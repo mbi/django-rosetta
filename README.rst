@@ -10,11 +10,10 @@ Because it doesn't export any models, Rosetta doesn't create any tables in your 
 Features
 ********
 
-  * Database independent 
-  * Reads and writes your project's `gettext` catalogs (po and mo files)
-  * Installed and uninstalled in under a minute
-  * Uses Django's admin interface CSS
-  * Translation suggestions via [http://code.google.com/apis/ajaxlanguage/ Google AJAX Language API]
+* Database independent 
+* Reads and writes your project's `gettext` catalogs (po and mo files)
+* Installed and uninstalled in under a minute
+* Uses Django's admin interface CSS
 
 ************
 Installation
@@ -23,9 +22,9 @@ Installation
 
 To install Rosetta:
 
-  # [http://code.google.com/p/django-rosetta/downloads/list Download] the application and place the `rosetta` folder anywhere in your Python path (your project directory is fine, but anywhere else in your python path will do), or simply install  using setuptools: `sudo easy_install django-rosetta`
-  # Add a `'rosetta'` line to  the `INSTALLED_APPS` in your project's `settings.py`
-  # Add an URL entry to your project's `urls.py`, for example: 
+1. ``pip install django-rosetta``
+2. Add ``'rosetta'`` to the `INSTALLED_APPS` in your project's ``settings.py``
+3. Add an URL entry to your project's ``urls.py``, for example: 
   
 
     from django.conf import settings
@@ -46,8 +45,9 @@ Security
 Because Rosetta requires write access to some of the files in your Django project, access to the application is restricted to the administrator user only (as defined in your project's Admin interface)
 
 If you wish to grant editing access to other users:
-  # Create a 'translators' group in your admin interface
-  # Add the user you wish to grant translating rights to this group
+ 
+1. Create a 'translators' group in your admin interface
+2. Add the user you wish to grant translating rights to this group
 
 *****
 Usage
@@ -79,16 +79,16 @@ Translating Rosetta itself
 
 By default Rosetta hides its own catalog files in the file selection interface (shown above.) If you would like to translate Rosetta to your own language:
 
-  # Create a subdirectory for your locale inside Rosetta's `locale` directory, e.g. `rosetta/locale/XX/LC_MESSAGES`
-  # Instruct Django to create the initial catalog, by running ` django-admin.py  makemessages -l XX` inside Rosetta's directory (refer to [http://www.djangoproject.com/documentation/i18n/ Django's documentation on i18n] for details)
-  # Instruct Rosetta to look for its own catalogs, by appending `?rosetta` to the language selection page's URL, e.g. `http://127.0.0.1:8000/rosetta/pick/?rosetta`
-  # Translate as usual
-  # Optionally, submit your translation for inclusion by [http://code.google.com/p/django-rosetta/issues/entry creating an issue and attaching your translated po file to the ticket]
+1. Create a subdirectory for your locale inside Rosetta's `locale` directory, e.g. `rosetta/locale/XX/LC_MESSAGES`
+2. Instruct Django to create the initial catalog, by running ` django-admin.py  makemessages -l XX` inside Rosetta's directory (refer to [http://www.djangoproject.com/documentation/i18n/ Django's documentation on i18n] for details)
+3. Instruct Rosetta to look for its own catalogs, by appending `?rosetta` to the language selection page's URL, e.g. `http://127.0.0.1:8000/rosetta/pick/?rosetta`
+4. Translate as usual
+5. Optionally, submit your translation for inclusion by [http://code.google.com/p/django-rosetta/issues/entry creating an issue and attaching your translated po file to the ticket]
 
 
 ***************
 Acknowledgments
 ***************
 
-  * Rosetta uses the excellent [http://code.google.com/p/polib/ polib] library to parse and handle Po files.
+* Rosetta uses the excellent `polib <http://code.google.com/p/polib/>`_ library to parse and handle gettext files.
 
