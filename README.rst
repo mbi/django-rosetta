@@ -1,8 +1,10 @@
-=Rosetta=
+=======
+Rosetta
+=======
 
-Rosetta is a [http://www.djangoproject.com/ Django] application that eases the translation process of your Django projects.
+Rosetta is a `Django <http://www.djangoproject.com/>` application that eases the translation process of your Django projects.
 
-Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main `urls.py` file. 
+Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file. 
 
 ==Features==
   * Database independent 
