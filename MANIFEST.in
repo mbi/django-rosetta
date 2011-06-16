@@ -1,4 +1,5 @@
 include MANIFEST.in
 include LICENSE
 recursive-include rosetta/locale *
+recursive-include rosetta/tests *
 recursive-include rosetta/templates *
