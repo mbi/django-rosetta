@@ -20,6 +20,5 @@ setup(
         'Framework :: Django',
     ],
     include_package_data=True,
-    zip_safe=False,
-    install_requires=['setuptools']
+    zip_safe=False
 )
