@@ -1,0 +1,167 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Rosetta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-07-04 13:42+0200\n"
+"Last-Translator: Nazar Leush <nazar@pleso.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
+msgid "Language selection"
+msgstr "Вибір мови"
+
+#: templates/rosetta/languages.html:6 templates/rosetta/pofile.html:18
+msgid "Home"
+msgstr "Домівка"
+
+#: templates/rosetta/languages.html:17
+msgid "Application"
+msgstr ""
+
+#: templates/rosetta/languages.html:18
+msgid "Progress"
+msgstr "Завершено"
+
+#: templates/rosetta/languages.html:19
+msgid "Messages"
+msgstr "Повідомлень"
+
+#: templates/rosetta/languages.html:20
+msgid "Translated"
+msgstr "Перекладено"
+
+#: templates/rosetta/languages.html:21 templates/rosetta/pofile.html:57
+msgid "Fuzzy"
+msgstr ""
+
+#: templates/rosetta/languages.html:22
+msgid "Obsolete"
+msgstr "Застарілих"
+
+#: templates/rosetta/languages.html:23
+msgid "File"
+msgstr "Файл"
+
+#: templates/rosetta/languages.html:44
+msgid "Nothing to translate!"
+msgstr ""
+
+#: templates/rosetta/languages.html:45
+msgid ""
+"You haven't specified any languages in your settings file, or haven't yet "
+"generated a batch of translation catalogs."
+msgstr ""
+
+#: templates/rosetta/languages.html:46
+#, python-format
+msgid ""
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
+"a> for a guide on how to set up internationalization for your project."
+msgstr ""
+
+#: templates/rosetta/pofile.html:8
+msgid "Pick another file"
+msgstr "Вибрати інший файл"
+
+#: templates/rosetta/pofile.html:9
+msgid "Download this catalog"
+msgstr "Завантажити цей каталог"
+
+#: templates/rosetta/pofile.html:21
+msgid "Progress: %(percent_translated)s%"
+msgstr "Завершено: %(percent_translated)s%"
+
+#: templates/rosetta/pofile.html:23
+msgid "File is read-only: download the file when done editing!"
+msgstr "Файл тільки для читання: завантажте файл після завершення редагування!"
+
+#: templates/rosetta/pofile.html:24
+msgid ""
+"Some items in your last translation block couldn't be saved: this usually "
+"happens when the catalog file changes on disk after you last loaded it."
+msgstr ""
+
+#: templates/rosetta/pofile.html:28
+#, python-format
+msgid "Translate into %(rosetta_i18n_lang_name)s"
+msgstr "Переклад на %(rosetta_i18n_lang_name)s"
+
+#: templates/rosetta/pofile.html:31
+msgid "Display:"
+msgstr "Відображати:"
+
+#: templates/rosetta/pofile.html:32
+msgid "Untranslated only"
+msgstr "Тільки неперекладені"
+
+#: templates/rosetta/pofile.html:33
+msgid "Translated only"
+msgstr "Тільки перекладені"
+
+#: templates/rosetta/pofile.html:34
+msgid "Fuzzy only"
+msgstr ""
+
+#: templates/rosetta/pofile.html:35
+msgid "All"
+msgstr ""
+
+#: templates/rosetta/pofile.html:42
+msgid "Search"
+msgstr "Пошук"
+
+#: templates/rosetta/pofile.html:44
+msgid "Go"
+msgstr "Вперед"
+
+#: templates/rosetta/pofile.html:54
+msgid "Original"
+msgstr ""
+
+#: templates/rosetta/pofile.html:58
+msgid "Occurrences(s)"
+msgstr "Зустрічається в"
+
+#: templates/rosetta/pofile.html:82
+msgid "suggest"
+msgstr ""
+
+#: templates/rosetta/pofile.html:93
+#, python-format
+msgid "%(more_count)s more"
+msgid_plural "%(more_count)s more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/rosetta/pofile.html:105
+msgid "Save and translate next block"
+msgstr "Записати і перекласти наступний блок"
+
+#: templates/rosetta/pofile.html:109
+msgid "Skip to page:"
+msgstr "Перейти до сторінки:"
+
+#: templates/rosetta/pofile.html:122
+msgid "Displaying:"
+msgstr "Відображення:"
+
+#: templates/rosetta/pofile.html:124
+#, python-format
+msgid "%(hits)s/%(message_number)s message"
+msgid_plural "%(hits)s/%(message_number)s messages"
+msgstr[0] "%(hits)s/%(message_number)s повідомлення"
+msgstr[1] "%(hits)s/%(message_number)s повідомлень"
+
+#~ msgid "English"
+#~ msgstr "Англійська"
+
+#~ msgid "Both"
+#~ msgstr "Всі"

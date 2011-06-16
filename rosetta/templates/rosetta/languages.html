@@ -1,0 +1,61 @@
+{% extends "rosetta/base.html" %}
+{% load i18n %}
+
+{% block pagetitle %}{{block.super}} - {% trans "Language selection" %}{% endblock %}
+
+{% block breadcumbs %}<a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; {% trans "Language selection" %}{% endblock %}
+
+{% block main %}
+    <h1>&nbsp;</h1>
+    <ul class="object-tools">
+        <li class="nobubble">{% trans "Filter" %}:</li>
+        <li{% ifequal rosetta_i18n_catalog_filter 'project' %} class="active"{% endifequal %}><a href="?filter=project">{% trans "Project" %}</a></li>
+        <li{% ifequal rosetta_i18n_catalog_filter 'third-party' %} class="active"{% endifequal %}><a href="?filter=third-party">{% trans "Third party" %}</a></li>
+        <li{% ifequal rosetta_i18n_catalog_filter 'django' %} class="active"{% endifequal %}><a href="?filter=django">Django</a></li>
+        <li{% ifequal rosetta_i18n_catalog_filter 'all' %} class="active"{% endifequal %}><a href="?filter=all">{% trans "All" %}</a></li>
+    </ul>
+
+    {% if has_pos %}
+
+    {% for lid,language,pos in languages %}
+    {% if pos %}
+        
+        <div class="module">
+            <h2>{{language}}</h2>
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>{% trans "Application" %}</th>
+                        <th class="r">{% trans "Progress"%}</th>
+                        <th class="r">{% trans "Messages" %}</th>
+                        <th class="r">{% trans "Translated" %}</th>
+                        <th class="r">{% trans "Fuzzy"%}</th>
+                        <th class="r">{% trans "Obsolete"%}</th>
+                        <th>{% trans "File" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app,path,po in pos %}
+                    <tr class="{% cycle row1,row2 %}">
+                        <td><a href="{% url rosetta-language-selection lid,forloop.counter0 %}{% if do_django %}?django{% endif %}{% if do_rosetta %}?rosetta{% endif %}">{{ app|title }}</a></td>
+                        <td class="ch-progress r">{{po.percent_translated|floatformat:2}}%</td>
+                        {% with po.untranslated_entries|length as len_untranslated_entries %}
+                        <td class="ch-messages r">{{po.translated_entries|length|add:len_untranslated_entries}}</td>
+                        {% endwith %}
+                        <td class="ch-translated r">{{po.translated_entries|length}}</td>
+                        <td class="ch-fuzzy r">{{po.fuzzy_entries|length}}</td>
+                        <td class="ch-obsolete r">{{po.obsolete_entries|length}}</td>
+                        <td class="hint">{{ path }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    {% endfor %}    
+    {% else %}
+    <h1>{% trans "Nothing to translate!" %}</h1>
+    <p>{% trans "You haven't specified any languages in your settings file, or haven't yet generated a batch of translation catalogs." %}</p>
+    <p>{% blocktrans with "http://docs.djangoproject.com/en/dev/topics/i18n/#topics-i18n" as i18n_doc_link  %}Please refer to <a href="{{i18n_doc_link}}">Django's I18N documentation</a> for a guide on how to set up internationalization for your project.{% endblocktrans %}</p>
+    {% endif %}
+{% endblock %}

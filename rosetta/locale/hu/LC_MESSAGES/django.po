@@ -1,0 +1,170 @@
+# Copyright (C) 2008
+# Gergely Kontra <pihentagy+rosetta@gmail.com>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Rosetta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-07-04 13:42+0200\n"
+"PO-Revision-Date: 2008-10-09 19:08+0100\n"
+"Last-Translator: Gergely Kontra <pihentagy@yahoo.com>\n"
+"Language-Team: nomail <hu@example.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.4.RC2\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
+msgid "Language selection"
+msgstr "Nyelvválasztás"
+
+#: templates/rosetta/languages.html:6 templates/rosetta/pofile.html:18
+msgid "Home"
+msgstr "Főoldal"
+
+#: templates/rosetta/languages.html:17
+msgid "Application"
+msgstr ""
+
+#: templates/rosetta/languages.html:18
+msgid "Progress"
+msgstr "Állapot"
+
+#: templates/rosetta/languages.html:19
+msgid "Messages"
+msgstr "Üzenet"
+
+#: templates/rosetta/languages.html:20
+msgid "Translated"
+msgstr "Lefordítva"
+
+#: templates/rosetta/languages.html:21 templates/rosetta/pofile.html:57
+msgid "Fuzzy"
+msgstr ""
+
+#: templates/rosetta/languages.html:22
+msgid "Obsolete"
+msgstr "Elavult"
+
+#: templates/rosetta/languages.html:23
+msgid "File"
+msgstr "Fájl"
+
+#: templates/rosetta/languages.html:44
+msgid "Nothing to translate!"
+msgstr "Nincs mit fordítani!"
+
+#: templates/rosetta/languages.html:45
+msgid ""
+"You haven't specified any languages in your settings file, or haven't yet "
+"generated a batch of translation catalogs."
+msgstr ""
+"Nincs beállítva egyetlen nyelv sem van nem hozott létre egy fordítási "
+"katalóguskoteget."
+
+#: templates/rosetta/languages.html:46
+#, python-format
+msgid ""
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
+"a> for a guide on how to set up internationalization for your project."
+msgstr ""
+"Projekted többnyelvűvé alakításához lásd a <a href=\"%(i18n_doc_link)s"
+"\">Django I18N dokumentációt</a>!"
+
+#: templates/rosetta/pofile.html:8
+msgid "Pick another file"
+msgstr "Másik fájl választása"
+
+#: templates/rosetta/pofile.html:9
+msgid "Download this catalog"
+msgstr "Katalógus letöltése"
+
+#: templates/rosetta/pofile.html:21
+msgid "Progress: %(percent_translated)s%"
+msgstr "%(percent_translated)s% kész"
+
+#: templates/rosetta/pofile.html:23
+msgid "File is read-only: download the file when done editing!"
+msgstr "A fájl írásvédett: töltse le a katalógust, ha végzett!"
+
+#: templates/rosetta/pofile.html:24
+msgid ""
+"Some items in your last translation block couldn't be saved: this usually "
+"happens when the catalog file changes on disk after you last loaded it."
+msgstr ""
+
+#: templates/rosetta/pofile.html:28
+#, python-format
+msgid "Translate into %(rosetta_i18n_lang_name)s"
+msgstr "Fordítsa %(rosetta_i18n_lang_name)s nyelvre"
+
+#: templates/rosetta/pofile.html:31
+msgid "Display:"
+msgstr "Szűrés:"
+
+#: templates/rosetta/pofile.html:32
+msgid "Untranslated only"
+msgstr "Fordításra vár"
+
+#: templates/rosetta/pofile.html:33
+msgid "Translated only"
+msgstr "Lefordított"
+
+#: templates/rosetta/pofile.html:34
+msgid "Fuzzy only"
+msgstr ""
+
+#: templates/rosetta/pofile.html:35
+msgid "All"
+msgstr ""
+
+#: templates/rosetta/pofile.html:42
+msgid "Search"
+msgstr "Keresés"
+
+#: templates/rosetta/pofile.html:44
+msgid "Go"
+msgstr "Keress"
+
+#: templates/rosetta/pofile.html:54
+msgid "Original"
+msgstr ""
+
+#: templates/rosetta/pofile.html:58
+msgid "Occurrences(s)"
+msgstr "Előfordulások"
+
+#: templates/rosetta/pofile.html:82
+msgid "suggest"
+msgstr "ajánl"
+
+#: templates/rosetta/pofile.html:93
+#, fuzzy, python-format
+msgid "%(more_count)s more"
+msgid_plural "%(more_count)s more"
+msgstr[0] "még %(more_count)s"
+
+#: templates/rosetta/pofile.html:105
+msgid "Save and translate next block"
+msgstr "Mentés"
+
+#: templates/rosetta/pofile.html:109
+msgid "Skip to page:"
+msgstr "Ugorj erre az oldalra:"
+
+#: templates/rosetta/pofile.html:122
+msgid "Displaying:"
+msgstr "Szűrés:"
+
+#: templates/rosetta/pofile.html:124
+#, fuzzy, python-format
+msgid "%(hits)s/%(message_number)s message"
+msgid_plural "%(hits)s/%(message_number)s messages"
+msgstr[0] "%(hits)s/%(message_number)s üzenet"
+
+#~ msgid "English"
+#~ msgstr "Angol"
+
+#~ msgid "Both"
+#~ msgstr "Minden"
