@@ -64,7 +64,7 @@ Translate away!
 
 Start your Django development server and point your browser to the URL prefix you have chosen during the installation process. You will get to the file selection window.
 
-http://django-rosetta.googlecode.com/files/rosetta-1.png
+.. image:: http://django-rosetta.googlecode.com/files/rosetta-1.png
 
 Select a file and translate each untranslated message. Whenever a new batch of messages is processed, Rosetta updates the corresponding `django.po` file and regenerates the corresponding ``mo`` file.
 
@@ -72,7 +72,7 @@ This means your project's labels will be translated right away, unfortunately yo
 
 If the webserver doesn't have write access on the catalog files (as shown in the screen shot below) an archive of the catalog files can be downloaded.
 
-http://django-rosetta.googlecode.com/files/rosetta-2.1.png
+.. image:: http://django-rosetta.googlecode.com/files/rosetta-2.1.png
 
 
 Translating Rosetta itself
