@@ -24,19 +24,20 @@ To install Rosetta:
 
 1. ``pip install django-rosetta``
 2. Add ``'rosetta'`` to the `INSTALLED_APPS` in your project's ``settings.py``
-3. Add an URL entry to your project's ``urls.py``, for example: 
-  
+3. Add an URL entry to your project's ``urls.py``, for example::
 
-  from django.conf import settings
-  if 'rosetta' in settings.INSTALLED_APPS:
-    urlpatterns += patterns('',
-      url(r'^rosetta/', include('rosetta.urls')),
-    )
+    from django.conf import settings
+    
+    if 'rosetta' in settings.INSTALLED_APPS:
+        urlpatterns += patterns('',
+            url(r'^rosetta/', include('rosetta.urls')),
+        )
+
 
 
 Note: you can use whatever you wish as the URL prefix.
 
-To uninstall Rosetta, simply comment out or remove the `'rosetta'` line in your `INSTALLED_APPS`
+To uninstall Rosetta, simply comment out or remove the ``'rosetta'`` line in your ``INSTALLED_APPS``
 
 ********
 Security
