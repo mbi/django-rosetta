@@ -5,7 +5,7 @@ setup(
     description='A Django application that eases the translation of Django projects',
     author='Marco Bonetti',
     author_email='mbonetti@gmail.com',
-    url='http://code.google.com/p/django-rosetta/',
+    url='https://github.com/mbi/django-rosetta',
     license='MIT',
     packages=find_packages(),
     classifiers=[
