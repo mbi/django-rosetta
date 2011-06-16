@@ -27,11 +27,11 @@ To install Rosetta:
 3. Add an URL entry to your project's ``urls.py``, for example: 
   
 
-    from django.conf import settings
-    if 'rosetta' in settings.INSTALLED_APPS:
-        urlpatterns += patterns('',
-            url(r'^rosetta/', include('rosetta.urls')),
-        )
+  from django.conf import settings
+  if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += patterns('',
+      url(r'^rosetta/', include('rosetta.urls')),
+    )
 
 
 Note: you can use whatever you wish as the URL prefix.
