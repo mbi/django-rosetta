@@ -2,3 +2,5 @@
 dist
 *.egg-info
 .svn
+.svnignore
+.svnexternals
