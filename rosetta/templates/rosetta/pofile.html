@@ -9,6 +9,19 @@
             <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            $('.googleall').click(function(){
+               $('a.suggest').click();
+            });
+            $('.checkall').css("cursor", "pointer");
+            $('.checkall').click(function(){
+               $('td.c input').attr('checked', '');
+               $('td.c input').attr('value', '0');
+            });
+        });
+    </script>
+    
 {% endblock %}
 
 {% block pagetitle %}{{block.super}} - {{MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
@@ -29,6 +42,7 @@
     
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
+        <li><a class="googleall" href="#">{% trans "Google All Translations" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'translated' %}class="active"{% endifequal %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
@@ -54,7 +68,7 @@
                         <th>{% trans "Original" %}</th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
-                        <th class="c">{% trans "Fuzzy" %}</th>
+                        <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
                         <th>{% trans "Occurrences(s)" %}</th>
                     </tr>
                 </thead>
