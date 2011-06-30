@@ -4,3 +4,5 @@ dist
 .svn
 .svnignore
 .svnexternals
+build
+rosetta/locale/xx/LC_MESSAGES/*.mo
