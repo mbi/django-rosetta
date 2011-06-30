@@ -10,16 +10,6 @@
         </p>
     </div>
     <script type="text/javascript">
-        jQuery(document).ready(function(){
-            $('.googleall').click(function(){
-               $('a.suggest').click();
-            });
-            $('.checkall').css("cursor", "pointer");
-            $('.checkall').click(function(){
-               $('td.c input').attr('checked', '');
-               $('td.c input').attr('value', '0');
-            });
-        });
     </script>
     
 {% endblock %}
@@ -42,7 +32,6 @@
     
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
-        <li><a class="googleall" href="#">{% trans "Google All Translations" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'translated' %}class="active"{% endifequal %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
@@ -56,6 +45,11 @@
                 <label for="searchbar"><img src="{{ADMIN_MEDIA_PREFIX}}img/admin/icon_searchbox.png" alt="{% trans "Search" %}" /></label>
                 <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
                 <input type="submit" name="search" value="{% trans "Go" %}" />
+            </div>
+        </form>
+        <form id="translate-all">
+            <div>
+                <input type="submit" class="googleall" value="{% trans "Suggest All Translations" %}" />
             </div>
         </form>
         </div>

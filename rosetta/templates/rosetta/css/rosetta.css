@@ -29,3 +29,7 @@ p.errornote { margin-top:0.4em;}
 #changelist table tbody td:first-child, #changelist table thead th:first-child  {text-align: left;}
 td.hint {color: #777;}
 div.module {margin-bottom: 20px;}
+.checkall {cursor:pointer}
+#toolbar { height:20px}
+#toolbar #translate-all { float:right}
+#toolbar form { float:left; }

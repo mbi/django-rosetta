@@ -23,6 +23,19 @@ google.setOnLoadCallback(function() {
         });
         return false;
     });
+    
+    
+    $('#translate-all').submit(function() {
+        $('a.suggest').click();
+        return false;
+    });
+    $('.checkall').click(function(){
+        $('td.c input').attr('checked', '');
+        $('td.c input').attr('value', '0');
+    });
+    
+    
+    
 {% endif %}
     $('td.plural').each(function(i) {
         var td = $(this), trY = parseInt(td.closest('tr').offset().top);
