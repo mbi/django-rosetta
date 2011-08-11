@@ -30,8 +30,6 @@ import types
 # the default encoding to use when autodetect_encoding is disabled
 default_encoding = 'utf-8'
 
-# _pofile_or_mofile {{{
-
 def _pofile_or_mofile(f, type, **kwargs):
     """
     Internal function used by :func:`polib.pofile` and :func:`polib.mofile` to
@@ -53,9 +51,6 @@ def _pofile_or_mofile(f, type, **kwargs):
     instance = parser.parse()
     instance.wrapwidth = kwargs.get('wrapwidth', 78)
     return instance
-
-# }}}
-# function pofile() {{{
 
 def pofile(pofile, **kwargs):
     """
@@ -86,9 +81,6 @@ def pofile(pofile, **kwargs):
     """
     return _pofile_or_mofile(pofile, 'pofile', **kwargs)
 
-# }}}
-# function mofile() {{{
-
 def mofile(mofile, **kwargs):
     """
     Convenience function that parses the mo file ``mofile`` and returns a
@@ -117,9 +109,6 @@ def mofile(mofile, **kwargs):
         file (optional, default: ``False``).
     """
     return _pofile_or_mofile(mofile, 'mofile', **kwargs)
-
-# }}}
-# function detect_encoding() {{{
 
 def detect_encoding(file, binary_mode=False):
     """
@@ -168,9 +157,6 @@ def detect_encoding(file, binary_mode=False):
         f.close()
     return default_encoding
 
-# }}}
-# function escape() {{{
-
 def escape(st):
     """
     Escapes the characters ``\\\\``, ``\\t``, ``\\n``, ``\\r`` and ``"`` in
@@ -181,9 +167,6 @@ def escape(st):
              .replace('\r', r'\r')\
              .replace('\n', r'\n')\
              .replace('\"', r'\"')
-
-# }}}
-# function unescape() {{{
 
 def unescape(st):
     """
@@ -202,9 +185,6 @@ def unescape(st):
             return '\\'
         return m # handles escaped double quote
     return re.sub(r'\\(\\|n|t|r|")', unescape_repl, st)
-
-# }}}
-# class _BaseFile {{{
 
 class _BaseFile(list):
     """
@@ -286,7 +266,7 @@ class _BaseFile(list):
             an instance of :class:`~polib._BaseEntry`.
         """
         return self.find(entry.msgid, by='msgid') is not None
-    
+
     def __eq__(self, other):
         return unicode(self) == unicode(other)
 
@@ -370,8 +350,7 @@ class _BaseFile(list):
         if self.fpath is None and fpath:
             self.fpath = fpath
 
-    def find(self, st, by='msgid', include_obsolete_entries=False,
-             msgctxt=False):
+    def find(self, st, by='msgid', include_obsolete_entries=False, msgctxt=False):
         """
         Find the entry which msgid (or property identified by the ``by``
         argument) matches the string ``st``.
@@ -391,6 +370,7 @@ class _BaseFile(list):
             string, allows to specify a specific message context for the
             search.
         """
+
         if include_obsolete_entries:
             entries = self[:]
         else:
@@ -511,7 +491,7 @@ class _BaseFile(list):
             7*4+entries_len*8, # start of value index
             0, keystart        # size and offset of hash table
                                # Important: we don't use hash tables
-        )              
+        )
         output += array.array("i", offsets).tostring()
         output += ids
         output += strs
@@ -525,9 +505,6 @@ class _BaseFile(list):
         if type(mixed) == types.UnicodeType:
             return mixed.encode(self.encoding)
         return mixed
-
-# }}}
-# class POFile {{{
 
 class POFile(_BaseFile):
     """
@@ -626,9 +603,6 @@ class POFile(_BaseFile):
             if refpot.find(entry.msgid) is None:
                 entry.obsolete = True
 
-# }}}
-# class MOFile {{{
-
 class MOFile(_BaseFile):
     """
     Mo file reader/writer.
@@ -640,7 +614,7 @@ class MOFile(_BaseFile):
 
     def __init__(self, *args, **kwargs):
         """
-        Constructor, accepts all keywords arguments accepted by 
+        Constructor, accepts all keywords arguments accepted by
         :class:`~polib._BaseFile` class.
         """
         _BaseFile.__init__(self, *args, **kwargs)
@@ -698,9 +672,6 @@ class MOFile(_BaseFile):
         Convenience method to keep the same interface with POFile instances.
         """
         return []
-
-# }}}
-# class _BaseEntry {{{
 
 class _BaseEntry(object):
     """
@@ -767,7 +738,7 @@ class _BaseEntry(object):
         Returns the string representation of the entry.
         """
         return unicode(self).encode(self.encoding)
-    
+
     def __eq__(self, other):
         return unicode(self) == unicode(other)
 
@@ -794,9 +765,6 @@ class _BaseEntry(object):
         for mstr in lines:
             ret.append('%s"%s"' % (delflag, escape(mstr)))
         return ret
-
-# }}}
-# class POEntry {{{
 
 class POEntry(_BaseEntry):
     """
@@ -853,9 +821,9 @@ class POEntry(_BaseEntry):
                     filelist.append(fpath)
             filestr = ' '.join(filelist)
             if wrapwidth > 0 and len(filestr)+3 > wrapwidth:
-                # XXX textwrap split words that contain hyphen, this is not 
-                # what we want for filenames, so the dirty hack is to 
-                # temporally replace hyphens with a char that a file cannot 
+                # XXX textwrap split words that contain hyphen, this is not
+                # what we want for filenames, so the dirty hack is to
+                # temporally replace hyphens with a char that a file cannot
                 # contain, like "*"
                 lines = wrap(filestr.replace('-', '*'),
                              wrapwidth,
@@ -879,10 +847,10 @@ class POEntry(_BaseEntry):
             ret += self._str_field("previous_msgctxt", "#| ", "",
                                    self.previous_msgctxt, wrapwidth)
         if self.previous_msgid:
-            ret += self._str_field("previous_msgid", "#| ", "", 
+            ret += self._str_field("previous_msgid", "#| ", "",
                                    self.previous_msgid, wrapwidth)
         if self.previous_msgid_plural:
-            ret += self._str_field("previous_msgid_plural", "#| ", "", 
+            ret += self._str_field("previous_msgid_plural", "#| ", "",
                                    self.previous_msgid_plural, wrapwidth)
 
         ret.append(_BaseEntry.__unicode__(self, wrapwidth))
@@ -981,17 +949,11 @@ class POEntry(_BaseEntry):
                 except KeyError:
                     self.msgstr_plural[pos] = ''
 
-# }}}
-# class MOEntry {{{
-
 class MOEntry(_BaseEntry):
     """
     Represents a mo file entry.
     """
     pass
-
-# }}}
-# class _POFileParser {{{
 
 class _POFileParser(object):
     """
@@ -1018,12 +980,14 @@ class _POFileParser(object):
         """
         enc = kwargs.get('encoding', default_encoding)
         if os.path.exists(pofile):
+            # pofile is a path
             try:
                 self.fhandle = codecs.open(pofile, 'rU', enc)
             except LookupError:
                 enc = default_encoding
                 self.fhandle = codecs.open(pofile, 'rU', enc)
         else:
+            # pofile is a string
             self.fhandle = pofile.splitlines()
 
         self.instance = POFile(
@@ -1069,7 +1033,7 @@ class _POFileParser(object):
         self.add('PP', all,                                              'PP')
         self.add('CT', ['ST', 'HE', 'GC', 'OC', 'FL', 'TC', 'PC', 'PM',
                         'PP', 'MS', 'MX'],                               'CT')
-        self.add('MI', ['ST', 'HE', 'GC', 'OC', 'FL', 'CT', 'TC', 'PC', 
+        self.add('MI', ['ST', 'HE', 'GC', 'OC', 'FL', 'CT', 'TC', 'PC',
                  'PM', 'PP', 'MS', 'MX'],                                'MI')
         self.add('MP', ['TC', 'GC', 'PC', 'PM', 'PP', 'MI'],             'MP')
         self.add('MS', ['MI', 'MP', 'TC'],                               'MS')
@@ -1087,7 +1051,7 @@ class _POFileParser(object):
             if line == '':
                 i = i+1
                 continue
-            if line[:3] == '#~ ':
+            if line[:3] == '#~ ': #this way ~3 times faster then .starswith()
                 line = line[3:]
                 self.entry_obsolete = 1
             else:
@@ -1139,7 +1103,7 @@ class _POFileParser(object):
             # since entries are added when another entry is found, we must add
             # the last entry here (only if there are lines)
             self.instance.append(self.current_entry)
-        # before returning the instance, check if there's metadata and if 
+        # before returning the instance, check if there's metadata and if
         # so extract it in a dict
         firstentry = self.instance[0]
         if firstentry.msgid == '': # metadata found
@@ -1238,7 +1202,7 @@ class _POFileParser(object):
                 try:
                     fil, line = occurrence.split(':')
                     if not line.isdigit():
-                        fil  = fil + line
+                        fil += line
                         line = ''
                     self.current_entry.occurrences.append((fil, line))
                 except:
@@ -1347,9 +1311,6 @@ class _POFileParser(object):
         # don't change the current state
         return False
 
-# }}}
-# class _MOFileParser {{{
-
 class _MOFileParser(object):
     """
     A class to parse binary mo files.
@@ -1451,16 +1412,13 @@ class _MOFileParser(object):
             return tup[0]
         return tup
 
-# }}}
-# class TextWrapper {{{
-
 class TextWrapper(textwrap.TextWrapper):
     """
     Subclass of textwrap.TextWrapper that backport the
     drop_whitespace option.
     """
     def __init__(self, *args, **kwargs):
-        drop_whitespace = kwargs.pop('drop_whitespace', True) 
+        drop_whitespace = kwargs.pop('drop_whitespace', True)
         textwrap.TextWrapper.__init__(self, *args, **kwargs)
         self.drop_whitespace = drop_whitespace
 
@@ -1534,9 +1492,6 @@ class TextWrapper(textwrap.TextWrapper):
 
         return lines
 
-# }}}
-# function wrap() {{{
-
 def wrap(text, width=70, **kwargs):
     """
     Wrap a single paragraph of text, returning a list of wrapped lines.
@@ -1544,5 +1499,3 @@ def wrap(text, width=70, **kwargs):
     if sys.version_info < (2, 6):
         return TextWrapper(width=width, **kwargs).wrap(text)
     return textwrap.wrap(text, width=width, **kwargs)
-
-#}}}
