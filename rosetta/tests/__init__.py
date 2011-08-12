@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
+from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
 from rosetta.conf import settings as rosetta_settings
@@ -267,7 +268,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         
         self.assertTrue('<td class="ch-messages r">1</td>' in r.content)
-        self.assertTrue('<td class="ch-progress r">0.00%</td>' in r.content)
+        self.assertTrue('<td class="ch-progress r">%s%%</td>' % str(floatformat(0.0, 2)) in r.content)
         self.assertTrue('<td class="ch-obsolete r">1</td>' in r.content)
         
         # reset the original file
