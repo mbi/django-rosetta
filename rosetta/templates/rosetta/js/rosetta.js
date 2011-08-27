@@ -13,7 +13,7 @@ google.setOnLoadCallback(function() {
             trans=$('textarea',a.parent());
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/g,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
-        google.language.translate(orig, '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', '{{rosetta_i18n_lang_code}}', function(result) {
+        google.language.translate(orig, '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', '{{rosetta_i18n_lang_code|slice:":2"}}', function(result) {
             if (!result.error) {
                 trans.val(unescape(result.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
                 a.hide();
