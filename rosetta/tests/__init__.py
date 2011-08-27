@@ -2,7 +2,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from django.dispatch import receiver
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
@@ -10,6 +9,16 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta.signals import entry_changed, post_save
 import os, shutil, django
 
+
+try:
+    from django.dispatch import receiver
+except ImportError:
+    # We might be in django < 1.3, so backport this function
+    def receiver(signal, **kwargs):
+        def _decorator(func):
+            signal.connect(func, **kwargs)
+            return func
+        return _decorator
 
 class RosettaTestCase(TestCase):
     urls = 'rosetta.tests.urls'
