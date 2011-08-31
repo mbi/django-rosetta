@@ -77,10 +77,10 @@
                                 </div>
                                 
                                 {% if message.msgctxt %}
-                                    <span class="context">{% trans "Context hint" %}: {{message.msgctxt}}</span>
+                                    <span class="context">{% trans "Context hint" %}: {{message.msgctxt|safe}}</span>
                                 {% else %}
                                     {% if message.comment %}
-                                    <span class="context">{% trans "Context hint" %}: {{message.comment}}</span>
+                                    <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
                                     {% endif %}
                                 {% endif %}
                                 
@@ -95,10 +95,10 @@
                             <td class="original">
                                 <span class="message">{{ message.msgid|format_message|linebreaksbr }}</span>
                             {% if message.msgctxt %}
-                                <span class="context">{% trans "Contextual hint" %}: "{{message.msgctxt}}"</span>
+                                <span class="context">{% trans "Context hint" %}: "{{message.msgctxt|safe}}"</span>
                                 {% else %}
                                 {% if message.comment %}
-                                <span class="context">{% trans "Context hint" %}: {{message.comment}}</span>
+                                <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
                                 {% endif %}                        
                             {% endif %}
                             </td>
