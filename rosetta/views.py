@@ -197,7 +197,7 @@ def home(request):
             page = int(request.GET.get('page'))
         else:
             page = 1
-        messages = paginator.page(page).object_list
+        rosetta_messages = paginator.page(page).object_list
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
 
             main_language = None
@@ -210,7 +210,7 @@ def home(request):
             po = pofile(fl)
 
             main_messages = []
-            for message in messages:
+            for message in rosetta_messages:
                 message.main_lang = po.find(message.msgid).msgstr
                 
         needs_pagination = paginator.num_pages > 1
