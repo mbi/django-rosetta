@@ -52,6 +52,8 @@ def init_pofiles():
             for p in poutil.find_pos(l[0], *values):
                 path = os.path.realpath(p)
                 writable = os.access(path, os.W_OK)
+                if rosetta_settings.EXCLUDE_READONLY and not writable:
+                    continue
                 appname = path.rsplit("/locale", 1)[0].rsplit("/", 1)[-1]
                 lang_pos[appname] = {
                     'appname' : appname,
