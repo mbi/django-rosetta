@@ -15,39 +15,37 @@
         <li{% ifequal filter 'all' %} class="active"{% endifequal %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
 
-    {% if has_pos %}
+    {% if languages %}
         {% for lang_id, language, pos in languages %}
-            {% if pos %}
-                <div class="module">
-                    <h2>{{language}}</h2>
-                    <table cellspacing="0">
-                        <thead>
-                            <tr>
-                                <th>{% trans "Application" %}</th>
-                                <th class="r">{% trans "Progress"%}</th>
-                                <th class="r">{% trans "Messages" %}</th>
-                                <th class="r">{% trans "Translated" %}</th>
-                                <th class="r">{% trans "Fuzzy"%}</th>
-                                <th class="r">{% trans "Obsolete"%}</th>
-                                <th>{% trans "File" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for app,path,po in pos %}
-                            <tr class="{% cycle row1,row2 %}">
-                                <td><a href="{% url rosetta-translate app, lang_id, 'untranslated', 1 %}">{{ app|title }}</a></td>
-                                <td class="ch-progress r">{{po.percent_translated|floatformat:2}}%</td>
-                                <td class="ch-messages r">{{po.translated_entries|add:po.untranslated_entries|length}}</td>
-                                <td class="ch-translated r">{{po.translated_entries|length}}</td>
-                                <td class="ch-fuzzy r">{{po.fuzzy_entries|length}}</td>
-                                <td class="ch-obsolete r">{{po.obsolete_entries|length}}</td>
-                                <td class="hint">{{ path }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
+            <div class="module">
+                <h2>{{language}}</h2>
+                <table cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{% trans "Application" %}</th>
+                            <th class="r">{% trans "Progress"%}</th>
+                            <th class="r">{% trans "Messages" %}</th>
+                            <th class="r">{% trans "Translated" %}</th>
+                            <th class="r">{% trans "Fuzzy"%}</th>
+                            <th class="r">{% trans "Obsolete"%}</th>
+                            <th>{% trans "File" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for po in pos %}
+                        <tr class="{% cycle row1,row2 %}">
+                            <td><a href="{% url rosetta-translate po.appname, lang_id, 'untranslated', 1 %}">{{ po.appname|title }}</a></td>
+                            <td class="ch-progress r">{{po.pofile.percent_translated|floatformat:2}}%</td>
+                            <td class="ch-messages r">{{po.pofile.translated_entries|add:po.pofile.untranslated_entries|length}}</td>
+                            <td class="ch-translated r">{{po.pofile.translated_entries|length}}</td>
+                            <td class="ch-fuzzy r">{{po.pofile.fuzzy_entries|length}}</td>
+                            <td class="ch-obsolete r">{{po.pofile.obsolete_entries|length}}</td>
+                            <td class="hint">{{ path }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endfor %}
     {% else %}
         <h1>{% trans "Nothing to translate!" %}</h1>

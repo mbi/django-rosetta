@@ -84,6 +84,9 @@ def find_pos(lang, project_apps = True, django_apps = False, third_party_apps = 
     return list(ret)
 
 def pagination_range(first,last,current):
+    if last<10:
+        return range(1,1+last)
+
     assert first <= current <= last
     r = [first, first+1, current-2, current-1, current, current+1, current+2, last-1, last]
     r = list(set(r))

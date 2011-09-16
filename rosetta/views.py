@@ -1,4 +1,6 @@
-import re, rosetta, datetime, unicodedata, hashlib, os
+import re, rosetta, datetime, unicodedata, hashlib, os, zipfile
+import time
+from StringIO import StringIO
 
 from django.conf import settings
 
@@ -15,6 +17,55 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta import poutil, polib
 from rosetta.signals import entry_changed, post_save
 
+_pofiles = {} # see init_pofiles for struct
+_filters = {
+    'project' : (True, False, False),
+    'django'  : (False, True, False),
+    'third-party': (False, False, True),
+}
+
+def upd_pofile(po):
+    last_modified = os.path.getmtime(po['path'])
+    if last_modified > po['last_modified']: #ie version in cache outdated
+        po['pofile'] = polib.pofile(po['path'])
+        po['last_modified'] = last_modified
+        entries = {}
+        for entry in po['pofile']:
+            entries[hashlib.md5(entry.msgid.encode('utf8')).hexdigest()] = entry
+        po['entries'] = entries
+    elif last_modified < po['last_modified'] and po['writable']:
+        try:
+            po['pofile'].save()
+            po['pofile'].save_as_mofile(po['path'].replace('.po','.mo'))
+        except IOError:
+            po['writable'] = False
+        else: #saving itself takes some time
+            po['last_modified'] = os.path.getmtime(po['path'])
+
+    return po
+
+def init_pofiles():
+    pofiles = {}
+    for l in settings.LANGUAGES:
+        lang_pos = {}
+        for filter, values in _filters.items():
+            for p in poutil.find_pos(l[0], *values):
+                path = os.path.realpath(p)
+                writable = os.access(path, os.W_OK)
+                appname = path.rsplit("/locale", 1)[0].rsplit("/", 1)[-1]
+                lang_pos[appname] = {
+                    'appname' : appname,
+                    'path'    : path,
+                    'filter'  : filter,
+                    'writable': writable,
+                    'pofile'  : None,
+                    'last_modified': 0,
+                }
+        pofiles[l[0]] = lang_pos
+    return pofiles
+
+_pofiles = init_pofiles()
+
 @never_cache
 @user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)
 def list_languages(request):
@@ -22,44 +73,38 @@ def list_languages(request):
     Lists the languages for the current project, the gettext catalog files
     that can be translated and their translation progress
     """
+    filter = request.GET.get('filter', 'project')
+
+    if filter != 'all' and filter not in _filters:
+        raise http.Http404
+
     languages = []
-
-    filter = request.GET.get('filter', 'project') # possible values are: all, project (default), third-party, django
-
-    third_party_apps= filter in ('all', 'third-party')
-    django_apps     = filter in ('all', 'django')
-    project_apps    = filter in ('all', 'project')
-
-    has_pos = False
-    for language in available_languages(request.user):
-        pos = poutil.find_pos(language[0], project_apps, django_apps, third_party_apps)
-        has_pos = has_pos or bool(pos)
-        languages.append(
-            (
-                language[0],
-                language[1],
-                [(get_app_name(l), os.path.realpath(l), polib.pofile(l)) for l in  pos],
-            )
-        )
+    for l in available_languages(request.user):
+        pos = [upd_pofile(po) for po in _pofiles[l[0]].values() if filter=='all' or filter==po['filter']]
+        if pos:
+            languages.append((l[0], l[1], pos))
 
     return shortcuts.render_to_response('rosetta/languages.html', {
-            'version' : rosetta.get_version(True),
-            'has_pos' : has_pos,
             'filter'  : filter,
             'languages': languages,
             'ADMIN_MEDIA_PREFIX' : settings.ADMIN_MEDIA_PREFIX,
         }, context_instance=template.RequestContext(request))
 
-def pofile_by_appname(appname, lang):
-    for po in poutil.find_pos(lang, True, True, True):
-        if appname == get_app_name(po):
-            return po
-    raise http.Http404
+def pofile_by_appname(appname, lang, user):
+    if lang not in [l[0] for l in available_languages(user)]:
+        raise http.Http404
 
+    if lang not in _pofiles:
+        raise http.Http404
+
+    if appname not in _pofiles[lang]:
+        raise http.Http404
+
+    return upd_pofile(_pofiles[lang][appname])
 
 @never_cache
 @user_passes_test(lambda user:can_translate(user), settings.LOGIN_URL)
-def translate(request, appname, lang, filter='all', page=1):
+def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
     """
     Displays a list of messages to be translated
     """
@@ -86,33 +131,15 @@ def translate(request, appname, lang, filter='all', page=1):
 
         return out_
 
-    if lang not in [l[0] for l in available_languages(request.user)]:
-        raise http.Http404
-
-    rosetta_i18n_fn = pofile_by_appname(appname, lang)
-
-    is_bidi = lang.split('-')[0] in settings.LANGUAGES_BIDI
-    try:
-        os.utime(rosetta_i18n_fn,None)
-        rosetta_i18n_write = True
-    except OSError:
-        rosetta_i18n_write = False
-
-    if rosetta_i18n_write:
-        rosetta_i18n_pofile = polib.pofile(rosetta_i18n_fn)
-    else:
-        if 'rosetta_i18n_pofile' not in request.session:
-            request.session['rosetta_i18n_pofile'] = polib.pofile(rosetta_i18n_fn)
-        rosetta_i18n_pofile = request.session['rosetta_i18n_pofile']
+    po = pofile_by_appname(appname, rosetta_i18n_lang_code, request.user)
+    rosetta_i18n_fn    = po['path']
+    rosetta_i18n_write = po['writable']
+    rosetta_last_save_error = False
 
     if '_next' in request.POST:
-        rx = re.compile(r'^m_([0-9a-f]+)')
-        rx_plural = re.compile(r'^m_([0-9a-f]+)_([0-9]+)')
+        rx = re.compile(r'm_([0-9a-f]+)')
+        rx_plural = re.compile(r'm_([0-9a-f]+)_([0-9]+)')
         file_change = False
-
-        entries = {}
-        for entry in rosetta_i18n_pofile:
-            entries[hashlib.md5(entry.msgid.encode('utf8')).hexdigest()] = entry.msgid
 
         for key, value in request.POST.items():
             md5hash = None
@@ -129,93 +156,84 @@ def translate(request, appname, lang, filter='all', page=1):
                 md5hash = str(rx.match(key).groups()[0])
 
             if md5hash is not None:
-                entry_text = entries.get(md5hash)
-                entry = entry_text and rosetta_i18n_pofile.find(entry_text)
+                entry = po['entries'].get(md5hash)
                 # If someone did a makemessage, some entries might
                 # have been removed, so we need to check.
                 if entry:
+                    entry_change = False
                     old_msgstr = entry.msgstr
 
                     if plural_id is not None:
                         plural_string = fix_nls(entry.msgstr_plural[plural_id], value)
+                        entry_change = entry_changed or entry.msgstr_plural[plural_id] != plural_string
                         entry.msgstr_plural[plural_id] = plural_string
                     else:
-                        entry.msgstr = fix_nls(entry.msgid, value)
+                        msgstr = fix_nls(entry.msgid, value)
+                        entry_change = entry_changed or entry.msgstr != msgstr
+                        entry.msgstr = msgstr
 
-                    is_fuzzy = bool(request.POST.get('f_%s' % md5hash, False))
                     old_fuzzy = 'fuzzy' in entry.flags
+                    new_fuzzy = bool(request.POST.get('f_%s' % md5hash, False))
+                    if new_fuzzy != old_fuzzy:
+                        entry_change = True
+                        if new_fuzzy:
+                            entry.flags.append('fuzzy')
+                        else:
+                            entry.flags.remove('fuzzy')
 
-                    if old_fuzzy and not is_fuzzy:
-                        entry.flags.remove('fuzzy')
-                    elif not old_fuzzy and is_fuzzy:
-                        entry.flags.append('fuzzy')
-
-                    file_change = True
-
-                    if old_msgstr != value or old_fuzzy != is_fuzzy:
+                    if entry_change:
+                        file_change = True
                         entry_changed.send(sender=entry,
                                            user=request.user,
                                            old_msgstr = old_msgstr,
                                            old_fuzzy = old_fuzzy,
-                                           pofile = rosetta_i18n_fn,
-                                           language_code = lang,
+                                           pofile = po['pofile'],
+                                           language_code = rosetta_i18n_lang_code,
                                         )
-
                 else:
-                    request.session['rosetta_last_save_error'] = True
+                    rosetta_last_save_error = True
 
-
-        if file_change and rosetta_i18n_write:
-
+        if file_change:
             try:
-                rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" %(request.user.first_name,request.user.last_name,request.user.email)).encode('ascii', 'ignore')
-                rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
-                rosetta_i18n_pofile.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
+                po['pofile'].metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" %(request.user.first_name,request.user.last_name,request.user.email)).encode('ascii', 'ignore')
+                po['pofile'].metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
+                po['pofile'].metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
             except UnicodeDecodeError:
                 pass
 
-            try:
-                rosetta_i18n_pofile.save()
-                rosetta_i18n_pofile.save_as_mofile(rosetta_i18n_fn.replace('.po','.mo'))
+            po['last_modified'] = time.time()
+            po = upd_pofile(po)
 
-                post_save.send(sender=None,language_code=lang,request=request)
+            post_save.send(sender=None,language_code=rosetta_i18n_lang_code,request=request)
 
-                # Try auto-reloading via the WSGI daemon mode reload mechanism
-                if  rosetta_settings.WSGI_AUTO_RELOAD and \
-                    request.environ.has_key('mod_wsgi.process_group') and \
-                    request.environ.get('mod_wsgi.process_group',None) and \
-                    request.environ.has_key('SCRIPT_FILENAME') and \
-                    int(request.environ.get('mod_wsgi.script_reloading', '0')):
-                        try:
-                            os.utime(request.environ.get('SCRIPT_FILENAME'), None)
-                        except OSError:
-                            pass
-                # Try auto-reloading via uwsgi daemon reload mechanism
-                if rosetta_settings.UWSGI_AUTO_RELOAD:
+            # Try auto-reloading via the WSGI daemon mode reload mechanism
+            if  rosetta_settings.WSGI_AUTO_RELOAD and \
+                request.environ.has_key('mod_wsgi.process_group') and \
+                request.environ.get('mod_wsgi.process_group',None) and \
+                request.environ.has_key('SCRIPT_FILENAME') and \
+                int(request.environ.get('mod_wsgi.script_reloading', '0')):
                     try:
-                        import uwsgi
-                        # pretty easy right?
-                        uwsgi.reload()
-                    except:
-                        # we may not be running under uwsgi :P
+                        os.utime(request.environ.get('SCRIPT_FILENAME'), None)
+                    except OSError:
                         pass
-            except IOError:
-                request.session['rosetta_i18n_write'] = False
-
-            request.session['rosetta_i18n_pofile']=rosetta_i18n_pofile
+            # Try auto-reloading via uwsgi daemon reload mechanism
+            if rosetta_settings.UWSGI_AUTO_RELOAD:
+                try:
+                    import uwsgi # pretty easy right?
+                    uwsgi.reload()
+                except: # we may not be running under uwsgi :P
+                    pass
 
             return shortcuts.redirect(request.path + '?' + request.META['QUERY_STRING'])
 
-    lang_name = dict(settings.LANGUAGES)[lang]
-
     if filter == 'untranslated':
-        entries_source = rosetta_i18n_pofile.untranslated_entries()
+        entries_source = po['pofile'].untranslated_entries()
     elif filter == 'translated':
-        entries_source = rosetta_i18n_pofile.translated_entries()
+        entries_source = po['pofile'].translated_entries()
     elif filter == 'fuzzy':
-        entries_source = rosetta_i18n_pofile.fuzzy_entries()
+        entries_source = po['pofile'].fuzzy_entries()
     else:
-        entries_source = (e for e in rosetta_i18n_pofile if not e.obsolete)
+        entries_source = (e for e in po['pofile'] if not e.obsolete)
 
     query = request.GET.get('q', '').strip()
     if query:
@@ -229,82 +247,66 @@ def translate(request, appname, lang, filter='all', page=1):
     else:
         page = 1
 
-    messages = paginator.page(page).object_list
-    for message in messages:
+    rosetta_messages = paginator.page(page).object_list
+    for message in rosetta_messages:
         message.md5hash = hashlib.md5(message.msgid.encode('utf8')).hexdigest()
 
-    if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != lang:
-
+    if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
         main_language = None
         for language in settings.LANGUAGES:
             if language[0] == rosetta_settings.MAIN_LANGUAGE:
                 main_language = _(language[1])
                 break
 
-        fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % lang))
+        fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % rosetta_i18n_lang_code))
         po = polib.pofile(fl)
 
         main_messages = []
         for message in messages:
             message.main_lang = po.find(message.msgid).msgstr
 
-    needs_pagination = paginator.num_pages > 1
-    if needs_pagination:
-        if paginator.num_pages >= 10:
-            page_range = poutil.pagination_range(1, paginator.num_pages, page)
-        else:
-            page_range = range(1,1+paginator.num_pages)
-    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
-    ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
+    return shortcuts.render_to_response('rosetta/pofile.html', {
+            'rosetta_i18n_fn'       : rosetta_i18n_fn,
+            'rosetta_i18n_write'    : rosetta_i18n_write,
+            'rosetta_i18n_pofile'   : po['pofile'],
+            'rosetta_i18n_lang_bidi': rosetta_i18n_lang_code.split('-', 1)[0] in settings.LANGUAGES_BIDI,
+            'rosetta_messages'      : rosetta_messages,
+            'rosetta_i18n_lang_name': dict(settings.LANGUAGES)[rosetta_i18n_lang_code],
+            'rosetta_i18n_lang_code': rosetta_i18n_lang_code,
+            'rosetta_i18n_app'      : appname,
+            'rosetta_i18n_filter'   : filter,
+            'rosetta_last_save_error' : rosetta_last_save_error,
 
-    MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
-    MESSAGES_SOURCE_LANGUAGE_CODE = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE
+            'ADMIN_MEDIA_PREFIX'             : settings.ADMIN_MEDIA_PREFIX,
+            'ENABLE_TRANSLATION_SUGGESTIONS' : rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS,
+            'MESSAGES_SOURCE_LANGUAGE_NAME'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME,
+            'MESSAGES_SOURCE_LANGUAGE_CODE'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE,
 
-    if 'rosetta_last_save_error' in request.session:
-        del(request.session['rosetta_last_save_error'])
-        rosetta_last_save_error = True
-
-    version = rosetta.get_version(True)
-
-    return shortcuts.render_to_response('rosetta/pofile.html', locals(), context_instance=template.RequestContext(request))
+            'paginator'               : paginator,
+            'needs_pagination'        : paginator.num_pages > 1,
+            'page_range'              : poutil.pagination_range(1, paginator.num_pages, page),
+            'page'                    : page,
+        }, context_instance=template.RequestContext(request))
 
 @never_cache
 @user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)
-def download_file(request, appname, lang):
-    import zipfile, os
-    from StringIO import StringIO
-    # original filename
-    rosetta_i18n_fn = pofile_by_appname(appname, lang)
-    # in-session modified catalog
-    if request.session.get('rosetta_i18n_write'):
-        rosetta_i18n_pofile = polib.pofile(rosetta_i18n_fn)
-    else:
-        rosetta_i18n_pofile = request.session.get('rosetta_i18n_pofile')
+def download_file(request, appname, rosetta_i18n_lang_code):
+    po = pofile_by_appname(appname, rosetta_i18n_lang_code, request.user)
 
-    if not rosetta_i18n_fn or not rosetta_i18n_pofile:
-        raise http.Http404
-
-    if len(rosetta_i18n_fn.split('/')) >= 5:
-        offered_fn = '_'.join(rosetta_i18n_fn.split('/')[-5:])
-    else:
-        offered_fn = rosetta_i18n_fn.split('/')[-1]
-    po_fn = str(rosetta_i18n_fn.split('/')[-1])
+    offered_fn = '_'.join(po['path'].split('/')[-5:])
+    po_fn = str(po['path'].split('/')[-1])
     mo_fn = str(po_fn.replace('.po','.mo')) # not so smart, huh
     zipdata = StringIO()
     zipf = zipfile.ZipFile(zipdata, mode="w")
-    zipf.writestr(po_fn, unicode(rosetta_i18n_pofile).encode("utf8"))
-    zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
+    zipf.writestr(po_fn, unicode(po['pofile']).encode("utf8"))
+    zipf.writestr(mo_fn, po['pofile'].to_binary())
     zipf.close()
     zipdata.seek(0)
 
     response = http.HttpResponse(zipdata.read())
-    response['Content-Disposition'] = 'attachment; filename=%s.%s.zip' %(offered_fn, lang)
+    response['Content-Disposition'] = 'attachment; filename=%s.%s.zip' %(offered_fn, rosetta_i18n_lang_code)
     response['Content-Type'] = 'application/x-zip'
     return response
-
-def get_app_name(path):
-    app = path.split("/locale")[0].split("/")[-1]
-    return app
 
 def available_languages(user):
     if not user.is_authenticated():
