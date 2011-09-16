@@ -4,6 +4,7 @@ google.setOnLoadCallback(function() {
     }, function() {
         $('.hide', $(this).parent()).hide();
     });
+
 {% if ENABLE_TRANSLATION_SUGGESTIONS %}
     $('a.suggest').click(function() {
         var a=$(this),
@@ -13,7 +14,7 @@ google.setOnLoadCallback(function() {
             trans=$('textarea',a.parent());
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/g,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
-        google.language.translate(orig, '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', '{{lang}}', function(result) {
+        google.language.translate(orig, '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', '{{rosetta_i18n_lang_code|slice:":2"}}', function(result) {
             if (!result.error) {
                 trans.val(unescape(result.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
                 a.hide();
@@ -23,8 +24,7 @@ google.setOnLoadCallback(function() {
         });
         return false;
     });
-    
-    
+
     $('#translate-all').submit(function() {
         $('a.suggest').click();
         return false;
@@ -33,10 +33,8 @@ google.setOnLoadCallback(function() {
         $('td.c input').attr('checked', '');
         $('td.c input').attr('value', '0');
     });
-    
-    
-    
 {% endif %}
+
     $('td.plural').each(function(i) {
         var td = $(this), trY = parseInt(td.closest('tr').offset().top);
         $('textarea', $(this).closest('tr')).each(function(j) {

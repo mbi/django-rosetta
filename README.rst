@@ -15,6 +15,15 @@ Features
 * Installed and uninstalled in under a minute
 * Uses Django's admin interface CSS
 
+
+************
+Requirements
+************
+
+Rosetta requires Django 1.2 or later. 
+
+Note that Rosetta is known to work with Django 1.1, but it is not supported.
+
 ************
 Installation
 ************
