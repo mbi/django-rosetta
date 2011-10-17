@@ -46,7 +46,7 @@ def upd_pofile(po):
 
 def init_pofiles():
     pofiles = {}
-    for l in settings.LANGUAGES:
+    for l in rosetta_settings.LANGUAGES:
         lang_pos = {}
         for filter, values in _filters.items():
             for p in poutil.find_pos(l[0], *values):
@@ -254,11 +254,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
         message.md5hash = hashlib.md5(message.msgid.encode('utf8')).hexdigest()
 
     if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
-        main_language = None
-        for language in settings.LANGUAGES:
-            if language[0] == rosetta_settings.MAIN_LANGUAGE:
-                main_language = _(language[1])
-                break
+        main_language = dict(rosetta_settings.LANGUAGES).get(rosetta_settings.MAIN_LANGUAGE)
 
         fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % rosetta_i18n_lang_code))
         po = polib.pofile(fl)
@@ -273,7 +269,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
             'rosetta_i18n_pofile'   : po['pofile'],
             'rosetta_i18n_lang_bidi': rosetta_i18n_lang_code.split('-', 1)[0] in settings.LANGUAGES_BIDI,
             'rosetta_messages'      : rosetta_messages,
-            'rosetta_i18n_lang_name': dict(settings.LANGUAGES)[rosetta_i18n_lang_code],
+            'rosetta_i18n_lang_name': dict(rosetta_settings.LANGUAGES)[rosetta_i18n_lang_code],
             'rosetta_i18n_lang_code': rosetta_i18n_lang_code,
             'rosetta_i18n_app'      : appname,
             'rosetta_i18n_filter'   : filter,
@@ -284,6 +280,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
             'MESSAGES_SOURCE_LANGUAGE_NAME'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME,
             'MESSAGES_SOURCE_LANGUAGE_CODE'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE,
 
+            'query'                   : query,
             'paginator'               : paginator,
             'needs_pagination'        : paginator.num_pages > 1,
             'page_range'              : poutil.pagination_range(1, paginator.num_pages, page),
@@ -314,7 +311,7 @@ def available_languages(user):
     if not user.is_authenticated():
         return []
 
-    languages = settings.LANGUAGES
+    languages = rosetta_settings.LANGUAGES
     if user.is_superuser and user.is_staff:
         return languages
 
