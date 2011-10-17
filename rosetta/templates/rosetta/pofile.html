@@ -130,7 +130,7 @@
                                 {% ifequal i page %}
                                     <span class="this-page">{{ i }}</span>
                                 {% else %}
-                                    <a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, rosetta_i18n_filter, i %}{% if query %}&amp;query={{query}}{% endif %}">{{i}}</a>
+                                    <a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, rosetta_i18n_filter, i %}{% if query %}?query={{query}}{% endif %}">{{i}}</a>
                                 {% endifequal %}
                             {% endifequal %}
                         {% endfor %}
