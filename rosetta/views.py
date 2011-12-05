@@ -162,17 +162,11 @@ def home(request):
                 request.session['rosetta_i18n_pofile']=rosetta_i18n_pofile
                 
                 # Retain query arguments
-                query_arg = ''
+                query_arg = '?_next=1'
                 if 'query' in request.REQUEST:
-                    query_arg = '?query=%s' %request.REQUEST.get('query')
+                    query_arg += '&query=%s' %request.REQUEST.get('query')
                 if 'page' in request.GET:
-                    if query_arg:
-                        query_arg = query_arg + '&'
-                    else:
-                        query_arg = '?'
-                    query_arg = query_arg + 'page=%d&_next=1' % int(request.GET.get('page'))
-                    
-                    
+                    query_arg = query_arg + '&page=%d' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
                 
                 
