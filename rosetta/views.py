@@ -219,7 +219,7 @@ def home(request):
                 page_range = pagination_range(1, paginator.num_pages, page)
             else:
                 page_range = range(1,1+paginator.num_pages)
-        ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+        ADMIN_MEDIA_PREFIX = getattr(settings, 'ADMIN_MEDIA_PREFIX', '')
         ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
         
         MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
@@ -307,7 +307,7 @@ def list_languages(request):
             [(get_app_name(l), os.path.realpath(l), pofile(l)) for l in  pos],
             )
         )
-    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    ADMIN_MEDIA_PREFIX = getattr(settings, 'ADMIN_MEDIA_PREFIX', '')
     version = rosetta.get_version(True)
     return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))    
 list_languages=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(list_languages)
