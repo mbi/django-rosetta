@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from django import http, template, shortcuts
 
 from django.utils.encoding import smart_unicode, iri_to_uri
+from django.utils.translation import get_language_info
 from django.utils.translation import ugettext_lazy as _
 from rosetta.conf import settings as rosetta_settings
 from rosetta import poutil, polib
@@ -266,7 +267,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
             'rosetta_i18n_fn'       : rosetta_i18n_fn,
             'rosetta_i18n_write'    : rosetta_i18n_write,
             'rosetta_i18n_pofile'   : po['pofile'],
-            'rosetta_i18n_lang_bidi': rosetta_i18n_lang_code.split('-', 1)[0] in settings.LANGUAGES_BIDI,
+            'rosetta_i18n_lang_bidi': get_language_info(rosetta_i18n_lang_code)['bidi'],
             'rosetta_messages'      : rosetta_messages,
             'rosetta_i18n_lang_name': dict(rosetta_settings.LANGUAGES)[rosetta_i18n_lang_code],
             'rosetta_i18n_lang_code': rosetta_i18n_lang_code,
