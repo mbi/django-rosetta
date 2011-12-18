@@ -240,7 +240,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
     query = request.GET.get('q', '').strip()
     if query:
         rx = re.compile(re.escape(query), re.IGNORECASE)
-        entries_source = (e for e in entries_source if rx.search("\n".join((smart_unicode(e.msgstr), smart_unicode(e.msgid), u''.join([o[0] for o in e.occurrences])))))
+        entries_source = (e for e in entries_source if rx.search("\n".join((smart_unicode(e.msgstr), smart_unicode(e.msgid), smart_unicode(e.comment), u"\t".join([o[0] for o in e.occurrences])))))
 
     paginator = Paginator(list(entries_source), rosetta_settings.MESSAGES_PER_PAGE)
 
