@@ -4,13 +4,13 @@ Rosetta
 
 Rosetta is a `Django <http://www.djangoproject.com/>`_ application that eases the translation process of your Django projects.
 
-Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file. 
+Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file.
 
 ********
 Features
 ********
 
-* Database independent 
+* Database independent
 * Reads and writes your project's `gettext` catalogs (po and mo files)
 * Installed and uninstalled in under a minute
 * Uses Django's admin interface CSS
@@ -20,9 +20,7 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.2 or later. 
-
-Note that Rosetta is known to work with Django 1.1, but it is not supported.
+Rosetta requires Django 1.3 or later.
 
 ************
 Installation
@@ -36,7 +34,7 @@ To install Rosetta:
 3. Add an URL entry to your project's ``urls.py``, for example::
 
     from django.conf import settings
-    
+
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls')),
@@ -54,10 +52,12 @@ Security
 
 Because Rosetta requires write access to some of the files in your Django project, access to the application is restricted to the administrator user only (as defined in your project's Admin interface)
 
-If you wish to grant editing access to other users:
- 
-1. Create a 'translators' group in your admin interface
-2. Add the user you wish to grant translating rights to this group
+If you wish to grant editing access only for particular language(s):
+
+1. Create a 'translators_<lang_code> group in admin. Eg it would be translators_ru for Russian and translators_ja for Japanese
+2. Add user to the created group
+
+Note: membership in 'translators' group grants access to all languages
 
 *****
 Usage
@@ -91,16 +91,14 @@ By default Rosetta hides its own catalog files in the file selection interface (
 
 1. Create a subdirectory for your locale inside Rosetta's ``locale`` directory, e.g. ``rosetta/locale/XX/LC_MESSAGES``
 2. Instruct Django to create the initial catalog, by running ``django-admin.py  makemessages -l XX`` inside Rosetta's directory (refer to `Django's documentation on i18n <http://www.djangoproject.com/documentation/i18n/>`_ for details)
-3. Instruct Rosetta to look for its own catalogs, by appending `?rosetta` to the language selection page's URL, e.g. ``http://127.0.0.1:8000/rosetta/pick/?rosetta``
+3. Instruct Rosetta to open its own catalogs, e.g. ``http://127.0.0.1:8000/rosetta/translate/rosetta/ru/untranslated/1``
 4. Translate as usual
 5. Send a pull request if you feel like sharing
-
-
 
 
 ***************
 Acknowledgments
 ***************
 
-* Rosetta uses the excellent `polib <http://code.google.com/p/polib/>`_ library to parse and handle gettext files.
+* Rosetta uses the excellent `polib <https://bitbucket.org/izi/polib>`_ library to parse and handle gettext files.
 
