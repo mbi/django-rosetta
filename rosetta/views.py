@@ -89,7 +89,6 @@ def list_languages(request):
     return shortcuts.render_to_response('rosetta/languages.html', {
             'filter'  : filter,
             'languages': languages,
-            'ADMIN_MEDIA_PREFIX' : settings.ADMIN_MEDIA_PREFIX,
         }, context_instance=template.RequestContext(request))
 
 def pofile_by_appname(appname, lang, user):
@@ -275,7 +274,6 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
             'rosetta_i18n_filter'   : filter,
             'rosetta_last_save_error' : rosetta_last_save_error,
 
-            'ADMIN_MEDIA_PREFIX'             : settings.ADMIN_MEDIA_PREFIX,
             'ENABLE_TRANSLATION_SUGGESTIONS' : rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS,
             'MESSAGES_SOURCE_LANGUAGE_NAME'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME,
             'MESSAGES_SOURCE_LANGUAGE_CODE'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE,
