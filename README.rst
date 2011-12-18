@@ -20,9 +20,7 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.2 or later. 
-
-Note that Rosetta is known to work with Django 1.1, but it is not supported.
+Rosetta requires Django 1.3 or later.
 
 ************
 Installation
@@ -56,10 +54,10 @@ Because Rosetta requires write access to some of the files in your Django projec
 
 If you wish to grant editing access only for particular language(s):
 
-1. Create a 'translators_<lang_code> group in your admin interface. Eg it would be translators_ru for Russian and translators_zh_cn for simplified Chinese.
+1. Create a 'translators_<lang_code> group in admin. Eg it would be translators_ru for Russian and translators_ja for Japanese
 2. Add user to the created group
 
-NOte: membership in 'translators' group grants access to all languages
+Note: membership in 'translators' group grants access to all languages
 
 *****
 Usage
