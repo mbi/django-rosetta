@@ -29,10 +29,10 @@
 
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
-        <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'untranslated', page %}?q={{ query }}">{% trans "Untranslated only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'translated' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'translated', page %}?q={{ query }}">{% trans "Translated only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'fuzzy', page %}?q={{ query }}">{% trans "Fuzzy only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'all' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'all', page %}?q={{ query }}">{% trans "All" %}</a></li>
+        <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'untranslated', page %}?q={{ query|urlencode }}">{% trans "Untranslated only" %}</a></li>
+        <li {% ifequal rosetta_i18n_filter 'translated' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'translated', page %}?q={{ query|urlencode }}">{% trans "Translated only" %}</a></li>
+        <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'fuzzy', page %}?q={{ query|urlencode }}">{% trans "Fuzzy only" %}</a></li>
+        <li {% ifequal rosetta_i18n_filter 'all' %}class="active"{% endifequal %}><a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, 'all', page %}?q={{ query|urlencode }}">{% trans "All" %}</a></li>
     </ul>
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
         <div id="toolbar">
@@ -130,7 +130,7 @@
                                 {% ifequal i page %}
                                     <span class="this-page">{{ i }}</span>
                                 {% else %}
-                                    <a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, rosetta_i18n_filter, i %}{% if query %}?query={{query}}{% endif %}">{{i}}</a>
+                                    <a href="{% url rosetta-translate rosetta_i18n_app, rosetta_i18n_lang_code, rosetta_i18n_filter, i %}{% if query %}?q={{ query|urlencode }}{% endif %}">{{i}}</a>
                                 {% endifequal %}
                             {% endifequal %}
                         {% endfor %}
