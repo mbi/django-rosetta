@@ -48,6 +48,19 @@ Note: you can use whatever you wish as the URL prefix.
 
 To uninstall Rosetta, simply comment out or remove the ``'rosetta'`` line in your ``INSTALLED_APPS``
 
+*************
+Configuration
+*************
+
+Rosetta can be configured via the following parameters, to be defined in your project settings file:
+
+* ``ROSETTA_MESSAGES_PER_PAGE``: Number of messages to display per page.
+* ``ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. 
+* ``BING_APP_ID``: Translation suggestions used to come from the Google Translation API service, but free service has been discontinued, and the next best thing is Microsoft `Bing's Translation API <http://msdn.microsoft.com/en-us/library/ff512404.aspx>`_. To use this service you must first `obtain an AppID key <https://ssl.bing.com/webmaster/Developers/AppIds/>`_, then specify the key here.
+* ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English
+* ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments
+* ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated
+
 ********
 Security
 ********
