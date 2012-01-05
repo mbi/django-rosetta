@@ -167,17 +167,11 @@ def home(request):
                 request.session['rosetta_i18n_pofile']=rosetta_i18n_pofile
                 
                 # Retain query arguments
-                query_arg = ''
+                query_arg = '?_next=1'
                 if 'query' in request.REQUEST:
-                    query_arg = '?query=%s' %request.REQUEST.get('query')
+                    query_arg += '&query=%s' %request.REQUEST.get('query')
                 if 'page' in request.GET:
-                    if query_arg:
-                        query_arg = query_arg + '&'
-                    else:
-                        query_arg = '?'
-                    query_arg = query_arg + 'page=%d' % int(request.GET.get('page'))
-                    
-                    
+                    query_arg = query_arg + '&page=%d' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
                 
                 
@@ -202,6 +196,14 @@ def home(request):
             page = int(request.GET.get('page'))
         else:
             page = 1
+        
+        if '_next' in request.GET:
+            page += 1
+            if page > paginator.num_pages:
+                page = 1
+            query_arg = '?page=%d' % page
+            return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
+        
         messages = paginator.page(page).object_list
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
 
