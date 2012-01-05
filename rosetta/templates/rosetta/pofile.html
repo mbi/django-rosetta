@@ -47,11 +47,15 @@
                 <input type="submit" name="search" value="{% trans "Go" %}" />
             </div>
         </form>
+        {% comment %}
+        {% if ENABLE_TRANSLATION_SUGGESTIONS %}
         <form id="translate-all">
             <div>
                 <input type="submit" class="googleall" value="{% trans "Suggest All Translations" %}" />
             </div>
         </form>
+        {% endif %}
+        {% endcomment %}
         </div>
         
         <form method="post" action="">

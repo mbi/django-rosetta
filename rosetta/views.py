@@ -12,7 +12,12 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range
 from rosetta.signals import entry_changed, post_save
-import re, rosetta, datetime, unicodedata, hashlib, os
+import re
+import rosetta
+import datetime
+import unicodedata
+import hashlib
+import os
 
 
 def home(request):
@@ -220,10 +225,11 @@ def home(request):
             else:
                 page_range = range(1,1+paginator.num_pages)
         ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
-        ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
-        
+        ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.BING_APP_ID and rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
+        BING_APP_ID = rosetta_settings.BING_APP_ID
         MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
         MESSAGES_SOURCE_LANGUAGE_CODE = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE
+        
         
         if 'rosetta_last_save_error' in request.session:
             del(request.session['rosetta_last_save_error'])

@@ -4,16 +4,29 @@ google.setOnLoadCallback(function() {
     }, function() {
         $('.hide', $(this).parent()).hide();
     });
-{% if ENABLE_TRANSLATION_SUGGESTIONS %}    
+{% if ENABLE_TRANSLATION_SUGGESTIONS and BING_APP_ID %}    
     $('a.suggest').click(function() {
-        var a=$(this), 
-            str=a.html(), 
-            orig=$('.original .message', 
-            a.parents('tr')).html(), 
-            trans=$('textarea',a.parent());
+        var a = $(this),
+            str = a.html(),
+            orig = $('.original .message', a.parents('tr')).html(),
+            trans=$('textarea',a.parent()),
+            sourceLang = '{{MESSAGES_SOURCE_LANGUAGE_CODE}}',
+            destLang = '{{rosetta_i18n_lang_code|slice:":2"}}',
+            app_id = '{{BING_APP_ID}}';
+        
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/g,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
-        google.language.translate(orig, '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', '{{rosetta_i18n_lang_code|slice:":2"}}', function(result) {
+        window.onTranslationComplete = function(resp) {
+            trans.val(unescape(resp).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+            a.hide();
+            
+        };
+        var s = document.createElement("script");
+            s.src = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=onTranslationComplete&appId="+app_id +"&from=" + sourceLang + "&to=" + destLang + "&text=" + orig;
+            document.getElementsByTagName("head")[0].appendChild(s);
+
+        /*
+        google.language.translate(orig, , function(result) {
             if (!result.error) {
                 trans.val(unescape(result.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
                 a.hide();
@@ -21,6 +34,7 @@ google.setOnLoadCallback(function() {
                 a.hide().before($('<span class="alert">'+result.error.message+'</span>'));
             }
         });
+        */
         return false;
     });
     
