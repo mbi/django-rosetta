@@ -1,11 +1,61 @@
 {% extends "rosetta/base.html" %}
 {% load rosetta i18n %}
 
-{% block header %}
-    {{block.super}}
+{% block js %}<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+<script src='/static/rosetta/rosetta.js' type="text/javascript"></script>
+{% if ENABLE_TRANSLATION_SUGGESTIONS %}<script type="text/javascript">
+$(document).ready(function() {
+    function translate (that, engine) {
+        var a = $(that),
+            orig=$('.original .message', a.parents('tr')).html(),
+            iclass = a.attr('class'),
+            trans=$('textarea',a.parent());
+
+        orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/g,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+        a.attr('class','suggesting').html('...');
+        switch (engine) {
+            case 'bing':
+                $.getJSON("http://api.microsofttranslator.com/V2/Ajax.svc/Translate?appId={{ BING_APPID }}&oncomplete=?",
+                          {from: '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', to: '{{ rosetta_i18n_lang_code }}', text: orig }, function(json, status) {
+                    trans.val(unescape(json).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+                    a.hide();
+                });
+                break;
+            default : // google
+                $.getJSON("https://www.googleapis.com/language/translate/v2?key={{ GOOGLE_API_KEY }}&callback=?",
+                        { source : '{{MESSAGES_SOURCE_LANGUAGE_CODE}}', target : '{{ rosetta_i18n_lang_code|slice:":2" }}', q : orig }, function(json) {
+                    if (!json.error) {
+                        trans.val(unescape(json.data.translations[0].translatedText).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+                        a.hide();
+                    } else {
+                        a.hide().before($('<span class="alert">'+json.error.message+'</span>'));
+                    }
+                });
+        }
+    }
+
+    {% if BING_APPID %}
+    $(".suggest").click(function() {
+        translate(this, 'bing');
+        return false;
+    });
+    {% endif %}
+
+    $('#translate-all').click(function() {
+        $('a.suggest').click();
+        return false;
+    });
+
+    $('#checkall').click(function(){
+        $('td.c input').attr('checked', this.checked);
+    });
+});
+</script>{% endif %}
+{% endblock js %}
+
+{% block header %}{{block.super}}
     <div id="user-tools">
-        <p>
-            <span><a href="{% url rosetta-home %}">{% trans "Pick another file" %}</a> /
+        <p><span><a href="{% url rosetta-home %}">{% trans "Pick another file" %}</a> /
             <a href="{% url rosetta-download-file rosetta_i18n_app rosetta_i18n_lang_code %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
@@ -39,10 +89,10 @@
         <form id="changelist-search" action="" method="get">
             <div><!-- DIV needed for valid HTML -->
                 {% rosetta_csrf_token %}
-                <input type="submit" class="googleall" value="{% trans 'Suggest All Translations' %}" />
                 <label for="searchbar"><img src="/static/admin/img/admin/icon_searchbox.png" alt="{% trans 'Search' %}" /></label>
                 <input type="text" size="40" name="q" value="{{ query }}" id="searchbar" tabindex="0" />
                 <input type="submit" value="{% trans 'Go' %}" />
+                <input type="submit" id="translate-all" value="{% trans 'Suggest All Translations' %}" />
             </div>
         </form>
         </div>
@@ -55,7 +105,7 @@
                         <th>{% trans "Original" %}</th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
-                        <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
+                        <th class="c"><input type='checkbox' id='checkall'></span> {% trans "Fuzzy" %}</th>
                         <th>{% trans "Occurrences(s)" %}</th>
                     </tr>
                 </thead>

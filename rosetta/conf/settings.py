@@ -4,8 +4,10 @@ from django.conf import settings
 MESSAGES_PER_PAGE = getattr(settings,'ROSETTA_MESSAGES_PER_PAGE',10)
 
 
-# Enable Google translation suggestions
-ENABLE_TRANSLATION_SUGGESTIONS = getattr(settings,'ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS',True)
+# Enable translation suggestions
+BING_APPID = getattr(settings,'BING_APPID', None)
+GOOGLE_API_KEY = getattr(settings,'GOOGLE_API_KEY', None)
+ENABLE_TRANSLATION_SUGGESTIONS = bool(BING_APPID or GOOGLE_API_KEY)
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings,'ROSETTA_MAIN_LANGUAGE', None)

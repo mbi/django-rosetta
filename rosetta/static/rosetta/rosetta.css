@@ -10,7 +10,6 @@ td.translation textarea{ width:98.5%; min-height:25px; margin:2px 0; }
 .rtl td.translation textarea { direction: rtl;}
 .plural span {display:block; margin:2px 0; position:absolute}
 td.location code,td.location a { font-size:95%; display:block;}
-td.location code.hide { display:none;}
 .submit-row {margin-bottom:0;}
 li.nobubble,li.nobubble:hover { background-image:none;}
 .object-tools li.active, .object-tools li.active a { color:yellow;}
@@ -31,4 +30,4 @@ div.module {margin-bottom: 20px;}
 .checkall {cursor:pointer}
 #toolbar { height:20px}
 #toolbar #translate-all { float:right}
-#toolbar form { float:left; }
+#toolbar form {width:100%}

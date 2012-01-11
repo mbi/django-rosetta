@@ -46,6 +46,8 @@ Note: you can use whatever you wish as the URL prefix.
 
 To uninstall Rosetta, simply comment out or remove the ``'rosetta'`` line in your ``INSTALLED_APPS``
 
+Since Google Translation API v1 is deprecated and v2 is available only on paid basis, we use Bing translation API. If you want to enable suggestions with Bing API, add BING_APPID to your settings (check out how to get one here <http://www.microsoft.com/web/post/using-the-free-bing-translation-apis>)
+
 ********
 Security
 ********

@@ -12,13 +12,6 @@
     <style>
         .alert {font-weight:bold;padding:4px 5px 4px 25px; margin-left:1em; color: red; background:transparent url({{ STATIC_URL }}admin/img/icon_alert.gif) 5px .3em no-repeat; }
     </style>
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
-    <script type="text/javascript">
-        google.load("jquery", "1.5");
-        var ENABLE_TRANSLATION_SUGGESTIONS = {{ ENABLE_TRANSLATION_SUGGESTIONS|yesno:"true,false" }};
-        {% if ENABLE_TRANSLATION_SUGGESTIONS %}google.load("language", "1");{% endif %}
-    </script>
-    <script src='/static/rosetta/rosetta.js' type="text/javascript"></script>
 </head>
 <body>
     <div id="container">
@@ -34,5 +27,6 @@
             <a href="https://github.com/mbi/django-rosetta">Rosetta</a> <span class="version">0.6.2</span>
         </div>
     </div>
+    {% block js %}{% endblock js %}
 </body>
 </html>

@@ -28,19 +28,17 @@
                             <th class="r">{% trans "Translated" %}</th>
                             <th class="r">{% trans "Fuzzy"%}</th>
                             <th class="r">{% trans "Obsolete"%}</th>
-                            <th>{% trans "File" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for po in pos %}
                         <tr class="{% cycle row1,row2 %}">
                             <td><a href="{% url rosetta-translate po.appname, lang_id, 'untranslated', 1 %}">{{ po.appname|title }}</a></td>
-                            <td class="ch-progress r">{{po.pofile.percent_translated|floatformat:2}}%</td>
+                            <td class="ch-progress r">{{po.pofile.percent_translated|floatformat:0}}%</td>
                             <td class="ch-messages r">{{po.pofile.translated_entries|add:po.pofile.untranslated_entries|length}}</td>
-                            <td class="ch-translated r">{{po.pofile.translated_entries|length}}</td>
-                            <td class="ch-fuzzy r">{{po.pofile.fuzzy_entries|length}}</td>
+                            <td class="ch-translated r"><a href="{% url rosetta-translate po.appname, lang_id, 'translated', 1 %}">{{po.pofile.translated_entries|length}}</a></td>
+                            <td class="ch-fuzzy r"><a href="{% url rosetta-translate po.appname, lang_id, 'fuzzy', 1 %}">{{po.pofile.fuzzy_entries|length}}</a></td>
                             <td class="ch-obsolete r">{{po.pofile.obsolete_entries|length}}</td>
-                            <td class="hint">{{ path }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

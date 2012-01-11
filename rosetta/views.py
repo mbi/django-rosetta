@@ -275,7 +275,11 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
             'rosetta_i18n_filter'   : filter,
             'rosetta_last_save_error' : rosetta_last_save_error,
 
-            'ENABLE_TRANSLATION_SUGGESTIONS' : rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS,
+            'ENABLE_TRANSLATION_SUGGESTIONS' : rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and \
+                                rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE != rosetta_i18n_lang_code,
+            'BING_APPID'                     : rosetta_settings.BING_APPID,
+            'GOOGLE_API_KEY'                 : rosetta_settings.GOOGLE_API_KEY,
+
             'MESSAGES_SOURCE_LANGUAGE_NAME'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME,
             'MESSAGES_SOURCE_LANGUAGE_CODE'  : rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE,
 
