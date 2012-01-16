@@ -129,6 +129,11 @@ def home(request):
             if file_change and rosetta_i18n_write:
                 
                 try:
+                    # Provide defaults in case authorization is not required.
+                    request.user.first_name = getattr(request.user, 'first_name', 'Anonymous')
+                    request.user.last_name = getattr(request.user, 'last_name', 'User')
+                    request.user.email = getattr(request.user, 'email', 'anonymous@user.tld')
+                    
                     rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" %(request.user.first_name,request.user.last_name,request.user.email)).encode('ascii', 'ignore')
                     rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
                     rosetta_i18n_pofile.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
@@ -241,7 +246,6 @@ def home(request):
         
     else:
         return list_languages(request)
-home=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(home)
 home=never_cache(home)
 
 
@@ -278,8 +282,6 @@ def download_file(request):
     except Exception, e:
 
         return HttpResponseRedirect(reverse('rosetta-home'))
-        
-download_file=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(download_file)
 download_file=never_cache(download_file)
         
 
@@ -315,8 +317,7 @@ def list_languages(request):
         )
     ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
     version = rosetta.get_version(True)
-    return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))    
-list_languages=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(list_languages)
+    return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))
 list_languages=never_cache(list_languages)
 
 def get_app_name(path):
@@ -355,7 +356,6 @@ def lang_sel(request,langid,idx):
             request.session['rosetta_i18n_write'] = False
             
         return HttpResponseRedirect(reverse('rosetta-home'))
-lang_sel=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(lang_sel)
 lang_sel=never_cache(lang_sel)
 
 def can_translate(user):
@@ -370,3 +370,10 @@ def can_translate(user):
             return translators in user.groups.all()
         except Group.DoesNotExist:
             return False
+
+# Only apply permission checks if ROSETTA_REQUIRES_AUTH.
+if getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
+    home=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(home)
+    download_file=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(download_file)
+    list_languages=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(list_languages)
+    lang_sel=user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)(lang_sel)
