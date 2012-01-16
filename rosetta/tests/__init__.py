@@ -291,13 +291,22 @@ class RosettaTestCase(TestCase):
 
 
     def test_12_issue_82_staff_user(self):
+        settings.ROSETTA_REQUIRES_AUTH = True
+
         self.client3 = Client()
         self.client3.login(username='test_admin3',password='test_password')
 
-        
-        r = self.client3.get(reverse('rosetta-language-selection', args=('xx',0,), kwargs=dict() ) +'?rosetta')
+        self.client3.get(reverse('rosetta-pick-file')+'?filter=third-party')
+        r = self.client3.get(reverse('rosetta-language-selection', args=('xx',0,), kwargs=dict() ))
         r = self.client3.get(reverse('rosetta-home'))
         self.assertTrue(not r.content)
+
+        settings.ROSETTA_REQUIRES_AUTH = False
+
+        self.client3.get(reverse('rosetta-pick-file')+'?filter=third-party')
+        r = self.client3.get(reverse('rosetta-language-selection', args=('xx',0,), kwargs=dict() ))
+        r = self.client3.get(reverse('rosetta-home'))
+        self.assertFalse(not r.content)
 
     
     def test_13_catalog_filters(self):

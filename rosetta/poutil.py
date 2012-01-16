@@ -1,4 +1,5 @@
-import os, django
+import os
+import django
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 from django.core.cache import cache
@@ -7,23 +8,24 @@ try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
-    
-def find_pos(lang, project_apps = True, django_apps = False, third_party_apps = False):
+
+
+def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False):
     """
-    scans a couple possible repositories of gettext catalogs for the given 
+    scans a couple possible repositories of gettext catalogs for the given
     language code
-    
+
     """
-    
+
     paths = []
-    
+
     # project/locale
     parts = settings.SETTINGS_MODULE.split('.')
     project = __import__(parts[0], {}, {}, [])
     abs_project_path = os.path.normpath(os.path.abspath(os.path.dirname(project.__file__)))
     if project_apps:
         paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale')))
-        
+
     # django/locale
     if django_apps:
         django_paths = cache.get('rosetta_django_paths')
