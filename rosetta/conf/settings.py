@@ -16,6 +16,8 @@ MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
 MESSAGES_SOURCE_LANGUAGE_CODE = getattr(settings, 'ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE', 'en')
 MESSAGES_SOURCE_LANGUAGE_NAME = getattr(settings, 'ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME', 'English')
 
+# Specify the additional language filenames
+ADDITIONAL_LANGUAGE_FILENAMES = getattr(settings, 'ROSETTA_ADDITIONAL_LANGUAGE_FILENAMES', list())
 
 """
 When running WSGI daemon mode, using mod_wsgi 2.0c5 or later, this setting
