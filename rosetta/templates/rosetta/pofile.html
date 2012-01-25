@@ -71,7 +71,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for  message in messages %}
+                    {% for message in rosetta_messages %}
                     <tr class="{% cycle row1,row2 %}">
                         {% if message.msgid_plural %}
                             <td class="original plural">
