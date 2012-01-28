@@ -53,7 +53,7 @@ def home(request):
         rosetta_i18n_lang_bidi = rosetta_i18n_lang_code.split('-')[0] in settings.LANGUAGES_BIDI
         rosetta_i18n_write = request.session.get('rosetta_i18n_write', True)
         if rosetta_i18n_write:
-            rosetta_i18n_pofile = pofile(rosetta_i18n_fn)
+            rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
 

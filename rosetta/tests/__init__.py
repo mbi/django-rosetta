@@ -427,6 +427,32 @@ class RosettaTestCase(TestCase):
         self.assertTrue(self.test_16_has_request)
         del(self.test_16_has_request)
         # reset the original file
-        shutil.move(self.dest_file+'.orig', self.dest_file)
+        shutil.move(self.dest_file + '.orig', self.dest_file)
 
+    def test_17_Test_Issue_gh24(self):
+        shutil.copy(self.dest_file, self.dest_file + '.orig')
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue24gh.template')), self.dest_file)
 
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+
+        self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in r.content)
+
+        # post a translation, it should have properly wrapped lines
+        r = self.client.post(reverse('rosetta-home'), dict(m_bb9d8fe6159187b9ea494c1b313d23d4='Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.', _next='_next'))
+        pofile_content = open(self.dest_file, 'r').read()
+        self.assertTrue('"pede mollis pretium."' in pofile_content)
+
+        # Again, with unwrapped lines
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue24gh.template')), self.dest_file)
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in r.content)
+        rosetta_settings.POFILE_WRAP_WIDTH = 0
+        r = self.client.post(reverse('rosetta-home'), dict(m_bb9d8fe6159187b9ea494c1b313d23d4='Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.', _next='_next'))
+        pofile_content = open(self.dest_file, 'r').read()
+        self.assertTrue('felis eu pede mollis pretium."' in pofile_content)
+
+        shutil.move(self.dest_file + '.orig', self.dest_file)
