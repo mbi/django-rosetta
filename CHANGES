@@ -1,7 +1,8 @@
 Version 0.6.5
 -------------
 * Updated polib to 0.7.0
-* Added ROSETTA_POFILE_WRAP_WIDTH setting to track the line-length of the updated Po file.
+* Added ROSETTA_POFILE_WRAP_WIDTH setting to track the line-length of the updated Po file. (Issue #24)
+* Renamed the ``messages``context variable to ``rosetta_messages`` prevent conflicts with ``django.contrib.messages`` (Issue #23)
 
 Version 0.6.4
 -------------
