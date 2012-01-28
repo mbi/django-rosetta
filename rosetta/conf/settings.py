@@ -46,3 +46,5 @@ UWSGI_AUTO_RELOAD = getattr(settings, 'ROSETTA_UWSGI_AUTO_RELOAD', False)
 # Exclude applications defined in this list from being translated
 EXCLUDED_APPLICATIONS = getattr(settings, 'ROSETTA_EXCLUDED_APPLICATIONS', ())
 
+# Line length of the updated PO file
+POFILE_WRAP_WIDTH = getattr(settings, 'ROSETTA_POFILE_WRAP_WIDTH', 78)
