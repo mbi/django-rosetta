@@ -1,3 +1,5 @@
+{% load rosetta %}
+
 google.setOnLoadCallback(function() {
     $('.location a').show().toggle(function() {
         $('.hide', $(this).parent()).show();
@@ -13,7 +15,7 @@ google.setOnLoadCallback(function() {
         var orig = $('.original .message', a.parents('tr')).html();
         var trans=$('textarea',a.parent());
         var sourceLang = '{{ MESSAGES_SOURCE_LANGUAGE_CODE }}';
-        var destLang = '{{ rosetta_i18n_lang_code|slice:":2" }}';
+        var destLang = '{{ rosetta_i18n_lang_code }}';
         var app_id = '{{ BING_APP_ID }}';
         var apiUrl = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate";
 
@@ -31,13 +33,13 @@ google.setOnLoadCallback(function() {
             appid: app_id,
             from: sourceLang,
             to: destLang,
+            oncomplete: "onTranslationComplete",
             text: orig
         };
         $.ajax({
             url: apiUrl,
             data: apiData,
-            dataType: 'jsonp',
-            jsonpCallback: 'onTranslationComplete'});
+            dataType: 'jsonp'});
     });
 {% endif %}
 

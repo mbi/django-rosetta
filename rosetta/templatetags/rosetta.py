@@ -4,6 +4,7 @@ from django.utils.html import escape
 import re
 from django.template import Node
 from django.utils.encoding import smart_str, smart_unicode
+from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 rx = re.compile(r'(%(\([^\s\)]*\))?[sd])')
@@ -27,7 +28,6 @@ def minus(a,b):
     except:
         return 0
 minus=register.filter(minus)
-    
 
 def gt(a,b):
     try:
