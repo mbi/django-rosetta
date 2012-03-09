@@ -133,7 +133,9 @@ def home(request):
                     rosetta_i18n_pofile.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
                 except UnicodeDecodeError:
                     pass
+
                 try:
+                    rosetta_i18n_pofile.save()
                     po_filepath, ext = os.path.splitext(rosetta_i18n_fn)
                     save_as_mo_filepath = po_filepath + '.mo'
                     rosetta_i18n_pofile.save_as_mofile(save_as_mo_filepath)
