@@ -218,8 +218,10 @@ def home(request):
                 page_range = range(1, 1 + paginator.num_pages)
         try:
             ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/admin/'
         except AttributeError:
-            ADMIN_MEDIA_PREFIX = settings.STATIC_ROOT + '/admin/'
+            ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
+            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
         ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.BING_APP_ID and rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
         BING_APP_ID = rosetta_settings.BING_APP_ID
         MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
@@ -301,7 +303,11 @@ def list_languages(request):
             [(get_app_name(l), os.path.realpath(l), pofile(l)) for l in  pos],
             )
         )
-    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    try:
+        ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    except AttributeError:
+        ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
+
     version = rosetta.get_version(True)
     return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))
 list_languages = never_cache(list_languages)

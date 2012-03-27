@@ -31,28 +31,24 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         django_paths = cache.get('rosetta_django_paths')
         if django_paths is None:
             django_paths = []
-            for root,dirnames,filename in os.walk(os.path.abspath(os.path.dirname(django.__file__))):
+            for root, dirnames, filename in os.walk(os.path.abspath(os.path.dirname(django.__file__))):
                 if 'locale' in dirnames:
-                    django_paths.append(os.path.join(root , 'locale'))
+                    django_paths.append(os.path.join(root, 'locale'))
                     continue
-            cache.set('rosetta_django_paths', django_paths, 60*60)
+            cache.set('rosetta_django_paths', django_paths, 60 * 60)
         paths = paths + django_paths
-        
-    
-    # settings 
+    # settings
     for localepath in settings.LOCALE_PATHS:
         if os.path.isdir(localepath):
             paths.append(localepath)
-    
+
     # project/app/locale
     for appname in settings.INSTALLED_APPS:
-                
         if rosetta_settings.EXCLUDED_APPLICATIONS and appname in rosetta_settings.EXCLUDED_APPLICATIONS:
             continue
-            
         p = appname.rfind('.')
         if p >= 0:
-            app = getattr(__import__(appname[:p], {}, {}, [appname[p+1:]]), appname[p+1:])
+            app = getattr(__import__(appname[:p], {}, {}, [appname[p + 1:]]), appname[p + 1:])
         else:
             app = __import__(appname, {}, {}, [])
 
