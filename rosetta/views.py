@@ -45,6 +45,7 @@ def home(request):
             out_ = out_.rstrip()
         return out_
 
+
     version = rosetta.get_version(True)
     if 'rosetta_i18n_fn' in request.session:
         rosetta_i18n_fn = request.session.get('rosetta_i18n_fn')
@@ -133,9 +134,12 @@ def home(request):
                     rosetta_i18n_pofile.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
                 except UnicodeDecodeError:
                     pass
+
                 try:
                     rosetta_i18n_pofile.save()
-                    rosetta_i18n_pofile.save_as_mofile(rosetta_i18n_fn.replace('.po', '.mo'))
+                    po_filepath, ext = os.path.splitext(rosetta_i18n_fn)
+                    save_as_mo_filepath = po_filepath + '.mo'
+                    rosetta_i18n_pofile.save_as_mofile(save_as_mo_filepath)
 
                     post_save.send(sender=None, language_code=rosetta_i18n_lang_code, request=request)
                     # Try auto-reloading via the WSGI daemon mode reload mechanism
