@@ -1,3 +1,5 @@
+* Merged @rory's PR to correcty handle plural strings that have a leading/trailing newline (Issue #34)
+
 Version 0.6.6
 -------------
 * Django 1.4 support (Issue #30, #33)

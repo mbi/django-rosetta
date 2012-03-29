@@ -93,7 +93,8 @@ def home(request):
                     if entry:
                         old_msgstr = entry.msgstr
                         if plural_id is not None:
-                            plural_string = fix_nls(entry.msgstr_plural[plural_id], value)
+                            #plural_string = fix_nls(entry.msgstr_plural[plural_id], value)
+                            plural_string = fix_nls(entry.msgid_plural, value)
                             entry.msgstr_plural[plural_id] = plural_string
                         else:
                             entry.msgstr = fix_nls(entry.msgid, value)

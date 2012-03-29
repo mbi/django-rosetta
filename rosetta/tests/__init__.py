@@ -457,3 +457,26 @@ class RosettaTestCase(TestCase):
         self.assertTrue('felis eu pede mollis pretium."' in pofile_content)
 
         shutil.move(self.dest_file + '.orig', self.dest_file)
+
+    def test_18_Test_Issue_gh34(self):
+        shutil.copy(self.dest_file, self.dest_file + '.orig')
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue34gh.template')), self.dest_file)
+
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_1' in r.content)
+        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_0' in r.content)
+        self.assertTrue('m_09f7e02f1290be211da707a266f153b3' in r.content)
+
+        # post a translation, it should have properly wrapped lines
+        r = self.client.post(reverse('rosetta-home'), dict(
+                m_ff7060c1a9aae9c42af4d54ac8551f67_0='Foo %s',
+                m_ff7060c1a9aae9c42af4d54ac8551f67_1='Bar %s',
+                m_09f7e02f1290be211da707a266f153b3='Salut', _next='_next'))
+        pofile_content = open(self.dest_file, 'r').read()
+        self.assertTrue('msgstr "Salut\\n"' in pofile_content)
+        self.assertTrue('msgstr[0] ""\n"\\n"\n"Foo %s\\n"' in pofile_content)
+        self.assertTrue('msgstr[1] ""\n"\\n"\n"Bar %s\\n"' in pofile_content)
+
+        shutil.move(self.dest_file + '.orig', self.dest_file)
