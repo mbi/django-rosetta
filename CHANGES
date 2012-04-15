@@ -1,4 +1,5 @@
 * Added a testproject to run tests
+* Updated french translation. Thanks, @BertrandBordage
 * Merged @sleepyjames' PR that fixes an error when pofile save path contains '.po' in the path
 * Merged @rory's PR to correcty handle plural strings that have a leading/trailing newline (Issue #34)
 
