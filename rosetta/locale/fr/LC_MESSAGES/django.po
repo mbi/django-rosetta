@@ -2,19 +2,19 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-07-04 13:42+0200\n"
-"PO-Revision-Date: 2008-09-22 11:02\n"
-"Last-Translator: Admin Admin <admin@admin.com>\n"
+"PO-Revision-Date: 2012-03-31 02:17\n"
+"Last-Translator: Anonymous User <anonymous@user.tld>\n"
 "Language-Team: French <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Translated-Using: django-rosetta 0.4.RC2\n"
+"X-Translated-Using: django-rosetta 0.6.7\n"
 
 #: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
 msgid "Language selection"
@@ -69,8 +69,9 @@ msgstr ""
 #: templates/rosetta/languages.html:46
 #, python-format
 msgid ""
-"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
-"a> for a guide on how to set up internationalization for your project."
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N "
+"documentation</a> for a guide on how to set up internationalization for your"
+" project."
 msgstr ""
 "Veuillez vous référer à la <a href=\"%(i18n_doc_link)s\">documentation sur "
 "l'internationalisation de Django</a> pour un guide sur comment activer et "
@@ -97,9 +98,10 @@ msgstr ""
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
-msgstr "Certains parmi vos derniers éléments n'ont pas pu être sauvés: ceci "
-"arrive généralement quand le catalogue de traductions à été modifié après qu'il ait "
-"été chargé."
+msgstr ""
+"Certains parmi vos derniers éléments n'ont pas pu être sauvés: ceci arrive "
+"généralement quand le catalogue de traductions à été modifié après qu'il ait"
+" été chargé."
 
 #: templates/rosetta/pofile.html:28
 #, python-format
