@@ -3,9 +3,10 @@ setup(
     name='django-rosetta',
     version=__import__('rosetta').get_version(limit=3),
     description='A Django application that eases the translation of Django projects',
-    author='Marco Bonetti',
-    author_email='mbonetti@gmail.com',
-    url='https://github.com/mbi/django-rosetta',
+    long_description=open('README.rst').read(),
+    author='Marat Valiev',
+    author_email='valiev.m@gmail.com',
+    url='https://github.com/user2589/django-rosetta',
     license='MIT',
     packages=find_packages(),
     classifiers=[
@@ -20,5 +21,9 @@ setup(
         'Framework :: Django',
     ],
     include_package_data=True,
-    zip_safe=False
+    zip_safe=False,
+    install_requires=[
+        "Django >= 1.3",
+        "polib >= 0.6.2",
+    ],
 )
