@@ -56,7 +56,11 @@ def home(request):
         if rosetta_i18n_write:
             rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
-                entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
+                entry.md5hash = hashlib.md5(
+                    entry.msgid.encode("utf8") +
+                    entry.msgstr.encode("utf8") +
+                    (entry.msgctxt and entry.msgctxt.encode("utf8") or "") 
+                ).hexdigest()
 
         else:
             rosetta_i18n_pofile = request.session.get('rosetta_i18n_pofile')
@@ -344,7 +348,11 @@ def lang_sel(request, langid, idx):
         request.session['rosetta_i18n_fn'] = file_
         po = pofile(file_)
         for entry in po:
-            entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
+            entry.md5hash = hashlib.md5(
+                entry.msgid.encode("utf8") +
+                entry.msgstr.encode("utf8") +
+                (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
+            ).hexdigest()
 
         request.session['rosetta_i18n_pofile'] = po
         try:
