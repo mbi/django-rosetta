@@ -18,57 +18,6 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta import poutil, polib
 from rosetta.signals import entry_changed, post_save
 
-_pofiles = {} # see init_pofiles for struct
-_filters = {
-    'project' : (True, False, False),
-    'django'  : (False, True, False),
-    'third-party': (False, False, True),
-}
-
-def upd_pofile(po):
-    last_modified = os.path.getmtime(po['path'])
-    if last_modified > po['last_modified']: #ie version in cache outdated
-        po['pofile'] = polib.pofile(po['path'])
-        po['last_modified'] = last_modified
-        entries = {}
-        for entry in po['pofile']:
-            entries[hashlib.md5(entry.msgid.encode('utf8')).hexdigest()] = entry
-        po['entries'] = entries
-    elif last_modified < po['last_modified'] and po['writable']:
-        try:
-            po['pofile'].save()
-            po['pofile'].save_as_mofile(po['path'].replace('.po','.mo'))
-        except IOError:
-            po['writable'] = False
-        else: #saving itself takes some time
-            po['last_modified'] = os.path.getmtime(po['path'])
-
-    return po
-
-def init_pofiles():
-    pofiles = {}
-    for l in rosetta_settings.LANGUAGES:
-        lang_pos = {}
-        for filter, values in _filters.items():
-            for p in poutil.find_pos(l[0], *values):
-                path = os.path.realpath(p)
-                writable = os.access(path, os.W_OK)
-                if rosetta_settings.EXCLUDE_READONLY and not writable:
-                    continue
-                appname = path.rsplit("/locale", 1)[0].rsplit("/", 1)[-1]
-                lang_pos[appname] = {
-                    'appname' : appname,
-                    'path'    : path,
-                    'filter'  : filter,
-                    'writable': writable,
-                    'pofile'  : None,
-                    'last_modified': 0,
-                }
-        pofiles[l[0]] = lang_pos
-    return pofiles
-
-_pofiles = init_pofiles()
-
 @never_cache
 @user_passes_test(lambda user:can_translate(user),settings.LOGIN_URL)
 def list_languages(request):
@@ -78,12 +27,24 @@ def list_languages(request):
     """
     filter = request.GET.get('filter', 'project')
 
-    if filter != 'all' and filter not in _filters:
+    if filter != 'all' and filter not in poutil.filters:
         raise http.Http404
 
     languages = []
     for l in available_languages(request.user):
-        pos = [upd_pofile(po) for po in _pofiles[l[0]].values() if filter=='all' or filter==po['filter']]
+        pos = []
+        for po in poutil.pofiles[l[0]].values():
+            if filter=='all' or filter==po['filter']:
+                #po = poutil.upd_pofile(po)
+                stats = poutil.upd_stats(po)
+                stats['appname'] = po['appname']
+
+                translated   = stats.get('translated_entries', 1)
+                untranslated = stats.get('untranslated_entries', 0)
+                fuzzy        = stats.get('fuzzy_entries', 0)
+                stats['percent_translated'] = (100 * translated)/(translated + untranslated + fuzzy)
+
+                pos.append(stats)
         if pos:
             languages.append((l[0], l[1], pos))
 
@@ -96,13 +57,13 @@ def pofile_by_appname(appname, lang, user):
     if lang not in [l[0] for l in available_languages(user)]:
         raise http.Http404
 
-    if lang not in _pofiles:
+    if lang not in poutil.pofiles:
         raise http.Http404
 
-    if appname not in _pofiles[lang]:
+    if appname not in poutil.pofiles[lang]:
         raise http.Http404
 
-    return upd_pofile(_pofiles[lang][appname])
+    return poutil.upd_pofile(poutil.pofiles[lang][appname])
 
 @never_cache
 @user_passes_test(lambda user:can_translate(user), settings.LOGIN_URL)
@@ -204,7 +165,7 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
                 pass
 
             po['last_modified'] = time.time()
-            po = upd_pofile(po)
+            po = poutil.upd_pofile(po)
 
             post_save.send(sender=None,language_code=rosetta_i18n_lang_code,request=request)
 
@@ -257,7 +218,10 @@ def translate(request, appname, rosetta_i18n_lang_code, filter='all', page=1):
         main_language = dict(rosetta_settings.LANGUAGES).get(rosetta_settings.MAIN_LANGUAGE)
 
         fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % rosetta_i18n_lang_code))
-        po = polib.pofile(fl)
+        po = polib.pofile(  fl,
+                            klass=poutil.SmartPOFile,
+                            wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH
+                        )
 
         main_messages = []
         for message in messages:
