@@ -1,7 +1,7 @@
 from django.conf import settings
 
 # Number of messages to display per page.
-MESSAGES_PER_PAGE = getattr(settings,'ROSETTA_MESSAGES_PER_PAGE',10)
+MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
 
 
 # Enable translation suggestions
@@ -10,11 +10,11 @@ GOOGLE_API_KEY = getattr(settings,'GOOGLE_API_KEY', None)
 ENABLE_TRANSLATION_SUGGESTIONS = bool(BING_APPID or GOOGLE_API_KEY)
 
 # Displays this language beside the original MSGID in the admin
-MAIN_LANGUAGE = getattr(settings,'ROSETTA_MAIN_LANGUAGE', None)
+MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
 
 # Change these if the source language in your PO files isn't English
-MESSAGES_SOURCE_LANGUAGE_CODE = getattr(settings,'ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE', 'en')
-MESSAGES_SOURCE_LANGUAGE_NAME = getattr(settings,'ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME', 'English')
+MESSAGES_SOURCE_LANGUAGE_CODE = getattr(settings, 'ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE', 'en')
+MESSAGES_SOURCE_LANGUAGE_NAME = getattr(settings, 'ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME', 'English')
 
 LANGUAGES = getattr(settings,'ROSETTA_LANGUAGES', settings.LANGUAGES)
 
@@ -48,3 +48,5 @@ UWSGI_AUTO_RELOAD = getattr(settings,'ROSETTA_UWSGI_AUTO_RELOAD', False)
 EXCLUDED_APPLICATIONS = getattr(settings,'ROSETTA_EXCLUDED_APPLICATIONS', ())
 EXCLUDE_READONLY = getattr(settings,'ROSETTA_EXCLUDE_READONLY', True)
 
+# Line length of the updated PO file, 0 for no-wrap
+POFILE_WRAP_WIDTH = getattr(settings, 'ROSETTA_POFILE_WRAP_WIDTH', 78)
