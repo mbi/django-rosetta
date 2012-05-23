@@ -12,6 +12,7 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range
 from rosetta.signals import entry_changed, post_save
+from rosetta.storage import SessionRosettaStorage
 import re
 import rosetta
 import datetime
@@ -47,6 +48,7 @@ def home(request):
 
 
     version = rosetta.get_version(True)
+    storage = SessionRosettaStorage(request)
     if 'rosetta_i18n_fn' in request.session:
         rosetta_i18n_fn = request.session.get('rosetta_i18n_fn')
         rosetta_i18n_app = get_app_name(rosetta_i18n_fn)

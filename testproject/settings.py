@@ -45,8 +45,9 @@ SOUTH_TESTS_MIGRATE = False
 FIXTURE_DIRS = (
     os.path.join(PROJECT_PATH, 'fixtures'),
 )
-
+STATIC_URL = '/static/'
 ROOT_URLCONF = 'testproject.urls'
 
 DEBUG = True
 TEMPLATE_DEBUG = True
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

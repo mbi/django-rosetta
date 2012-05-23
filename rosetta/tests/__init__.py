@@ -471,12 +471,36 @@ class RosettaTestCase(TestCase):
 
         # post a translation, it should have properly wrapped lines
         r = self.client.post(reverse('rosetta-home'), dict(
-                m_ff7060c1a9aae9c42af4d54ac8551f67_0='Foo %s',
-                m_ff7060c1a9aae9c42af4d54ac8551f67_1='Bar %s',
-                m_09f7e02f1290be211da707a266f153b3='Salut', _next='_next'))
+            m_ff7060c1a9aae9c42af4d54ac8551f67_0='Foo %s',
+            m_ff7060c1a9aae9c42af4d54ac8551f67_1='Bar %s',
+            m_09f7e02f1290be211da707a266f153b3='Salut', _next='_next'))
         pofile_content = open(self.dest_file, 'r').read()
         self.assertTrue('msgstr "Salut\\n"' in pofile_content)
         self.assertTrue('msgstr[0] ""\n"\\n"\n"Foo %s\\n"' in pofile_content)
         self.assertTrue('msgstr[1] ""\n"\\n"\n"Bar %s\\n"' in pofile_content)
 
         shutil.move(self.dest_file + '.orig', self.dest_file)
+
+    def test_19_Test_Issue_gh38(self):
+        if self.django_version_major >= 1 and self.django_version_minor >= 4:
+            self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
+            settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+            shutil.copy(self.dest_file, self.dest_file + '.orig')
+            shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue38gh.template')), self.dest_file)
+
+            self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+            self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
+            r = self.client.get(reverse('rosetta-home'))
+            self.assertTrue(len(str(self.client.cookies.get('sessionid'))) > 4096)
+            self.assertTrue('m_9efd113f7919952523f06e0d88da9c54' in r.content)
+            r = self.client.post(reverse('rosetta-home'), dict(
+                m_9efd113f7919952523f06e0d88da9c54='Testing cookie length',
+                _next='_next'
+            ))
+            pofile_content = open(self.dest_file, 'r').read()
+            self.assertTrue('Testing cookie length' in pofile_content)
+
+            self.client.get(reverse('rosetta-home') + '?filter=translated')
+            r = self.client.get(reverse('rosetta-home'))
+            self.assertTrue('Testing cookie length' in r.content)
+            shutil.move(self.dest_file + '.orig', self.dest_file)
