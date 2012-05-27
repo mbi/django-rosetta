@@ -50,3 +50,4 @@ ROOT_URLCONF = 'testproject.urls'
 
 DEBUG = True
 TEMPLATE_DEBUG = True
+STATIC_URL = '/static/'
