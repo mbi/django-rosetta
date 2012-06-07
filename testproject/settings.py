@@ -31,7 +31,6 @@ INSTALLED_APPS = [
 
     'rosetta',
 ]
-
 LANGUAGE_CODE = "en"
 
 LANGUAGES = (
@@ -50,4 +49,12 @@ ROOT_URLCONF = 'testproject.urls'
 
 DEBUG = True
 TEMPLATE_DEBUG = True
-SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+#SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+#ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
+ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11212',
+    }
+}

@@ -1,3 +1,9 @@
+Version 0.6.8
+-------------
+* Switched to a pluggable storage backend model to increase compatibility with Django 1.4. Cache and Session-based storages are provided.
+
+Version 0.6.7
+-------------
 * Added a testproject to run tests
 * Updated french translation. Thanks, @BertrandBordage
 * Merged @sleepyjames' PR that fixes an error when pofile save path contains '.po' in the path

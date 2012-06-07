@@ -12,7 +12,7 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range
 from rosetta.signals import entry_changed, post_save
-from rosetta.storage import SessionRosettaStorage
+from rosetta.storage import get_storage
 import re
 import rosetta
 import datetime
@@ -46,30 +46,29 @@ def home(request):
             out_ = out_.rstrip()
         return out_
 
-
+    storage = get_storage(request)
     version = rosetta.get_version(True)
-    storage = SessionRosettaStorage(request)
-    if 'rosetta_i18n_fn' in request.session:
-        rosetta_i18n_fn = request.session.get('rosetta_i18n_fn')
+    if storage.has('rosetta_i18n_fn'):
+        rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
         rosetta_i18n_app = get_app_name(rosetta_i18n_fn)
-        rosetta_i18n_lang_code = request.session['rosetta_i18n_lang_code']
+        rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
         rosetta_i18n_lang_bidi = rosetta_i18n_lang_code.split('-')[0] in settings.LANGUAGES_BIDI
-        rosetta_i18n_write = request.session.get('rosetta_i18n_write', True)
+        rosetta_i18n_write = storage.get('rosetta_i18n_write', True)
         if rosetta_i18n_write:
             rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
 
         else:
-            rosetta_i18n_pofile = request.session.get('rosetta_i18n_pofile')
+            rosetta_i18n_pofile = storage.get('rosetta_i18n_pofile')
 
         if 'filter' in request.GET:
             if request.GET.get('filter') in ('untranslated', 'translated', 'fuzzy', 'all'):
                 filter_ = request.GET.get('filter')
-                request.session['rosetta_i18n_filter'] = filter_
+                storage.set('rosetta_i18n_filter', filter_)
                 return HttpResponseRedirect(reverse('rosetta-home'))
 
-        rosetta_i18n_filter = request.session.get('rosetta_i18n_filter', 'all')
+        rosetta_i18n_filter = storage.get('rosetta_i18n_filter', 'all')
 
         if '_next' in request.POST:
             rx = re.compile(r'^m_([0-9a-f]+)')
@@ -122,7 +121,7 @@ def home(request):
                                                )
 
                     else:
-                        request.session['rosetta_last_save_error'] = True
+                        storage.set('rosetta_last_save_error', True)
 
             if file_change and rosetta_i18n_write:
                 try:
@@ -165,9 +164,8 @@ def home(request):
                             pass
 
                 except:
-                    request.session['rosetta_i18n_write'] = False
-
-                request.session['rosetta_i18n_pofile'] = rosetta_i18n_pofile
+                    storage.set('rosetta_i18n_write', False)
+                storage.set('rosetta_i18n_pofile', rosetta_i18n_pofile)
 
                 # Retain query arguments
                 query_arg = ''
@@ -180,8 +178,8 @@ def home(request):
                         query_arg = '?'
                     query_arg = query_arg + 'page=%d' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
-        rosetta_i18n_lang_name = _(request.session.get('rosetta_i18n_lang_name'))
-        rosetta_i18n_lang_code = request.session.get('rosetta_i18n_lang_code')
+        rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
+        rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
 
         if 'query' in request.REQUEST and request.REQUEST.get('query', '').strip():
             query = request.REQUEST.get('query').strip()
@@ -233,13 +231,13 @@ def home(request):
         BING_APP_ID = rosetta_settings.BING_APP_ID
         MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
         MESSAGES_SOURCE_LANGUAGE_CODE = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE
-        if 'rosetta_last_save_error' in request.session:
-            del(request.session['rosetta_last_save_error'])
+        if storage.has('rosetta_last_save_error'):
+            storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
 
         return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
     else:
-        return list_languages(request)
+        return list_languages(request, do_session_warn=True)
 home = never_cache(home)
 home = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(home)
 
@@ -247,12 +245,13 @@ home = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ho
 def download_file(request):
     import zipfile
     from StringIO import StringIO
+    storage = get_storage(request)
     # original filename
-    rosetta_i18n_fn = request.session.get('rosetta_i18n_fn', None)
+    rosetta_i18n_fn = storage.get('rosetta_i18n_fn', None)
     # in-session modified catalog
-    rosetta_i18n_pofile = request.session.get('rosetta_i18n_pofile', None)
+    rosetta_i18n_pofile = storage.get('rosetta_i18n_pofile', None)
     # language code
-    rosetta_i18n_lang_code = request.session.get('rosetta_i18n_lang_code', None)
+    rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code', None)
 
     if not rosetta_i18n_lang_code or not rosetta_i18n_pofile or not rosetta_i18n_fn:
         return HttpResponseRedirect(reverse('rosetta-home'))
@@ -281,20 +280,21 @@ download_file = never_cache(download_file)
 download_file = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(download_file)
 
 
-def list_languages(request):
+def list_languages(request, do_session_warn=False):
     """
     Lists the languages for the current project, the gettext catalog files
     that can be translated and their translation progress
     """
+    storage = get_storage(request)
     languages = []
 
     if 'filter' in request.GET:
         if request.GET.get('filter') in ('project', 'third-party', 'django', 'all'):
             filter_ = request.GET.get('filter')
-            request.session['rosetta_i18n_catalog_filter'] = filter_
+            storage.set('rosetta_i18n_catalog_filter', filter_)
             return HttpResponseRedirect(reverse('rosetta-pick-file'))
 
-    rosetta_i18n_catalog_filter = request.session.get('rosetta_i18n_catalog_filter', 'project')
+    rosetta_i18n_catalog_filter = storage.get('rosetta_i18n_catalog_filter', 'project')
 
     third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
     django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
@@ -316,6 +316,7 @@ def list_languages(request):
         ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
 
     version = rosetta.get_version(True)
+    do_session_warn = do_session_warn and 'SessionRosettaStorage' in rosetta_settings.STORAGE_CLASS and 'signed_cookies' in settings.SESSION_ENGINE
     return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))
 list_languages = never_cache(list_languages)
 list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
@@ -330,30 +331,31 @@ def lang_sel(request, langid, idx):
     """
     Selects a file to be translated
     """
+    storage = get_storage(request)
     if langid not in [l[0] for l in settings.LANGUAGES]:
         raise Http404
     else:
 
-        rosetta_i18n_catalog_filter = request.session.get('rosetta_i18n_catalog_filter', 'project')
+        rosetta_i18n_catalog_filter = storage.get('rosetta_i18n_catalog_filter', 'project')
 
         third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
         django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
         project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
         file_ = find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)[int(idx)]
 
-        request.session['rosetta_i18n_lang_code'] = langid
-        request.session['rosetta_i18n_lang_name'] = unicode([l[1] for l in settings.LANGUAGES if l[0] == langid][0])
-        request.session['rosetta_i18n_fn'] = file_
+        storage.set('rosetta_i18n_lang_code', langid)
+        storage.set('rosetta_i18n_lang_name', unicode([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
+        storage.set('rosetta_i18n_fn',  file_)
         po = pofile(file_)
         for entry in po:
             entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
 
-        request.session['rosetta_i18n_pofile'] = po
+        storage.set('rosetta_i18n_pofile', po)
         try:
             os.utime(file_, None)
-            request.session['rosetta_i18n_write'] = True
+            storage.set('rosetta_i18n_write', True)
         except OSError:
-            request.session['rosetta_i18n_write'] = False
+            storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
 lang_sel = never_cache(lang_sel)
