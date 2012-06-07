@@ -1310,7 +1310,7 @@ class _POFileParser(object):
             if action():
                 self.current_state = state
         except Exception:
-            raise IOError('Syntax error in po file (line %s)' % linenum)
+            raise IOError('Syntax error in po file: %s (line %s)' % (self.instance.fpath, linenum))
 
     # state handlers
 
