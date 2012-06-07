@@ -472,3 +472,14 @@ class RosettaTestCase(TestCase):
         self.client2.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
 
         self.assertTrue(self.client.session.get('rosetta_cache_storage_key_prefix') != self.client2.session.get('rosetta_cache_storage_key_prefix'))
+
+    def test_21_Test_Issue_gh39(self):
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue39gh.template')), self.dest_file)
+
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+        # We have distinct hashes, even though the msgid and msgstr are identical
+        self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in r.content)
+        self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in r.content)
+
