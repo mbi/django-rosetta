@@ -203,7 +203,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('String 1' in r.content)
         self.assertTrue('String 1' in r2.content)
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in r.content)
-        r = self.client.post(reverse('rosetta-home'), dict(m_08e4e11e2243d764fc45a5a4fba5d0f2='Hello, world', _next='_next'))
+        r = self.client.post(reverse('rosetta-home'), dict(m_08e4e11e2243d764fc45a5a4fba5d0f2='Hello, world', _next='_next'), follow=True)
         r2 = self.client2.get(reverse('rosetta-home'))
 
         # Client 2 reloads the home, forces a reload of the catalog,
@@ -220,13 +220,18 @@ class RosettaTestCase(TestCase):
         self.assertTrue('String 2' in r.content and 'm_e48f149a8b2e8baa81b816c0edf93890' in r.content)
 
         # client 2 posts!
-        r2 = self.client2.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client two!', _next='_next'))
+        r2 = self.client2.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client two!', _next='_next'), follow=True)
+
         self.assertTrue('save-conflict' not in r2.content)
 
         # uh-oh here comes client 1
-        r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client one!', _next='_next'))
+        r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client one!', _next='_next'), follow=True)
         # An error message is displayed
         self.assertTrue('save-conflict' in r.content)
+
+        # client 2 won
+        pofile_content = open(self.dest_file, 'r').read()
+        self.assertTrue('Hello, world, from client two!' in pofile_content)
 
         # Both clients show all strings, error messages are gone
         r = self.client.get(reverse('rosetta-home') + '?filter=translated')
