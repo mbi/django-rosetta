@@ -55,7 +55,6 @@ google.setOnLoadCallback(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
             var RX = /%(?:\([^\s\)]*\))?[diouxXeEfFgGcrs]/g,
-                RX_PERCENT = /(%(?:\([^\s\)]*\))?[diouxXeEfFgGcrs%])|%/g,
                 origs=$('.original', $(this).parents('tr')).html().match(RX),
                 trads=$(this).val().match(RX),
                 error = $('<span class="alert">Unmatched variables</span>');
@@ -75,10 +74,12 @@ google.setOnLoadCallback(function() {
                 }
             }
             
+            // Check, that need use %% instead of %
+            RX = /(%(?:\([^\s\)]*\))?[diouxXeEfFgGcrs%])|%/g;
             if(origs){
-                trads = $(this).val().match(RX_PERCENT);
+                trads = $(this).val().match(RX);
+                var error = $('<span class="alert">Use %% instead of %</span>');
                 for (var i = trads.length; i--;){
-                    error = $('<span class="alert">Use %% instead of %</span>');
                     if(trads[i] === '%'){
                         $(this).before(error);
                         return false;
