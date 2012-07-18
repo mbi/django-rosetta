@@ -68,7 +68,6 @@ google.setOnLoadCallback(function() {
                         return false;
                     }
                 }
-                return true;
             } else {
                 if (!(origs === null && trads === null)) {
                     $(this).before(error);
