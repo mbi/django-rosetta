@@ -54,10 +54,12 @@ google.setOnLoadCallback(function() {
     $('.translation textarea').blur(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
-            var RX = /%(?:\([^\s\)]*\))?[sdf]/g,
+            var RX = /%(?:\([^\s\)]*\))?[diouxXeEfFgGcrs]/g,
+                RX_PERCENT = /(%(?:\([^\s\)]*\))?[diouxXeEfFgGcrs%])|%/g,
                 origs=$('.original', $(this).parents('tr')).html().match(RX),
                 trads=$(this).val().match(RX),
                 error = $('<span class="alert">Unmatched variables</span>');
+            
             if (origs && trads) {
                 for (var i = trads.length; i--;){
                     var key = trads[i];
@@ -73,6 +75,17 @@ google.setOnLoadCallback(function() {
                     return false;                    
                 }
             }
+            
+            if(origs){
+                trads = $(this).val().match(RX_PERCENT);
+                for (var i = trads.length; i--;){
+                    error = $('<span class="alert">Use %% instead of %</span>');
+                    if(trads[i] === '%'){
+                        $(this).before(error);
+                        return false;
+                    }
+                }
+            }
             return true;
         }
     });
@@ -80,3 +93,4 @@ google.setOnLoadCallback(function() {
     $('.translation textarea').eq(0).focus();
     
 });
+
