@@ -10,8 +10,9 @@ from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
+from rosetta.forms import UpdatePoForm
 from rosetta.polib import pofile
-from rosetta.poutil import find_pos, pagination_range
+from rosetta.poutil import find_pos, pagination_range, get_app_name, get_differences, priority_merge
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
@@ -331,11 +332,6 @@ list_languages = never_cache(list_languages)
 list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
 
 
-def get_app_name(path):
-    app = path.split("/locale")[0].split("/")[-1]
-    return app
-
-
 def restart_server(request):
     """
     Restart web server
@@ -380,6 +376,72 @@ def do_restart(request, noresponse=False):
     if noresponse:
         return
     return HttpResponseRedirect(request.environ['HTTP_REFERER'])
+
+
+def update_current_catalogue(request):
+    pofile = request.session.get('rosetta_i18n_pofile', None)
+    pofilepath = request.session.get('rosetta_i18n_fn', None)
+    if not pofile or pofilepath:
+        request.user.message_set.create(message=ugettext("There is not a current catalogue"))
+        return HttpResponseRedirect(reverse('rosetta-pick-file'))
+    return _update_catalogue(request, pofile, pofilepath)
+
+
+def update_catalogue(request):
+    return _update_catalogue(request)
+
+
+def _update_catalogue(request, pofile=None, pofilepath=None):
+    data = None
+    files = None
+    if request.method == 'POST':
+        data = request.POST
+        files = request.FILES
+    form = UpdatePoForm(pofile=pofile, pofilepath=pofilepath, data=data, files=files)
+    if form.is_valid():
+        po_tmp, po_destination, priority = form.save_temporal_file()
+        request.session['rosetta_update_confirmation'] = {
+            'path_source': po_tmp.fpath,
+            'path_destination': po_destination.fpath,
+            'priority': priority,
+        }
+        return HttpResponseRedirect(reverse('rosetta.views.update_confirmation'))
+    if pofile:
+        storage = get_storage(request)
+        rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
+        rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
+        rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
+        rosetta_i18n_app = get_app_name(rosetta_i18n_fn)
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/update_file.html',
+                              locals(),
+                              context_instance=RequestContext(request))
+
+
+def update_confirmation(request):
+    up_conf = request.session.get('rosetta_update_confirmation')
+    priority = up_conf['priority']
+    path_source = up_conf['path_source']
+    po_source = pofile(path_source)
+    path_destination = up_conf['path_destination']
+    po_destination = pofile(path_destination)
+
+    if request.method == 'POST':
+        priority = up_conf['priority']
+        priority_merge(po_destination, po_source, priority=priority)
+        redirect_to = reverse('rosetta.views.home')
+        return HttpResponseRedirect(redirect_to)
+    news_entries, changes_entries = get_differences(po_destination,
+                                                    po_source, priority)
+    storage = get_storage(request)
+    rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
+    rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
+    rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
+    rosetta_i18n_app = get_app_name(path_destination)
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/update_confirmation.html',
+                              locals(),
+                              context_instance=RequestContext(request))
 
 
 def lang_sel(request, langid, idx):

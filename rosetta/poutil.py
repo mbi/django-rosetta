@@ -4,10 +4,14 @@ from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 from django.core.cache import cache
 
+from rosetta import polib
+
 try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
+FUZZY = 'fuzzy'
 
 
 def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False):
@@ -119,3 +123,54 @@ def pagination_range(first,last,current):
                 pass
         prev = e
     return r
+
+
+def priority_merge(po_destination, po_source, priority=False):
+    for entry in po_source:
+        e = po_destination.find(entry.msgid)
+        if e:
+            if (not e.translated() or priority) and entry.translated():
+                # entry found, we update if it isn't translated
+                e.occurrences = entry.occurrences
+                e.comment = entry.comment
+                e.msgstr = entry.msgstr
+                e.msgstr_plural = entry.msgstr_plural
+                if FUZZY in e.flags:
+                    e.flags.remove(FUZZY)
+        else:
+            # entry is not in the po file, we must add it
+            # entry is created with msgid, occurrences and comment
+            new_entry = polib.POEntry(msgid=entry.msgid,
+                                      occurrences=entry.occurrences,
+                                      comment=entry.comment,
+                                      msgstr=entry.msgstr,
+                                      msgstr_plural=entry.msgstr_plural)
+            po_destination.append(new_entry)
+    po_destination.save()
+
+
+def get_differences(po_destination, po_source, priority=False):
+    l_changes = []
+    l_news = []
+    for entry_source in po_source:
+        entry_destination = po_destination.find(entry_source.msgid)
+        item = {}
+        if entry_destination:
+            if entry_source.translated() and not entry_destination.translated():
+                item['entry_source'] = entry_source
+                item['entry_destination'] = ""
+            elif priority:
+                if entry_destination.msgstr != entry_source.msgstr or \
+                   entry_destination.msgstr_plural != entry_source.msgstr_plural:
+                    item['entry_source'] = entry_source
+                    item['entry_destination'] = entry_destination
+                    l_changes.append(item)
+        else:
+            item['entry_source'] = entry_source
+            l_news.append(item)
+    return l_news, l_changes
+
+
+def get_app_name(path):
+    app = path.split("/locale")[0].split("/")[-1]
+    return app

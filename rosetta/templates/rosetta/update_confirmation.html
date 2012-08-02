@@ -1,0 +1,54 @@
+{% extends "rosetta/base.html" %}
+{% load i18n %}
+
+
+{% block breadcumbs %}
+    <div>
+        <a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo;
+        {% if rosetta_i18n_lang_name and rosetta_i18n_app %}
+            {{ rosetta_i18n_lang_name }} &rsaquo; 
+            {{ rosetta_i18n_app|title }} &rsaquo; 
+        {% endif %}
+        {% trans "Update confirmation" %}
+    </div>
+{% endblock %}
+
+{% block main %}
+    {% if not changes_entries and not news_entries %}
+        <h1>{% trans "No changes with the next file" %}</h1>
+        {{ path_destination }}
+    {% else %}
+        <h1> {% trans "Are you sure you want to update this file?" %} </h1>
+        {{ path_destination }}
+        <h3>{% trans "Your action wil have these consequences:"%}</h3>
+        <dl>
+            {% if news_entries %}
+            <dt> {% trans "News messages created" %}</dt>
+            <dd><ul>
+                {% for item in news_entries %}
+                    <li> '{{ item.entry_source.msgid }}': '{{ item.entry_source.msgstr }}' 
+                    {% if item.entry_source.msgstr_plural %}/ '{{ item.entry_source.msgstr_plural }}'{% endif %} </li>
+                {% endfor %}
+            </ul></dd>
+            {% endif %}
+            {% if changes_entries %}
+            <dt> {% trans "Old messages updated" %}</dt>
+            <dd><ul>
+                {% for item in changes_entries %}
+                    <li> '{{ item.entry_source.msgid }}': 
+                        {% trans "from" %} '{{ item.entry_destination.msgstr }}' {% if item.entry_destination.msgstr_plural %}/ 
+                                '{{ item.entry_destination.msgstr_plural }} {% endif %}
+                        {% trans "to" %} '{{ item.entry_source.msgstr }}' {% if item.entry_source.msgstr_plural %}/
+                                '{{ item.entry_source.msgstr }}'{% endif %}
+                    </li>
+                {% endfor %}
+            </ul></dd>
+            {% endif %}
+        </dl>
+        <form action="." method="POST" enctype="multipart/form-data">
+            <div class="submit-row">
+                <input type="submit" name="_save" class="default" value="{% trans "Update file" %}"/>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
