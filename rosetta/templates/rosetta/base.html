@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -26,9 +27,21 @@
             <div id="branding">
                 <h1 id="site-name"><a href="{% url rosetta-pick-file %}">Rosetta</a> </h1>
             </div>
+                {% block header-tools %}
+                <div id="rosetta-tools" style="float: right; font-size: 11px; padding-right: 10px;">
+                    <p><span>
+                        <a href="{% url rosetta-restart-server %}">{% trans "Restart web server" %}</a> /
+                    </span></p>
+                </div>
+                {% endblock %}
             {% endblock %}
         </div>
         <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
+        {% if messages %} 
+        <ul class="messagelist">
+            {% for message in messages %}<li>{{ message|safe }}</li>{% endfor %}
+        </ul>
+        {% endif %} 
         <div id="content" class="flex">
             {% block main %}{% endblock %}
         </div>

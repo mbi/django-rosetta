@@ -6,6 +6,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.encoding import smart_unicode, iri_to_uri
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
@@ -335,6 +336,52 @@ def get_app_name(path):
     return app
 
 
+def restart_server(request):
+    """
+    Restart web server
+    """
+    if request.method == 'POST':
+        ## No RedHAT or similars
+        # os.system('sleep 5 && sudo apache2ctl restart &')
+        ## For RedHAT CentOS ..., see install for set the correct sudoers
+        # os.system('sleep 5 && sudo /usr/sbin/apachectl restart &')
+        ## For FastCGI with supervisord control
+        #os.system('sleep 5 && bin/restart_django.sh & ')
+        do_restart(request, noresponse=True)
+        return HttpResponseRedirect(reverse('rosetta-home'))
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/confirm_restart.html', locals(), context_instance=RequestContext(request))
+
+restart_server = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(restart_server)
+restart_server = never_cache(restart_server)
+
+
+def do_restart(request, noresponse=False):
+    """
+    * "test" for a django instance (this do a touch over settings.py for reload)
+    * "apache"
+    * "httpd"
+    * "wsgi"
+    * "restart_script <script_path_name>"
+    """
+    reload_method = getattr(settings, 'AUTO_RELOAD_METHOD', getattr(rosetta_settings, 'AUTO_RELOAD_METHOD', 'test'))
+    if reload_method == 'test':
+        os.system('sleep 2 && touch settings.py &')
+    ## No RedHAT or similars
+    elif reload_method == 'apache2':
+        os.system('sleep 2 && sudo apache2ctl restart &')
+    ## RedHAT, CentOS
+    elif reload_method == 'httpd':
+        os.system('sleep 2 && sudo service httpd restart &')
+    elif reload_method.startswith('restart_script'):
+        script = reload_method.split(" ", 1)[1]
+        os.system("sleep 2 && %s &" % script)
+    request.user.message_set.create(message=ugettext("Server restarted. Wait 10 seconds before checking translation"))
+    if noresponse:
+        return
+    return HttpResponseRedirect(request.environ['HTTP_REFERER'])
+
+
 def lang_sel(request, langid, idx):
     """
     Selects a file to be translated
@@ -388,4 +435,3 @@ def can_translate(user):
             return translators in user.groups.all()
         except Group.DoesNotExist:
             return False
-

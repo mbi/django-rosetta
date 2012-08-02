@@ -1,0 +1,17 @@
+{% extends "rosetta/base.html" %}
+{% load i18n %}
+
+{% block breadcumbs %}
+    <div><a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; {% trans "Restart server" %}</div>
+{% endblock %}
+
+{% block main %}
+  <div>
+    <h1>{% trans "Are you sure you want to restart web server?" %}</h1>
+    <form action="." method="post">
+    <div class="submit-row" style="text-align: center">
+      <input type="submit" value="{% trans "Yes, I'm sure" %}" />
+    </div>
+    </form>
+  </div>
+{% endblock %}
