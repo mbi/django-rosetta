@@ -27,13 +27,12 @@
             <div id="branding">
                 <h1 id="site-name"><a href="{% url rosetta-pick-file %}">Rosetta</a> </h1>
             </div>
-                {% block header-tools %}
-                <div id="rosetta-tools" style="float: right; font-size: 11px; padding-right: 10px;">
-                    <p><span>
-                        <a href="{% url rosetta-restart-server %}">{% trans "Restart web server" %}</a> /
-                    </span></p>
-                </div>
-                {% endblock %}
+            <div id="rosetta-tools">
+                <p>
+                    <span><a href="{% url rosetta-restart-server %}">{% trans "Restart web server" %}</a> /
+                    </span>
+                </p>
+            </div>
             {% endblock %}
         </div>
         <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
