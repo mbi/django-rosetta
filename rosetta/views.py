@@ -385,10 +385,14 @@ def update_current_catalogue(request):
         request.user.message_set.create(message=ugettext("There is not a current catalogue"))
         return HttpResponseRedirect(reverse('rosetta-pick-file'))
     return _update_catalogue(request, pofile, pofilepath)
+update_current_catalogue = never_cache(update_current_catalogue)
+update_current_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_current_catalogue)
 
 
 def update_catalogue(request):
     return _update_catalogue(request)
+update_catalogue = never_cache(update_catalogue)
+update_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_catalogue)
 
 
 def _update_catalogue(request, pofile=None, pofilepath=None):
@@ -442,6 +446,8 @@ def update_confirmation(request):
     return render_to_response('rosetta/update_confirmation.html',
                               locals(),
                               context_instance=RequestContext(request))
+update_confirmation = never_cache(update_confirmation)
+update_confirmation = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_confirmation)
 
 
 def lang_sel(request, langid, idx):
