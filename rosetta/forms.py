@@ -17,7 +17,7 @@ class UpdatePoForm(forms.Form):
     file = forms.FileField(label=_('File .po'))
     priority = forms.BooleanField(label=_('Priority'),
         required=False,
-        help_text=_('If you check it, your file overwrite the translations, in te other case only will create new entries'))
+        help_text=_('If you check it, your file overwrite the translations, in the other case only will create new entries'))
 
     def __init__(self, po_file=None, po_file_path=None, *args, **kwargs):
         super(UpdatePoForm, self).__init__(*args, **kwargs)

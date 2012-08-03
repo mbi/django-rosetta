@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-04 13:42+0200\n"
+"POT-Creation-Date: 2012-08-03 14:07+0200\n"
 "PO-Revision-Date: 2008-06-16 10:11+0100\n"
 "Last-Translator: Martin Mahner <martin@mahner.org>\n"
 "Language-Team: patrick lauber <patrick.lauber@divio.ch>\n"
@@ -18,47 +18,155 @@ msgstr ""
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: SWITZERLAND\n"
 
-#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
-msgid "Language selection"
-msgstr "Sprachwahl"
+#: forms.py:17
+#, fuzzy
+msgid "File .po"
+msgstr "Datei"
 
-#: templates/rosetta/languages.html:6 templates/rosetta/pofile.html:18
+#: forms.py:18
+msgid "Priority"
+msgstr ""
+
+#: forms.py:20
+msgid ""
+"If you check it, your file overwrite the translations, in the other case "
+"only will create new entries"
+msgstr ""
+
+#: views.py:398
+msgid "Server restarted. Wait 10 seconds before checking translation"
+msgstr ""
+
+#: views.py:409
+msgid "There is not a current catalogue"
+msgstr ""
+
+#: templates/rosetta/base.html:33
+msgid "Restart web server"
+msgstr ""
+
+#: templates/rosetta/base.html:34
+msgid "Update a catalogue"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:5 templates/rosetta/languages.html:7
+#: templates/rosetta/pofile.html:114
+#: templates/rosetta/update_confirmation.html:7
+#: templates/rosetta/update_file.html:6
 msgid "Home"
 msgstr "Home"
 
-#: templates/rosetta/languages.html:17
+#: templates/rosetta/confirm_restart.html:5
+msgid "Restart server"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:10
+msgid "Are you sure you want to restart web server?"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:13
+msgid "Yes, I'm sure"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:5
+#: templates/rosetta/inc.invalid_message.html:26
+msgid "No"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:6
+msgid "There is a more prioritary catalog"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:9
+msgid "Prioritary translation:"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:23
+msgid "Yes"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:23
+msgid "Updated!"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:26
+msgid "Error updating"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:31
+msgid "Update prioritary catalog with the text from the input boxes?"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:33
+msgid "Update prioritary catalog with the text from the input box?"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:37
+msgid "Yes, update"
+msgstr ""
+
+#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:7
+msgid "Language selection"
+msgstr "Sprachwahl"
+
+#: templates/rosetta/languages.html:8
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
+">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
+"your settings file should fix this."
+msgstr ""
+
+#: templates/rosetta/languages.html:14
+#, fuzzy
+msgid "Filter"
+msgstr "Datei"
+
+#: templates/rosetta/languages.html:15
+msgid "Project"
+msgstr ""
+
+#: templates/rosetta/languages.html:16
+msgid "Third party"
+msgstr ""
+
+#: templates/rosetta/languages.html:18 templates/rosetta/pofile.html:131
+msgid "All"
+msgstr "Alle"
+
+#: templates/rosetta/languages.html:31
 msgid "Application"
 msgstr ""
 
-#: templates/rosetta/languages.html:18
+#: templates/rosetta/languages.html:32
 msgid "Progress"
 msgstr "Fortschritt"
 
-#: templates/rosetta/languages.html:19
+#: templates/rosetta/languages.html:33
 msgid "Messages"
 msgstr "Texte"
 
-#: templates/rosetta/languages.html:20
+#: templates/rosetta/languages.html:34
 msgid "Translated"
 msgstr "Übersetzt"
 
-#: templates/rosetta/languages.html:21 templates/rosetta/pofile.html:57
+#: templates/rosetta/languages.html:35 templates/rosetta/pofile.html:162
 msgid "Fuzzy"
 msgstr "Unscharf"
 
-#: templates/rosetta/languages.html:22
+#: templates/rosetta/languages.html:36
 msgid "Obsolete"
 msgstr "Veraltet"
 
-#: templates/rosetta/languages.html:23
+#: templates/rosetta/languages.html:37
 msgid "File"
 msgstr "Datei"
 
-#: templates/rosetta/languages.html:44
+#: templates/rosetta/languages.html:60
 msgid "Nothing to translate!"
 msgstr "Nichts zu übersetzen!"
 
-#: templates/rosetta/languages.html:45
+#: templates/rosetta/languages.html:61
 msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
@@ -67,7 +175,7 @@ msgstr ""
 "noch keine Übersetzungskataloge generiert."
 
 # python-format
-#: templates/rosetta/languages.html:46
+#: templates/rosetta/languages.html:62
 #, python-format
 msgid ""
 "Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
@@ -77,100 +185,164 @@ msgstr ""
 "Sie eine Anleitung, wie sie Internationalisierung in Ihrem Projekt "
 "einrichten."
 
-#: templates/rosetta/pofile.html:8
+#: templates/rosetta/pofile.html:20
+msgid ""
+"Warning... There are fuzzy elements that will be translated as suggestion "
+"says. Do you want to continue?"
+msgstr ""
+
+#: templates/rosetta/pofile.html:57
+msgid "Please write a translation in the text area"
+msgstr ""
+
+#: templates/rosetta/pofile.html:100
 msgid "Pick another file"
 msgstr "Wähle eine andere Datei"
 
-#: templates/rosetta/pofile.html:9
+#: templates/rosetta/pofile.html:101
 msgid "Download this catalog"
 msgstr "Laden sie diesen Katalog herunter"
 
-#: templates/rosetta/pofile.html:21
+#: templates/rosetta/pofile.html:102
+msgid "Update current catalogue"
+msgstr ""
+
+#: templates/rosetta/pofile.html:117
 msgid "Progress: %(percent_translated)s%"
 msgstr "Fortschritt: %(percent_translated)s%"
 
-#: templates/rosetta/pofile.html:23
+#: templates/rosetta/pofile.html:119
 msgid "File is read-only: download the file when done editing!"
 msgstr ""
 "Datei ist schreibgeschützt: Laden Sie die Datei herunter wenn sie mit dem "
 "Editieren fertig sind!"
 
-#: templates/rosetta/pofile.html:24
+#: templates/rosetta/pofile.html:120
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
 msgstr ""
 
-#: templates/rosetta/pofile.html:28
+#: templates/rosetta/pofile.html:124
 #, python-format
 msgid "Translate into %(rosetta_i18n_lang_name)s"
 msgstr "Übersetze in %(rosetta_i18n_lang_name)s"
 
-#: templates/rosetta/pofile.html:31
+#: templates/rosetta/pofile.html:127
 msgid "Display:"
 msgstr "Anzeige:"
 
-#: templates/rosetta/pofile.html:32
+#: templates/rosetta/pofile.html:128
 msgid "Untranslated only"
 msgstr "Nur unübersetzte"
 
-#: templates/rosetta/pofile.html:33
+#: templates/rosetta/pofile.html:129
 msgid "Translated only"
 msgstr "Nur übersetzte"
 
-#: templates/rosetta/pofile.html:34
+#: templates/rosetta/pofile.html:130
 msgid "Fuzzy only"
 msgstr "Nur unscharfe"
 
-#: templates/rosetta/pofile.html:35
-msgid "All"
-msgstr "Alle"
-
-#: templates/rosetta/pofile.html:42
+#: templates/rosetta/pofile.html:138
 msgid "Search"
 msgstr "Suchen"
 
-#: templates/rosetta/pofile.html:44
+#: templates/rosetta/pofile.html:140
 msgid "Go"
 msgstr "Los"
 
-#: templates/rosetta/pofile.html:54
+#: templates/rosetta/pofile.html:147
+msgid "Suggest All Translations"
+msgstr ""
+
+#: templates/rosetta/pofile.html:159
 msgid "Original"
 msgstr "Original"
 
-#: templates/rosetta/pofile.html:58
+#: templates/rosetta/pofile.html:163
 msgid "Occurrences(s)"
 msgstr "Gefunden in"
 
-#: templates/rosetta/pofile.html:82
+#: templates/rosetta/pofile.html:177 templates/rosetta/pofile.html.py:180
+#: templates/rosetta/pofile.html:198 templates/rosetta/pofile.html.py:201
+msgid "Context hint"
+msgstr ""
+
+#: templates/rosetta/pofile.html:208
 msgid "suggest"
 msgstr "vorschlagen"
 
-#: templates/rosetta/pofile.html:93
+#: templates/rosetta/pofile.html:220
 #, python-format
 msgid "%(more_count)s more"
 msgid_plural "%(more_count)s more"
 msgstr[0] "%(more_count)s mehr"
 msgstr[1] "%(more_count)s mehr"
 
-#: templates/rosetta/pofile.html:105
+#: templates/rosetta/pofile.html:232
 msgid "Save and translate next block"
 msgstr "Speichern und nächsten Block übersetzen"
 
-#: templates/rosetta/pofile.html:109
+#: templates/rosetta/pofile.html:234
+msgid "Continue in"
+msgstr ""
+
+#: templates/rosetta/pofile.html:237
 msgid "Skip to page:"
 msgstr "Zur Seite:"
 
-#: templates/rosetta/pofile.html:122
+#: templates/rosetta/pofile.html:250
 msgid "Displaying:"
 msgstr "Anzeigen:"
 
-#: templates/rosetta/pofile.html:124
+#: templates/rosetta/pofile.html:254
 #, python-format
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
 msgstr[0] "%(hits)s/%(message_number)s Text"
 msgstr[1] "%(hits)s/%(message_number)s Texte"
+
+#: templates/rosetta/update_confirmation.html:12
+msgid "Update confirmation"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:18
+msgid "No changes with the next file"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:21
+msgid "Are you sure you want to update this file?"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:23
+msgid "Your action wil have these consequences:"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:26
+msgid "News messages created"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:35
+msgid "Old messages updated"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:39
+msgid "from"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:41
+msgid "to"
+msgstr ""
+
+#: templates/rosetta/update_confirmation.html:50
+#: templates/rosetta/update_file.html:11
+msgid "Update file"
+msgstr ""
+
+#: templates/rosetta/update_file.html:20
+msgid "Update File"
+msgstr ""
 
 #~ msgid "English"
 #~ msgstr "Englisch"
