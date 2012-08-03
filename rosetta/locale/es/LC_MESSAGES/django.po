@@ -117,7 +117,7 @@ msgstr "Traducidos sólo"
 
 #: templates/rosetta/pofile.html:34
 msgid "Fuzzy only"
-msgstr "Vellosos sólo"
+msgstr "Sin revisar sólo"
 
 #: templates/rosetta/pofile.html:35
 msgid "All"
