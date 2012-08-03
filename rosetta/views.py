@@ -248,7 +248,26 @@ def home(request):
         if storage.has('rosetta_last_save_error'):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
-
+        rosetta_i18n_catalog_filter = storage.get('rosetta_i18n_catalog_filter', 'project')
+        third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
+        django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
+        project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
+        languages_to_catalogue = []
+        for language in settings.LANGUAGES:
+            if rosetta_i18n_lang_code == language[0]:
+                continue
+            pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
+            position = None
+            for i in xrange(len(pos)):
+                pos_split = pos[i].split(os.path.sep)
+                try:
+                    if pos_split[-5] == rosetta_i18n_app and rosetta_i18n_fn.split(os.path.sep)[-1] == pos_split[-1]:
+                        position = i
+                        break
+                except IndexError:
+                    pass
+            if position is not None:
+                languages_to_catalogue.append((language[0], _(language[1]), position))
         return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)

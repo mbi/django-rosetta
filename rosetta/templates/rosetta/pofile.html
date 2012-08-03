@@ -230,8 +230,9 @@
                         <input type="hidden" name="query" value="{{query}}"  />
                     {% endif %}
                     <input type="submit" class="default" name="_next" value="{% trans "Save and translate next block" %}" tabindex="{% increment tab_idx %}"/>
-                    
-                    
+                    {% for lid, language, position in languages_to_catalogue %}
+                        <a href="{% url rosetta-language-selection lid,position %}{{ query_arg }}">{% trans "Continue in" %} {{ language }}</a>
+                    {% endfor %}
                     {% if needs_pagination %}
                     {% trans "Skip to page:" %}
                     {% for i in page_range %}
