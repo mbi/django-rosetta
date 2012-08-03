@@ -2,9 +2,11 @@ from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.contrib.admin.util import unquote
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import simplejson
 from django.utils.encoding import smart_unicode, iri_to_uri
 from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
@@ -12,7 +14,8 @@ from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
 from rosetta.forms import UpdatePoForm
 from rosetta.polib import pofile
-from rosetta.poutil import find_pos, pagination_range, get_app_name, get_differences, priority_merge
+from rosetta.poutil import (find_pos, pagination_range, get_app_name,
+                            get_differences, priority_merge, validate_format)
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
@@ -210,6 +213,7 @@ def home(request):
             return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
 
         rosetta_messages = paginator.page(page).object_list
+        rosetta_messages = search_msg_id_in_other_pos(rosetta_messages, rosetta_i18n_lang_code, rosetta_i18n_pofile)
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
 
             main_language = None
@@ -489,6 +493,104 @@ lang_sel = never_cache(lang_sel)
 lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
 
 
+def change_catalogue(request):
+    new_catalog = request.GET.get('catalog', None)
+    if not new_catalog:
+        return HttpResponseRedirect(reverse('rosetta-home'))
+    reload_catalog_in_storage(request, file_path=unquote(new_catalog))
+    entry_id = request.GET.get('entry_id', None)
+    if entry_id:
+        query_arg = '?query=%s' % entry_id
+    else:
+        query_arg = ''
+    return HttpResponseRedirect(reverse('rosetta-home') + query_arg)
+change_catalogue = never_cache(change_catalogue)
+change_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(change_catalogue)
+
+
+def ajax_update_translation(request):
+
+    def fix_nls(in_, out_):
+        """Fixes submitted translations by filtering carriage returns and pairing
+        newlines at the begging and end of the translated string with the original
+        """
+        if 0 == len(in_) or 0 == len(out_):
+            return out_
+
+        if "\r" in out_ and "\r" not in in_:
+            out_ = out_.replace("\r", '')
+
+        if "\n" == in_[0] and "\n" != out_[0]:
+            out_ = "\n" + out_
+        elif "\n" != in_[0] and "\n" == out_[0]:
+            out_ = out_.lstrip()
+        if "\n" == in_[-1] and "\n" != out_[-1]:
+            out_ = out_ + "\n"
+        elif "\n" != in_[-1] and "\n" == out_[-1]:
+            out_ = out_.rstrip()
+        return out_
+    catalog = request.GET.get('catalog', None)
+    translation = request.GET.get('translation', None)
+    if not translation:
+        translation = {}
+        for key, value in request.GET.items():
+            if key.startswith('translation_'):
+                translation[key.replace('translation_', '')] = value
+    msgid = request.GET.get('msgid', None)
+    try:
+        po_file = pofile(catalog)
+        entry = po_file.find(msgid)
+    except:
+        po_file = None
+        entry = None
+    if not catalog or not translation or not msgid\
+       or not po_file or not entry:
+        raise Http404
+
+    saved = False
+    if isinstance(translation, dict):
+        for key, item in translation.items():
+            entry.msgstr_plural[key] = fix_nls(entry.msgid_plural, item)
+    else:
+        entry.msgstr = fix_nls(entry.msgid, translation)
+    if 'fuzzy' in entry.flags:
+        entry.flags.remove('fuzzy')
+    transhette_i18n_write = request.session.get('transhette_i18n_write', True)
+    format_errors = validate_format(po_file)
+    if transhette_i18n_write and not format_errors:
+        try:
+            po_file.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (request.user.first_name,
+                                                                                                 request.user.last_name,
+                                                                                                 request.user.email)).encode('ascii', 'ignore')
+            po_file.metadata['X-Translated-Using'] = str("django-rosetta %s" % rosetta.get_version(False))
+            po_file.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
+        except UnicodeDecodeError:
+            pass
+        try:
+            po_file.save()
+            po_file.save_as_mofile(po_file.fpath.replace('.po', '.mo'))
+            saved = True
+        except:
+            pass
+
+    json_dict = simplejson.dumps({'saved': saved,
+                                  'translation': translation})
+    return HttpResponse(json_dict, mimetype='text/javascript')
+
+
+def reload_catalog_in_storage(request, file_path=None):
+    """ Reload rosetta catalog in storage """
+    storage = get_storage(request)
+    if file_path is None:
+        file_path = storage.get("rosetta_i18n_fn")
+    po = pofile(file_path)
+    for i in range(len(po)):
+        po[i].id = i
+    storage.set('rosetta_i18n_fn', file_path)
+    storage.set('rosetta_i18n_pofile', po)
+    storage.set('rosetta_i18n_mtime', os.stat(file_path)[-2])
+
+
 def can_translate(user):
     if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
         return True
@@ -503,3 +605,26 @@ def can_translate(user):
             return translators in user.groups.all()
         except Group.DoesNotExist:
             return False
+
+
+def search_msg_id_in_other_pos(msg_list, lang, pofile_path):
+    pofile_paths = find_pos(lang, project_apps=True, django_apps=True, third_party_apps=True)
+    pofiles = []
+    for path in pofile_paths:
+        pofiles.append(pofile(path))
+    for msg in msg_list:
+        for p in pofiles:
+            valid_entry = None
+            valid_catalog = p
+            if p.fpath == pofile_path.fpath:
+                is_valid = True
+                break
+            entry = p.find(msg.msgid)
+            if entry:
+                is_valid = False
+                valid_entry = entry
+                break
+        msg.is_valid = is_valid
+        msg.valid_catalog = valid_catalog
+        msg.valid_entry = valid_entry
+    return msg_list

@@ -1,0 +1,39 @@
+{% load i18n %}
+
+{% if not message.is_valid %} 
+    <p> 
+        <img src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-no.gif" alt="{% trans "No" %}" /> 
+        <a href="{% url rosetta-change-catalogue %}?entry_id={{ message.msgid }}&catalog={{ message.valid_catalog.fpath }}">{% trans "There is a more prioritary catalog" %}</a> 
+    </p> 
+    <p> 
+        <label>{% trans "Prioritary translation:" %}</label>
+            {% if translation_plural %}
+            <ul>
+                {% for k, msgstr in message.valid_entry.msgstr_plural.items|dictsort:"0"  %} 
+                <li> 
+                    <label>{{k}}:</label> 
+                    <span class="prioritary-translation-{{ k }}">{{ message.valid_entry.msgstr }}</span> 
+                </li> 
+                {% endfor %} 
+            </ul> 
+            {% else %}
+                <span class="prioritary-translation">{{ message.valid_entry.msgstr }}</span>
+            {% endif %}
+            <span class="hide ajax-notify ajax-success"> 
+                <img src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-yes.gif" alt="{% trans "Yes" %}" /> {% trans "Updated!" %} 
+            </span> 
+            <span class="hide ajax-notify ajax-error"> 
+                <img src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-no.gif" alt="{% trans "No" %}" /> {% trans "Error updating" %} 
+            </span> 
+    </p> 
+    <p> 
+        {% if translation_plural %}
+            {% trans "Update prioritary catalog with the text from the input boxes?" %}
+        {% else %}
+            {% trans "Update prioritary catalog with the text from the input box?" %}
+        {% endif %}
+        <input type="hidden" class="valid-catalog" name="valid_catalog" value="{{ message.valid_catalog.fpath }}" /> 
+        <input type="hidden" class="entry-id" name="entry_id" value="{{ message.msgid }}" /> 
+        <input type="button" class="update-by-ajax" name="update_prioritary" value="{% trans "Yes, update" %}" />
+    </p> 
+{% endif %} 
