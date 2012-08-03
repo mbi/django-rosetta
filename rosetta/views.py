@@ -383,12 +383,13 @@ def do_restart(request, noresponse=False):
 
 
 def update_current_catalogue(request):
-    pofile = request.session.get('rosetta_i18n_pofile', None)
-    pofilepath = request.session.get('rosetta_i18n_fn', None)
-    if not pofile or pofilepath:
+    storage = get_storage(request)
+    po_file_path = storage.get('rosetta_i18n_fn', None)
+    po_file = storage.get('rosetta_i18n_pofile', None) or pofile(po_file_path)
+    if not po_file or not po_file_path:
         request.user.message_set.create(message=ugettext("There is not a current catalogue"))
         return HttpResponseRedirect(reverse('rosetta-pick-file'))
-    return _update_catalogue(request, pofile, pofilepath)
+    return _update_catalogue(request, po_file, po_file_path)
 update_current_catalogue = never_cache(update_current_catalogue)
 update_current_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_current_catalogue)
 
@@ -399,23 +400,23 @@ update_catalogue = never_cache(update_catalogue)
 update_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_catalogue)
 
 
-def _update_catalogue(request, pofile=None, pofilepath=None):
+def _update_catalogue(request, po_file=None, po_file_path=None):
+    storage = get_storage(request)
     data = None
     files = None
     if request.method == 'POST':
         data = request.POST
         files = request.FILES
-    form = UpdatePoForm(pofile=pofile, pofilepath=pofilepath, data=data, files=files)
+    form = UpdatePoForm(po_file=po_file, po_file_path=po_file_path, data=data, files=files)
     if form.is_valid():
         po_tmp, po_destination, priority = form.save_temporal_file()
-        request.session['rosetta_update_confirmation'] = {
+        storage.set('rosetta_update_confirmation', {
             'path_source': po_tmp.fpath,
             'path_destination': po_destination.fpath,
             'priority': priority,
-        }
+        })
         return HttpResponseRedirect(reverse('rosetta.views.update_confirmation'))
     if pofile:
-        storage = get_storage(request)
         rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
@@ -427,7 +428,8 @@ def _update_catalogue(request, pofile=None, pofilepath=None):
 
 
 def update_confirmation(request):
-    up_conf = request.session.get('rosetta_update_confirmation')
+    storage = get_storage(request)
+    up_conf = storage.get('rosetta_update_confirmation')
     priority = up_conf['priority']
     path_source = up_conf['path_source']
     po_source = pofile(path_source)
@@ -480,7 +482,6 @@ def lang_sel(request, langid, idx):
                 entry.msgstr.encode("utf8") +
                 (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
             ).hexdigest()
-
         storage.set('rosetta_i18n_pofile', po)
         try:
             os.utime(file_, None)
@@ -510,6 +511,7 @@ change_catalogue = user_passes_test(lambda user: can_translate(user), settings.L
 
 def ajax_update_translation(request):
 
+    storage = get_storage(request)
     def fix_nls(in_, out_):
         """Fixes submitted translations by filtering carriage returns and pairing
         newlines at the begging and end of the translated string with the original
@@ -555,9 +557,9 @@ def ajax_update_translation(request):
         entry.msgstr = fix_nls(entry.msgid, translation)
     if 'fuzzy' in entry.flags:
         entry.flags.remove('fuzzy')
-    transhette_i18n_write = request.session.get('transhette_i18n_write', True)
+    rosetta_i18n_write = storage.get('rosetta_i18n_write', True)
     format_errors = validate_format(po_file)
-    if transhette_i18n_write and not format_errors:
+    if rosetta_i18n_write and not format_errors:
         try:
             po_file.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (request.user.first_name,
                                                                                                  request.user.last_name,

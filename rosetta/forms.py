@@ -19,13 +19,13 @@ class UpdatePoForm(forms.Form):
         required=False,
         help_text=_('If you check it, your file overwrite the translations, in te other case only will create new entries'))
 
-    def __init__(self, pofile=None, pofilepath=None, *args, **kwargs):
+    def __init__(self, po_file=None, po_file_path=None, *args, **kwargs):
         super(UpdatePoForm, self).__init__(*args, **kwargs)
         self.fields['priority'].is_checkbox = True
         self.data_file = None
-        self.pofile = pofile
-        self.pofilepath = pofilepath
-        if not pofile:
+        self.po_file = po_file
+        self.po_file_path = po_file_path
+        if not po_file:
             pofiles_choices = [('', '-----')]
             for language in settings.LANGUAGES:
                 pos = poutil.find_pos(language[0], project_apps=True, django_apps=True, third_party_apps=True)
@@ -38,11 +38,11 @@ class UpdatePoForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(UpdatePoForm, self).clean()
-        if not self.pofilepath:
-            self.pofilepath = cleaned_data['pofile']
-        if not self.pofile:
-            self.pofile = polib.pofile(self.pofilepath)
-        if not self.errors and not self.pofile:
+        if not self.po_file_path:
+            self.po_file_path = cleaned_data['pofile']
+        if not self.po_file:
+            self.po_file = polib.pofile(self.po_file_path)
+        if not self.errors and not self.po_file:
             try:
                 tmp_file, po_tmp, po_dest_file = self._get_files_to_merge()
                 tmp_file.close()
@@ -67,7 +67,7 @@ class UpdatePoForm(forms.Form):
         tmp_file.write(self.data_file)
         tmp_file.flush()
         po_tmp = polib.pofile(temporal_filepath)
-        return (tmp_file, po_tmp, self.pofile)
+        return (tmp_file, po_tmp, self.po_file)
 
     def __unicode__(self):
         try:
