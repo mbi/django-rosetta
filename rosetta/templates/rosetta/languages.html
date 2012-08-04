@@ -4,7 +4,7 @@
 {% block pagetitle %}{{block.super}} - {% trans "Language selection" %}{% endblock %}
 
 {% block breadcumbs %}
-    <div><a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; {% trans "Language selection" %}</div>
+    <div><a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo; {% trans "Language selection" %}</div>
     {% if do_session_warn %}<p class="errornote session-warn">{% trans "Couldn't load the specified language file. This usually happens when using the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/>Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in your settings file should fix this." %}</p>{% endif %}
 {% endblock %}
 
@@ -40,7 +40,7 @@
                 <tbody>
                     {% for app,path,po in pos %}
                     <tr class="{% cycle row1,row2 %}">
-                        <td><a href="{% url rosetta-language-selection lid,forloop.counter0 %}{% if do_django %}?django{% endif %}{% if do_rosetta %}?rosetta{% endif %}">{{ app|title }}</a></td>
+                        <td><a href="{% url 'rosetta-language-selection' lid forloop.counter0 %}{% if do_django %}?django{% endif %}{% if do_rosetta %}?rosetta{% endif %}">{{ app|title }}</a></td>
                         <td class="ch-progress r">{{po.percent_translated|floatformat:2}}%</td>
                         {% with po.untranslated_entries|length as len_untranslated_entries %}
                         <td class="ch-messages r">{{po.translated_entries|length|add:len_untranslated_entries}}</td>
