@@ -5,8 +5,8 @@
     {{block.super}}
     <div id="user-tools">
         <p>
-            <span><a href="{% url rosetta-pick-file %}">{% trans "Pick another file" %}</a> / 
-            <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a></span>
+            <span><a href="{% url 'rosetta-pick-file' %}">{% trans "Pick another file" %}</a> / 
+            <a href="{% url 'rosetta-download-file' %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
     <script type="text/javascript">
@@ -18,7 +18,7 @@
 
 {% block breadcumbs %}
     <div>
-        <a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; 
+        <a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo; 
         {{ rosetta_i18n_lang_name }} &rsaquo; 
         {{ rosetta_i18n_app|title }} &rsaquo; 
         {% blocktrans with rosetta_i18n_pofile.percent_translated|floatformat:2 as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
