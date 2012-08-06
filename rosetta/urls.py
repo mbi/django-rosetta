@@ -11,4 +11,6 @@ urlpatterns = patterns('rosetta.views',
     url(r'^change/catalogue/$', 'change_catalogue', name='rosetta-change-catalogue'),
     url(r'^select/(?P<langid>[\w\-]+)/(?P<idx>\d+)/$', 'lang_sel', name='rosetta-language-selection'),
     url(r'^ajax/update/translation/$', 'ajax_update_translation', name='rosetta-ajax-update-translation'),
+    url(r'^ajax/restart/$', 'ajax_restart', name='rosetta-ajax-restart'),
+    url(r'^ajax/are_you_wakeup/$', 'ajax_is_wakeup', name='rosetta-ajax-is-wakeup'),
 )

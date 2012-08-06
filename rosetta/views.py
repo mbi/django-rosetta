@@ -20,6 +20,7 @@ from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
 import rosetta
+import subprocess
 import datetime
 import unicodedata
 import hashlib
@@ -360,13 +361,7 @@ def restart_server(request):
     Restart web server
     """
     if request.method == 'POST':
-        ## No RedHAT or similars
-        # os.system('sleep 5 && sudo apache2ctl restart &')
-        ## For RedHAT CentOS ..., see install for set the correct sudoers
-        # os.system('sleep 5 && sudo /usr/sbin/apachectl restart &')
-        ## For FastCGI with supervisord control
-        #os.system('sleep 5 && bin/restart_django.sh & ')
-        do_restart(request, noresponse=True)
+        do_restart(request)
         return HttpResponseRedirect(reverse('rosetta-home'))
     ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
     return render_to_response('rosetta/confirm_restart.html', locals(), context_instance=RequestContext(request))
@@ -375,7 +370,7 @@ restart_server = user_passes_test(lambda user: can_translate(user), settings.LOG
 restart_server = never_cache(restart_server)
 
 
-def do_restart(request, noresponse=False):
+def do_restart(request):
     """
     * "test" for a django instance (this do a touch over settings.py for reload)
     * "apache"
@@ -383,19 +378,22 @@ def do_restart(request, noresponse=False):
     * "wsgi"
     * "restart_script <script_path_name>"
     """
+    if request.is_ajax():
+        noresponse = True
+    else:
+        noresponse = False
     reload_method = getattr(settings, 'AUTO_RELOAD_METHOD', getattr(rosetta_settings, 'AUTO_RELOAD_METHOD', 'test'))
     if reload_method == 'test':
-        os.system('sleep 2 && touch settings.py &')
+        script = 'touch settings.py'
     ## No RedHAT or similars
     elif reload_method == 'apache2':
-        os.system('sleep 2 && sudo apache2ctl restart &')
+        script = 'sudo apache2ctl restart'
     ## RedHAT, CentOS
     elif reload_method == 'httpd':
-        os.system('sleep 2 && sudo service httpd restart &')
+        script = 'sudo service httpd restart'
     elif reload_method.startswith('restart_script'):
-        script = reload_method.split(" ", 1)[1]
-        os.system("sleep 2 && %s &" % script)
-    request.user.message_set.create(message=ugettext("Server restarted. Wait 10 seconds before checking translation"))
+        script = " ".join(reload_method.split(" ")[1:])
+    subprocess.call(script.split(" "))
     if noresponse:
         return
     return HttpResponseRedirect(request.environ['HTTP_REFERER'])
@@ -435,7 +433,7 @@ def _update_catalogue(request, po_file=None, po_file_path=None):
             'priority': priority,
         })
         return HttpResponseRedirect(reverse('rosetta.views.update_confirmation'))
-    if pofile:
+    if po_file:
         rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
@@ -597,6 +595,23 @@ def ajax_update_translation(request):
     json_dict = simplejson.dumps({'saved': saved,
                                   'translation': translation})
     return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_update_translation = never_cache(ajax_update_translation)
+ajax_update_translation = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_update_translation)
+
+
+def ajax_restart(request):
+    json_dict = simplejson.dumps({'restarting': True})
+    do_restart(request)
+    return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_restart = never_cache(ajax_restart)
+ajax_restart = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_restart)
+
+
+def ajax_is_wakeup(request):
+    json_dict = simplejson.dumps({'wakeup': True})
+    return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_is_wakeup = never_cache(ajax_is_wakeup)
+ajax_is_wakeup = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_is_wakeup)
 
 
 def reload_catalog_in_storage(request, file_path=None):
