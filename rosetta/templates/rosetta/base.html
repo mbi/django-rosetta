@@ -1,3 +1,4 @@
+{% load i18n %}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -18,6 +19,7 @@
         {% include 'rosetta/js/rosetta.js' %}
     //-->
     </script>
+    {% block extrahead %}{% endblock %}
 </head>
 <body>
     <div id="container">
@@ -26,9 +28,21 @@
             <div id="branding">
                 <h1 id="site-name"><a href="{% url rosetta-pick-file %}">Rosetta</a> </h1>
             </div>
+            <div id="rosetta-tools">
+                <p>
+                    <span><a href="{% url rosetta-restart-server %}">{% trans "Restart web server" %}</a> /
+                    <a href="{% url rosetta-update-catalogue %}">{% trans "Update a catalogue" %}</a>
+                    </span>
+                </p>
+            </div>
             {% endblock %}
         </div>
         <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
+        {% if messages %} 
+        <ul class="messagelist">
+            {% for message in messages %}<li>{{ message|safe }}</li>{% endfor %}
+        </ul>
+        {% endif %} 
         <div id="content" class="flex">
             {% block main %}{% endblock %}
         </div>

@@ -1,0 +1,73 @@
+{% extends "rosetta/base.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+    <script type="text/javascript">
+        (function($) {
+            $(document).ready(function(){
+                $('.restartForm').submit(function() {
+                    var wait_div = $(this).find('div.wait');
+                    var submit_div = $(this).find('div.submit-row');
+                    var success_div = $(this).find('div.success');
+                    var error_div = $(this).find('div.error');
+                    var polling_period = 5000;
+                    var checkWakeUp = function() {
+                        polling = setTimeout(checkWakeUp, polling_period);
+                        $.ajax({
+                            url: "{% url rosetta-ajax-is-wakeup %}",
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response && response.wakeup) { 
+                                    clearTimeout(polling);
+                                    clearTimeout(noresponse);
+                                    wait_div.hide();
+                                    success_div.show();
+                                }; 
+                            }
+                        });
+                    };
+                    var noResponseFunc = function() {
+                        clearTimeout(polling);
+                        wait_div.hide();
+                        error_div.show();
+                    };
+
+                    submit_div.hide();
+                    wait_div.show();
+
+                    $.ajax({
+                        url: "{% url rosetta-ajax-restart %}",
+                    });
+                    var polling = setTimeout(checkWakeUp, 0);
+                    var noresponse = setTimeout(noResponseFunc, polling_period * 10);
+                    return false;
+                });
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+{% block breadcumbs %}
+    <div><a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; {% trans "Restart server" %}</div>
+{% endblock %}
+
+{% block main %}
+  <div>
+    <h1>{% trans "Are you sure you want to restart web server?" %}</h1>
+    <form action="." method="post" class="restartForm">
+        <div class="submit-row" style="text-align: center">
+            <input type="submit" value="{% trans "Yes, I'm sure" %}" />
+        </div>
+        <div class="wait" style="display: none;">
+            <h2>{% trans "Please wait while the server is restarting..." %}</h2>
+        </div>
+        <div class="success" style="display: none;">
+            <h2>{% trans "Server restarted successfully!" %}</h2>
+            <a href="{% url rosetta-home %}">{% trans "Return to rosetta home page" %}</a>
+        </div>
+        <div class="error" style="display: none;">
+            <h2>{% trans "The server is taking to long to respond. Probably it is down, please check!" %}</h2>
+        </div>
+    </form>
+  </div>
+{% endblock %}

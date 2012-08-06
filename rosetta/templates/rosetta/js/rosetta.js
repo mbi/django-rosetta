@@ -1,4 +1,4 @@
-{% load rosetta %}
+{% load rosetta_tags %}
 
 google.setOnLoadCallback(function() {
     $('.location a').show().toggle(function() {

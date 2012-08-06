@@ -1,12 +1,105 @@
 {% extends "rosetta/base.html" %}
-{% load rosetta i18n %}
+{% load rosetta_tags i18n %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <script type="text/javascript">
+  // <![CDATA[
+  (function($) {
+
+  $(document).ready( function() {
+      $("tr.fuzzy textarea").change(function () {
+          $(this).parent().parent().removeClass("fuzzy");
+      });
+
+      $("div.submit-row input").click(function () {
+          var not_empty_fuzzies = $("tr.fuzzy textarea").filter(function () {
+              return this.value != ""
+          });
+          if (not_empty_fuzzies.length > 0) {
+              confirmation = confirm("{% trans "Warning... There are fuzzy elements that will be translated as suggestion says. Do you want to continue?" %}");
+              if(!confirmation) {
+                  return false; // do not perform form submit
+              }
+          }
+      });
+  });
+
+  })(jQuery);
+
+  (function ($) {
+    $(document).ready(function () {
+        var ajax_url = "{% url rosetta-ajax-update-translation %}";
+        $("input.update-by-ajax").click(function() {
+                var container = $(this).parents('td.translation');
+                var catalog = container.find('input.valid-catalog').val();
+                var textareas = container.find('textarea');
+                var has_translation = false;
+                var multiple = false;
+                if (!textareas) return;
+                if (textareas.length > 1) {
+                    translation = "";
+                    textareas.each(function() {
+                        key = $(this).attr('name').split('_')[2];
+                        translation += "&translation_" + key + "=" + $(this).val();
+                        if(has_translation || $(this).val()) {
+                            has_translation = true;
+                        }
+                    });
+                    multiple = true;
+                } else {
+                    translation = "&translation=" + textareas.val();
+                    if (textareas.val()) {
+                        has_translation = true;
+                    }
+                }
+                if (!has_translation) {
+                    alert("{% trans 'Please write a translation in the text area'%}")
+                    return false;
+                }
+                msgid = container.find('input.entry-id').val();
+                $.ajax({
+                    data: "catalog=" + catalog + translation + '&msgid=' + msgid,
+                    url: ajax_url,
+                    type: "GET",
+                    async: true,
+                    dataType: "json",
+                    success: function(json_data, textstatus) {
+                        if (json_data.saved) {
+                            if (multiple) {
+                                for (var item in json_data.translation) {
+                                    container.find('span.prioritary-translation-'+item).text(json_data.translation[item]);
+                                }
+                            } else {
+                                container.find('span.prioritary-translation').text(json_data.translation);
+                            }
+                            container.find('.ajax-success').show();
+                            container.find('.ajax-error').hide();
+                        } else {
+                            container.find('.ajax-error').show();
+                            container.find('.ajax-success').hide();
+                        }
+                    },
+                    error: function() {
+                        container.find('.ajax-error').show();
+                        container.find('.ajax-success').hide();
+                    }});
+            });
+        });
+    })(jQuery);
+
+  // ]]>
+  </script>
+{% endblock %}
+
 
 {% block header %}
     {{block.super}}
     <div id="user-tools">
         <p>
             <span><a href="{% url rosetta-pick-file %}">{% trans "Pick another file" %}</a> / 
-            <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a></span>
+            <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a> /
+            <a href="{% url rosetta-current-update-catalogue %}">{% trans "Update current catalogue" %}</a></span>
         </p>
     </div>
     <script type="text/javascript">
@@ -72,7 +165,7 @@
                 </thead>
                 <tbody>
                     {% for message in rosetta_messages %}
-                    <tr class="{% cycle row1,row2 %}">
+                    <tr class="{% cycle row1,row2 %} {% for flag in message.flags %}{{ flag }} {% endfor %}{% if not message.is_valid %} novalid{% endif %}">
                         {% if message.msgid_plural %}
                             <td class="original plural">
                                 <div class="plural-container">
@@ -94,6 +187,9 @@
                                     <label for="m_{{message.md5hash}}_{{k}}">{{k}}:</label>
                                     <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" id="m_{{message.md5hash}}_{{k}}" name="m_{{message.md5hash}}_{{k}}" tabindex="{% increment tab_idx %}">{{msgstr}}</textarea>
                                 {% endfor %}
+                                {% with 1 as translation_plural %}
+                                    {% include "rosetta/inc.invalid_message.html" %}
+                                {% endwith %}
                             </td>
                         {% else %}
                             <td class="original">
@@ -110,6 +206,7 @@
                             <td class="translation">
                                 <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" name="m_{{message.md5hash}}" tabindex="{% increment tab_idx %}">{{message.msgstr}}</textarea>
                                 {% if ENABLE_TRANSLATION_SUGGESTIONS %}<a href="#" class="suggest">{% trans "suggest" %}</a>{% endif %}
+                                {% include "rosetta/inc.invalid_message.html" %}
                             </td>
                         {% endif %}
                             <td class="c">
@@ -133,8 +230,9 @@
                         <input type="hidden" name="query" value="{{query}}"  />
                     {% endif %}
                     <input type="submit" class="default" name="_next" value="{% trans "Save and translate next block" %}" tabindex="{% increment tab_idx %}"/>
-                    
-                    
+                    {% for lid, language, position in languages_to_catalogue %}
+                        <a href="{% url rosetta-language-selection lid,position %}{{ query_arg }}">{% trans "Continue in" %} {{ language }}</a>
+                    {% endfor %}
                     {% if needs_pagination %}
                     {% trans "Skip to page:" %}
                     {% for i in page_range %}

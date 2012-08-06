@@ -2,19 +2,26 @@ from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.contrib.admin.util import unquote
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import simplejson
 from django.utils.encoding import smart_unicode, iri_to_uri
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
+from rosetta.forms import UpdatePoForm
 from rosetta.polib import pofile
-from rosetta.poutil import find_pos, pagination_range
+from rosetta.poutil import (find_pos, pagination_range, get_app_name,
+                            get_differences, priority_merge, validate_format,
+                            search_msg_id_in_other_pos)
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
 import rosetta
+import subprocess
 import datetime
 import unicodedata
 import hashlib
@@ -208,6 +215,7 @@ def home(request):
             return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
 
         rosetta_messages = paginator.page(page).object_list
+        rosetta_messages = search_msg_id_in_other_pos(rosetta_messages, rosetta_i18n_lang_code, rosetta_i18n_pofile)
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
 
             main_language = None
@@ -242,7 +250,26 @@ def home(request):
         if storage.has('rosetta_last_save_error'):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
-
+        rosetta_i18n_catalog_filter = storage.get('rosetta_i18n_catalog_filter', 'project')
+        third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
+        django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
+        project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
+        languages_to_catalogue = []
+        for language in settings.LANGUAGES:
+            if rosetta_i18n_lang_code == language[0]:
+                continue
+            pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
+            position = None
+            for i in xrange(len(pos)):
+                pos_split = pos[i].split(os.path.sep)
+                try:
+                    if pos_split[-5] == rosetta_i18n_app and rosetta_i18n_fn.split(os.path.sep)[-1] == pos_split[-1]:
+                        position = i
+                        break
+                except IndexError:
+                    pass
+            if position is not None:
+                languages_to_catalogue.append((language[0], _(language[1]), position))
         return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)
@@ -330,9 +357,121 @@ list_languages = never_cache(list_languages)
 list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
 
 
-def get_app_name(path):
-    app = path.split("/locale")[0].split("/")[-1]
-    return app
+def restart_server(request):
+    """
+    Restart web server
+    """
+    if request.method == 'POST':
+        do_restart(request)
+        return HttpResponseRedirect(reverse('rosetta-home'))
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/confirm_restart.html', locals(), context_instance=RequestContext(request))
+
+restart_server = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(restart_server)
+restart_server = never_cache(restart_server)
+
+
+def do_restart(request):
+    """
+    * "test" for a django instance (this do a touch over settings.py for reload)
+    * "apache"
+    * "httpd"
+    * "wsgi"
+    * "restart_script <script_path_name>"
+    """
+    if request.is_ajax():
+        noresponse = True
+    else:
+        noresponse = False
+    reload_method = getattr(settings, 'AUTO_RELOAD_METHOD', getattr(rosetta_settings, 'AUTO_RELOAD_METHOD', 'test'))
+    if reload_method == 'test':
+        script = 'touch settings.py'
+    ## No RedHAT or similars
+    elif reload_method == 'apache2':
+        script = 'sudo apache2ctl restart'
+    ## RedHAT, CentOS
+    elif reload_method == 'httpd':
+        script = 'sudo service httpd restart'
+    elif reload_method.startswith('restart_script'):
+        script = " ".join(reload_method.split(" ")[1:])
+    subprocess.call(script.split(" "))
+    if noresponse:
+        return
+    return HttpResponseRedirect(request.environ['HTTP_REFERER'])
+
+
+def update_current_catalogue(request):
+    storage = get_storage(request)
+    po_file_path = storage.get('rosetta_i18n_fn', None)
+    po_file = storage.get('rosetta_i18n_pofile', None) or pofile(po_file_path)
+    if not po_file or not po_file_path:
+        request.user.message_set.create(message=ugettext("There is not a current catalogue"))
+        return HttpResponseRedirect(reverse('rosetta-pick-file'))
+    return _update_catalogue(request, po_file, po_file_path)
+update_current_catalogue = never_cache(update_current_catalogue)
+update_current_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_current_catalogue)
+
+
+def update_catalogue(request):
+    return _update_catalogue(request)
+update_catalogue = never_cache(update_catalogue)
+update_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_catalogue)
+
+
+def _update_catalogue(request, po_file=None, po_file_path=None):
+    storage = get_storage(request)
+    data = None
+    files = None
+    if request.method == 'POST':
+        data = request.POST
+        files = request.FILES
+    form = UpdatePoForm(po_file=po_file, po_file_path=po_file_path, data=data, files=files)
+    if form.is_valid():
+        po_tmp, po_destination, priority = form.save_temporal_file()
+        storage.set('rosetta_update_confirmation', {
+            'path_source': po_tmp.fpath,
+            'path_destination': po_destination.fpath,
+            'priority': priority,
+        })
+        return HttpResponseRedirect(reverse('rosetta.views.update_confirmation'))
+    if po_file:
+        rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
+        rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
+        rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
+        rosetta_i18n_app = get_app_name(rosetta_i18n_fn)
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/update_file.html',
+                              locals(),
+                              context_instance=RequestContext(request))
+
+
+def update_confirmation(request):
+    storage = get_storage(request)
+    up_conf = storage.get('rosetta_update_confirmation')
+    priority = up_conf['priority']
+    path_source = up_conf['path_source']
+    po_source = pofile(path_source)
+    path_destination = up_conf['path_destination']
+    po_destination = pofile(path_destination)
+
+    if request.method == 'POST':
+        priority = up_conf['priority']
+        priority_merge(po_destination, po_source, priority=priority)
+        redirect_to = reverse('rosetta.views.home')
+        return HttpResponseRedirect(redirect_to)
+    news_entries, changes_entries = get_differences(po_destination,
+                                                    po_source, priority)
+    storage = get_storage(request)
+    rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
+    rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
+    rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
+    rosetta_i18n_app = get_app_name(path_destination)
+    ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
+    return render_to_response('rosetta/update_confirmation.html',
+                              locals(),
+                              context_instance=RequestContext(request))
+update_confirmation = never_cache(update_confirmation)
+update_confirmation = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(update_confirmation)
 
 
 def lang_sel(request, langid, idx):
@@ -361,7 +500,6 @@ def lang_sel(request, langid, idx):
                 entry.msgstr.encode("utf8") +
                 (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
             ).hexdigest()
-
         storage.set('rosetta_i18n_pofile', po)
         try:
             os.utime(file_, None)
@@ -372,6 +510,122 @@ def lang_sel(request, langid, idx):
         return HttpResponseRedirect(reverse('rosetta-home'))
 lang_sel = never_cache(lang_sel)
 lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
+
+
+def change_catalogue(request):
+    new_catalog = request.GET.get('catalog', None)
+    if not new_catalog:
+        return HttpResponseRedirect(reverse('rosetta-home'))
+    reload_catalog_in_storage(request, file_path=unquote(new_catalog))
+    entry_id = request.GET.get('entry_id', None)
+    if entry_id:
+        query_arg = '?query=%s' % entry_id
+    else:
+        query_arg = ''
+    return HttpResponseRedirect(reverse('rosetta-home') + query_arg)
+change_catalogue = never_cache(change_catalogue)
+change_catalogue = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(change_catalogue)
+
+
+def ajax_update_translation(request):
+
+    storage = get_storage(request)
+    def fix_nls(in_, out_):
+        """Fixes submitted translations by filtering carriage returns and pairing
+        newlines at the begging and end of the translated string with the original
+        """
+        if 0 == len(in_) or 0 == len(out_):
+            return out_
+
+        if "\r" in out_ and "\r" not in in_:
+            out_ = out_.replace("\r", '')
+
+        if "\n" == in_[0] and "\n" != out_[0]:
+            out_ = "\n" + out_
+        elif "\n" != in_[0] and "\n" == out_[0]:
+            out_ = out_.lstrip()
+        if "\n" == in_[-1] and "\n" != out_[-1]:
+            out_ = out_ + "\n"
+        elif "\n" != in_[-1] and "\n" == out_[-1]:
+            out_ = out_.rstrip()
+        return out_
+    catalog = request.GET.get('catalog', None)
+    translation = request.GET.get('translation', None)
+    if not translation:
+        translation = {}
+        for key, value in request.GET.items():
+            if key.startswith('translation_'):
+                translation[key.replace('translation_', '')] = value
+    msgid = request.GET.get('msgid', None)
+    try:
+        po_file = pofile(catalog)
+        entry = po_file.find(msgid)
+    except:
+        po_file = None
+        entry = None
+    if not catalog or not translation or not msgid\
+       or not po_file or not entry:
+        raise Http404
+
+    saved = False
+    if isinstance(translation, dict):
+        for key, item in translation.items():
+            entry.msgstr_plural[key] = fix_nls(entry.msgid_plural, item)
+    else:
+        entry.msgstr = fix_nls(entry.msgid, translation)
+    if 'fuzzy' in entry.flags:
+        entry.flags.remove('fuzzy')
+    rosetta_i18n_write = storage.get('rosetta_i18n_write', True)
+    format_errors = validate_format(po_file)
+    if rosetta_i18n_write and not format_errors:
+        try:
+            po_file.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (request.user.first_name,
+                                                                                                 request.user.last_name,
+                                                                                                 request.user.email)).encode('ascii', 'ignore')
+            po_file.metadata['X-Translated-Using'] = str("django-rosetta %s" % rosetta.get_version(False))
+            po_file.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
+        except UnicodeDecodeError:
+            pass
+        try:
+            po_file.save()
+            po_file.save_as_mofile(po_file.fpath.replace('.po', '.mo'))
+            saved = True
+        except:
+            pass
+
+    json_dict = simplejson.dumps({'saved': saved,
+                                  'translation': translation})
+    return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_update_translation = never_cache(ajax_update_translation)
+ajax_update_translation = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_update_translation)
+
+
+def ajax_restart(request):
+    json_dict = simplejson.dumps({'restarting': True})
+    do_restart(request)
+    return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_restart = never_cache(ajax_restart)
+ajax_restart = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_restart)
+
+
+def ajax_is_wakeup(request):
+    json_dict = simplejson.dumps({'wakeup': True})
+    return HttpResponse(json_dict, mimetype='text/javascript')
+ajax_is_wakeup = never_cache(ajax_is_wakeup)
+ajax_is_wakeup = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ajax_is_wakeup)
+
+
+def reload_catalog_in_storage(request, file_path=None):
+    """ Reload rosetta catalog in storage """
+    storage = get_storage(request)
+    if file_path is None:
+        file_path = storage.get("rosetta_i18n_fn")
+    po = pofile(file_path)
+    for i in range(len(po)):
+        po[i].id = i
+    storage.set('rosetta_i18n_fn', file_path)
+    storage.set('rosetta_i18n_pofile', po)
+    storage.set('rosetta_i18n_mtime', os.stat(file_path)[-2])
 
 
 def can_translate(user):
@@ -388,4 +642,3 @@ def can_translate(user):
             return translators in user.groups.all()
         except Group.DoesNotExist:
             return False
-

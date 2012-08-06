@@ -1,0 +1,23 @@
+{% extends "rosetta/base.html" %}
+{% load i18n %}
+
+{% block breadcumbs %}
+    <div>
+        <a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo;
+        {% if rosetta_i18n_lang_name and rosetta_i18n_app %}
+            {{ rosetta_i18n_lang_name }} &rsaquo; 
+            {{ rosetta_i18n_app|title }} &rsaquo; 
+        {% endif %}
+        {% trans "Update file" %}
+    </div>
+{% endblock %}
+
+
+{% block main %}
+    <form action="." method="POST" enctype="multipart/form-data">
+        {{ form }}
+        <div class="submit-row">
+            <input type="submit" name="_save" class="default" value="{% trans "Update File" %}"/>
+        </div>
+    </form>
+{% endblock %}

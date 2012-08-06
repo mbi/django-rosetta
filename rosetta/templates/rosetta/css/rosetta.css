@@ -1,4 +1,6 @@
+#user-tools { padding-bottom: 0px;}
 #user-tools p span { margin-left:2em; }
+#rosetta-tools { float: right; font-size: 11px; padding-right: 10px;}
 table{width:100%;}
 td.translation label {font-size: 95%;}
 td.translation textarea, td.original { font-size:110%;}
@@ -34,3 +36,9 @@ div.module {margin-bottom: 20px;}
 #toolbar #translate-all { float:right}
 #toolbar form { float:left; }
 #changelist table thead th { padding: 2px 5px; }
+.fuzzy { background:#FFFFB0 none repeat scroll 0 0;}
+.novalid { background:#FFB0B0 none repeat scroll 0 0;}
+.hide { display: none; }
+.ajax-notify { color: green; margin-left: 10px; }
+.ajax-error { color: red; }
+pre { display: inline; }
