@@ -3,11 +3,16 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 import re
 from django.template import Node
-from django.utils.encoding import smart_str, smart_unicode
-from django.template.defaultfilters import stringfilter
+from django.template import TemplateSyntaxError
+from django.utils.encoding import smart_unicode
+from django.template.defaulttags import IfNode
+
+from rosetta.views import can_translate
+
 
 register = template.Library()
 rx = re.compile(r'(%(\([^\s\)]*\))?[sd])')
+
 
 def format_message(message):
     return mark_safe(rx.sub('<code>\\1</code>', escape(message).replace(r'\n','<br />\n')))
@@ -74,3 +79,39 @@ def rosetta_csrf_token(parser, token):
     except ImportError:
         return RosettaCsrfTokenPlaceholder()
 rosetta_csrf_token=register.tag(rosetta_csrf_token)
+
+
+class IfCanAccessRosetta(template.Node):
+
+    def __init__(self, if_node, else_node):
+        self.if_node = if_node
+        self.else_node = else_node
+
+    def __repr__(self):
+        return '<IfNode>'
+
+    def render(self, context):
+        if self.check(context):
+            return self.if_node.render(context)
+        else:
+            return self.else_node.render(context)
+
+    def check(self, context):
+        user = template.Variable('user').resolve(context)
+        return can_translate(user)
+
+
+def if_can_access_rosetta(parser, token):
+    bits = list(token.split_contents())
+    if len(bits) != 1:
+        raise TemplateSyntaxError('%r takes no arguments' % bits[0])
+    end_tag = 'end' + bits[0]
+    node_if = parser.parse(('else', end_tag))
+    token = parser.next_token()
+    if token.contents == 'else':
+        node_else = parser.parse((end_tag, ))
+        parser.delete_first_token()
+    else:
+        node_else = template.NodeList()
+    return IfCanAccessRosetta(node_if, node_else)
+if_can_access_rosetta = register.tag(if_can_access_rosetta)
