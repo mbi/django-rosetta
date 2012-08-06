@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-06 14:38+0200\n"
+"POT-Creation-Date: 2012-08-06 15:02+0200\n"
 "PO-Revision-Date: 2008-11-30 12:12\n"
 "Last-Translator: <antonio.mele@django.es>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 "Si tu chequeas este campo, tu archivo sobreescribirá las traducciones, en "
 "otro caso solo se crearán nuevas entradas"
 
-#: views.py:407
+#: views.py:408
 msgid "There is not a current catalogue"
 msgstr "No hay un catálogo actual"
 
@@ -83,7 +83,7 @@ msgstr ""
 "¡por favor compruebelo!"
 
 #: templates/rosetta/inc.invalid_message.html:5
-#: templates/rosetta/inc.invalid_message.html:26
+#: templates/rosetta/inc.invalid_message.html:38
 msgid "No"
 msgstr ""
 
@@ -95,28 +95,33 @@ msgstr "Hay un catálogo más prioritario"
 msgid "Prioritary translation:"
 msgstr "Traducción prioritaria:"
 
-#: templates/rosetta/inc.invalid_message.html:23
+#: templates/rosetta/inc.invalid_message.html:19
+#: templates/rosetta/inc.invalid_message.html:30
+msgid "Empty"
+msgstr "Vacío"
+
+#: templates/rosetta/inc.invalid_message.html:35
 msgid "Yes"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:23
+#: templates/rosetta/inc.invalid_message.html:35
 msgid "Updated!"
 msgstr "¡Actualizado!"
 
-#: templates/rosetta/inc.invalid_message.html:26
+#: templates/rosetta/inc.invalid_message.html:38
 msgid "Error updating"
 msgstr "Error actualizando"
 
-#: templates/rosetta/inc.invalid_message.html:31
+#: templates/rosetta/inc.invalid_message.html:43
 msgid "Update prioritary catalog with the text from the input boxes?"
 msgstr ""
 "¿Actualiza el catálogo prioritario con el texto de la cajas de entrada?"
 
-#: templates/rosetta/inc.invalid_message.html:33
+#: templates/rosetta/inc.invalid_message.html:45
 msgid "Update prioritary catalog with the text from the input box?"
 msgstr "¿Actualiza el catálogo prioritario con el texto de la caja de entrada?"
 
-#: templates/rosetta/inc.invalid_message.html:37
+#: templates/rosetta/inc.invalid_message.html:49
 msgid "Yes, update"
 msgstr "Si, actualiza"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-06 14:38+0200\n"
+"POT-Creation-Date: 2012-08-06 15:02+0200\n"
 "PO-Revision-Date: 2008-09-22 11:02\n"
 "Last-Translator: Admin Admin <admin@admin.com>\n"
 "Language-Team: French <LL@li.org>\n"
@@ -30,7 +30,7 @@ msgid ""
 "only will create new entries"
 msgstr ""
 
-#: views.py:407
+#: views.py:408
 msgid "There is not a current catalogue"
 msgstr ""
 
@@ -79,7 +79,7 @@ msgid ""
 msgstr ""
 
 #: templates/rosetta/inc.invalid_message.html:5
-#: templates/rosetta/inc.invalid_message.html:26
+#: templates/rosetta/inc.invalid_message.html:38
 msgid "No"
 msgstr ""
 
@@ -91,27 +91,32 @@ msgstr ""
 msgid "Prioritary translation:"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:23
+#: templates/rosetta/inc.invalid_message.html:19
+#: templates/rosetta/inc.invalid_message.html:30
+msgid "Empty"
+msgstr ""
+
+#: templates/rosetta/inc.invalid_message.html:35
 msgid "Yes"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:23
+#: templates/rosetta/inc.invalid_message.html:35
 msgid "Updated!"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:26
+#: templates/rosetta/inc.invalid_message.html:38
 msgid "Error updating"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:31
+#: templates/rosetta/inc.invalid_message.html:43
 msgid "Update prioritary catalog with the text from the input boxes?"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:33
+#: templates/rosetta/inc.invalid_message.html:45
 msgid "Update prioritary catalog with the text from the input box?"
 msgstr ""
 
-#: templates/rosetta/inc.invalid_message.html:37
+#: templates/rosetta/inc.invalid_message.html:49
 msgid "Yes, update"
 msgstr ""
 

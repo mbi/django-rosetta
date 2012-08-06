@@ -15,7 +15,8 @@ from rosetta.conf import settings as rosetta_settings
 from rosetta.forms import UpdatePoForm
 from rosetta.polib import pofile
 from rosetta.poutil import (find_pos, pagination_range, get_app_name,
-                            get_differences, priority_merge, validate_format)
+                            get_differences, priority_merge, validate_format,
+                            search_msg_id_in_other_pos)
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
@@ -641,26 +642,3 @@ def can_translate(user):
             return translators in user.groups.all()
         except Group.DoesNotExist:
             return False
-
-
-def search_msg_id_in_other_pos(msg_list, lang, pofile_path):
-    pofile_paths = find_pos(lang, project_apps=True, django_apps=True, third_party_apps=True)
-    pofiles = []
-    for path in pofile_paths:
-        pofiles.append(pofile(path))
-    for msg in msg_list:
-        for p in pofiles:
-            valid_entry = None
-            valid_catalog = p
-            if p.fpath == pofile_path.fpath:
-                is_valid = True
-                break
-            entry = p.find(msg.msgid)
-            if entry:
-                is_valid = False
-                valid_entry = entry
-                break
-        msg.is_valid = is_valid
-        msg.valid_catalog = valid_catalog
-        msg.valid_entry = valid_entry
-    return msg_list

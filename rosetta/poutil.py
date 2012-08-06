@@ -209,3 +209,27 @@ def validate_format(pofile):
 
     os.unlink(temp_file)
     return errors
+
+
+def search_msg_id_in_other_pos(msg_list, lang, pofile_path, project_apps=True, django_apps=True, third_party_apps=True):
+    pofile_paths = find_pos(lang, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
+    pofiles = []
+    for path in pofile_paths:
+        pofiles.append(polib.pofile(path))
+    for msg in msg_list:
+        valid_entry = valid_catalog = None
+        is_valid = True
+        for p in pofiles:
+            if p.fpath == pofile_path.fpath:
+                is_valid = True
+                break
+            entry = p.find(msg.msgid)
+            if entry:
+                is_valid = not entry.translated()
+                valid_entry = entry
+                valid_catalog = p
+                break
+        msg.is_valid = is_valid
+        msg.valid_catalog = valid_catalog
+        msg.valid_entry = valid_entry
+    return msg_list

@@ -1,6 +1,6 @@
 {% load i18n %}
 
-{% if not message.is_valid %} 
+{% if message.valid_entry and message.valid_catalog %} 
     <p> 
         <img src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-no.gif" alt="{% trans "No" %}" /> 
         <a href="{% url rosetta-change-catalogue %}?entry_id={{ message.msgid }}&catalog={{ message.valid_catalog.fpath }}">{% trans "There is a more prioritary catalog" %}</a> 
@@ -12,12 +12,24 @@
                 {% for k, msgstr in message.valid_entry.msgstr_plural.items|dictsort:"0"  %} 
                 <li> 
                     <label>{{k}}:</label> 
-                    <span class="prioritary-translation-{{ k }}">{{ message.valid_entry.msgstr }}</span> 
+                    <span class="prioritary-translation-{{ k }}">
+                        {% if msgstr %}
+                            {{ msgstr }}
+                        {% else %}
+                            <i>{% trans "Empty" %}</i>
+                        {% endif %}
+                    </span> 
                 </li> 
                 {% endfor %} 
             </ul> 
             {% else %}
-                <span class="prioritary-translation">{{ message.valid_entry.msgstr }}</span>
+                <span class="prioritary-translation">
+                    {% if message.valid_entry.msgstr %}
+                        {{ message.valid_entry.msgstr }}
+                    {% else %}
+                        <i>{% trans "Empty" %}</i>
+                    {% endif %}
+                </span>
             {% endif %}
             <span class="hide ajax-notify ajax-success"> 
                 <img src="{{ ADMIN_MEDIA_PREFIX }}img/admin/icon-yes.gif" alt="{% trans "Yes" %}" /> {% trans "Updated!" %} 
