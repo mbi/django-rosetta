@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-03 14:07+0200\n"
+"POT-Creation-Date: 2012-08-06 14:38+0200\n"
 "PO-Revision-Date: 2008-06-16 10:11+0100\n"
 "Last-Translator: Martin Mahner <martin@mahner.org>\n"
 "Language-Team: patrick lauber <patrick.lauber@divio.ch>\n"
@@ -33,11 +33,7 @@ msgid ""
 "only will create new entries"
 msgstr ""
 
-#: views.py:398
-msgid "Server restarted. Wait 10 seconds before checking translation"
-msgstr ""
-
-#: views.py:409
+#: views.py:407
 msgid "There is not a current catalogue"
 msgstr ""
 
@@ -49,23 +45,40 @@ msgstr ""
 msgid "Update a catalogue"
 msgstr ""
 
-#: templates/rosetta/confirm_restart.html:5 templates/rosetta/languages.html:7
-#: templates/rosetta/pofile.html:114
+#: templates/rosetta/confirm_restart.html:51
+#: templates/rosetta/languages.html:7 templates/rosetta/pofile.html:114
 #: templates/rosetta/update_confirmation.html:7
 #: templates/rosetta/update_file.html:6
 msgid "Home"
 msgstr "Home"
 
-#: templates/rosetta/confirm_restart.html:5
+#: templates/rosetta/confirm_restart.html:51
 msgid "Restart server"
 msgstr ""
 
-#: templates/rosetta/confirm_restart.html:10
+#: templates/rosetta/confirm_restart.html:56
 msgid "Are you sure you want to restart web server?"
 msgstr ""
 
-#: templates/rosetta/confirm_restart.html:13
+#: templates/rosetta/confirm_restart.html:59
 msgid "Yes, I'm sure"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:62
+msgid "Please wait while the server is restarting..."
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:65
+msgid "Server restarted successfully!"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:66
+msgid "Return to rosetta home page"
+msgstr ""
+
+#: templates/rosetta/confirm_restart.html:69
+msgid ""
+"The server is taking to long to respond. Probably it is down, please check!"
 msgstr ""
 
 #: templates/rosetta/inc.invalid_message.html:5
@@ -316,7 +329,7 @@ msgid "Are you sure you want to update this file?"
 msgstr ""
 
 #: templates/rosetta/update_confirmation.html:23
-msgid "Your action wil have these consequences:"
+msgid "Your action will have these consequences:"
 msgstr ""
 
 #: templates/rosetta/update_confirmation.html:26
