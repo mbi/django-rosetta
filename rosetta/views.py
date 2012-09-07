@@ -331,7 +331,10 @@ list_languages = user_passes_test(lambda user: can_translate(user), settings.LOG
 
 
 def get_app_name(path):
-    app = path.split("/locale")[0].split("/")[-1]
+    if '/locale/' in path:
+        app = path.split("/locale")[0].split("/")[-1]
+    else:
+        app = path.rsplit('/')[-4]
     return app
 
 
