@@ -395,9 +395,6 @@ def translate_text(request):
         AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
         AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-        print AZURE_CLIENT_ID
-        print AZURE_CLIENT_SECRET
-
         translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
 
         try:
@@ -407,4 +404,3 @@ def translate_text(request):
             data = { 'success' : False, 'error' : "Translation API Exception: {0}".format(e.message) }
 
     return HttpResponse(simplejson.dumps(data), mimetype='application/json')
-    
