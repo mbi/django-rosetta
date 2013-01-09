@@ -59,14 +59,26 @@ class CacheRosettaStorage(BaseRosettaStorage):
     def __init__(self, request):
         super(CacheRosettaStorage, self).__init__(request)
 
-        if 'dummycache' in settings.CACHES['default']['BACKEND'].lower():
-            raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are use the DummyCache cache backend).")
-
         if 'rosetta_cache_storage_key_prefix' in self.request.session:
             self._key_prefix = self.request.session['rosetta_cache_storage_key_prefix']
         else:
             self._key_prefix = hashlib.new('sha1', str(time.time())).hexdigest()
             self.request.session['rosetta_cache_storage_key_prefix'] = self._key_prefix
+
+        if self.request.session['rosetta_cache_storage_key_prefix'] != self._key_prefix:
+            raise ImproperlyConfigured("You can't use the CacheRosettaStorage because your Django Session storage doesn't seem to be working. The CacheRosettaStorage relies on the Django Session storage to avoid conflicts.")
+
+        # Make sure we're not using DummyCache
+        if 'dummycache' in settings.CACHES['default']['BACKEND'].lower():
+            raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are use the DummyCache cache backend).")
+
+        # Make sure the actually actually works
+        try:
+            self.set('rosetta_cache_test', 'rosetta')
+            if not self.get('rosetta_cache_test') == 'rosetta':
+                raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up, please double check your Django DATABASES setting and that the cache server is responding.")
+        finally:
+            self.delete('rosetta_cache_test')
 
     def get(self, key, default=None):
         #print ('get', self._key_prefix + key)
