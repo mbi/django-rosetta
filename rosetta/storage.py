@@ -1,5 +1,7 @@
 from django.core.cache import cache
+from django.conf import settings
 from django.utils import importlib
+from django.core.exceptions import ImproperlyConfigured
 import hashlib
 import time
 
@@ -56,6 +58,10 @@ class CacheRosettaStorage(BaseRosettaStorage):
     # so we need to per-user key prefix, which we store in the session
     def __init__(self, request):
         super(CacheRosettaStorage, self).__init__(request)
+
+        if 'dummycache' in settings.CACHES['default']['BACKEND'].lower():
+            raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are use the DummyCache cache backend).")
+
         if 'rosetta_cache_storage_key_prefix' in self.request.session:
             self._key_prefix = self.request.session['rosetta_cache_storage_key_prefix']
         else:
