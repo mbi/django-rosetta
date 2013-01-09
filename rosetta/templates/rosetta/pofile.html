@@ -1,26 +1,27 @@
 {% extends "rosetta/base.html" %}
 {% load rosetta i18n %}
+{% load url from future %}
 
 {% block header %}
     {{block.super}}
     <div id="user-tools">
         <p>
-            <span><a href="{% url rosetta-pick-file %}">{% trans "Pick another file" %}</a> / 
-            <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a></span>
+            <span><a href="{% url 'rosetta-pick-file' %}">{% trans "Pick another file" %}</a> /
+            <a href="{% url 'rosetta-download-file' %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
     <script type="text/javascript">
     </script>
-    
+
 {% endblock %}
 
 {% block pagetitle %}{{block.super}} - {{MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
 
 {% block breadcumbs %}
     <div>
-        <a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; 
-        {{ rosetta_i18n_lang_name }} &rsaquo; 
-        {{ rosetta_i18n_app|title }} &rsaquo; 
+        <a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo;
+        {{ rosetta_i18n_lang_name }} &rsaquo;
+        {{ rosetta_i18n_app|title }} &rsaquo;
         {% blocktrans with rosetta_i18n_pofile.percent_translated|floatformat:2 as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
@@ -29,7 +30,7 @@
 
 {% block main %}
     <h1>{% blocktrans  %}Translate into {{rosetta_i18n_lang_name}}{% endblocktrans %}</h1>
-    
+
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
         <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
@@ -57,7 +58,7 @@
         {% endif %}
         {% endcomment %}
         </div>
-        
+
         <form method="post" action="">
             <table>
                 <thead>
@@ -79,7 +80,7 @@
                                     <span class="part">{{message.msgid|format_message|linebreaksbr}}</span>
                                     <span class="part">{{message.msgid_plural|format_message|linebreaksbr}}</span>
                                 </div>
-                                
+
                                 {% if message.msgctxt %}
                                     <span class="context">{% trans "Context hint" %}: {{message.msgctxt|safe}}</span>
                                 {% else %}
@@ -87,7 +88,7 @@
                                     <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
                                     {% endif %}
                                 {% endif %}
-                                
+
                             </td>
                             <td class="translation">
                                 {% for k, msgstr in message.msgstr_plural.items|dictsort:"0"  %}
@@ -103,7 +104,7 @@
                                 {% else %}
                                 {% if message.comment %}
                                 <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
-                                {% endif %}                        
+                                {% endif %}
                             {% endif %}
                             </td>
                             {% if main_language %}<td class="original">{{ message.main_lang|format_message|linebreaksbr }}</td>{% endif %}
@@ -117,7 +118,7 @@
                             </td>
                             <td class="location">
                                 {% for fn,lineno in message.occurrences %}
-                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code> 
+                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
                                 {% endfor %}
                                 {% if message.occurrences|length|gt:"3" %}
                                     <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
@@ -133,8 +134,8 @@
                         <input type="hidden" name="query" value="{{query}}"  />
                     {% endif %}
                     <input type="submit" class="default" name="_next" value="{% trans "Save and translate next block" %}" tabindex="{% increment tab_idx %}"/>
-                    
-                    
+
+
                     {% if needs_pagination %}
                     {% trans "Skip to page:" %}
                     {% for i in page_range %}
@@ -143,7 +144,7 @@
                         {% else %}
                         {% ifequal i page %}
                             <span class="this-page">{{i}}</span>
-                        {% else %}    
+                        {% else %}
                             <a href="?page={{i}}{% if query %}&amp;query={{query}}{% endif %}">{{i}}</a>
                         {% endifequal %}
                         {% endifequal %}
@@ -151,12 +152,12 @@
                     {% else %}
                     {% trans "Displaying:" %}
                     {% endif %}
-                    
+
                     {% with paginator.object_list|length as hits %}
-                    <strong>{% blocktrans count rosetta_i18n_pofile|length as message_number %}{{hits}}/{{message_number}} message{% plural %}{{hits}}/{{message_number}} messages{% endblocktrans %}</strong>    
+                    <strong>{% blocktrans count rosetta_i18n_pofile|length as message_number %}{{hits}}/{{message_number}} message{% plural %}{{hits}}/{{message_number}} messages{% endblocktrans %}</strong>
                     {% endwith %}
 
-                    
+
                 </p>
             </div>
         </form>

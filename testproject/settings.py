@@ -54,4 +54,4 @@ STATIC_URL = '/static/'
 #SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 #ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
-
+SECRET_KEY = 'empty'
