@@ -1,3 +1,4 @@
+* Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
 * Actually move to the next block when submitting a lot of translations (Issue #13)
 * Add msgctxt to the entry hash to differentiate entries with context. Thanks @metalpriest (Issue #39)
 
