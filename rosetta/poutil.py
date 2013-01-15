@@ -3,13 +3,18 @@ import django
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 from django.core.cache import cache
-from django.utils import timezone
 from datetime import datetime
+try:
+    from django.utils import timezone
+except:
+    timezone = None
+
 
 try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
 
 def timestamp_with_timezone(dt=None):
     """
@@ -17,6 +22,8 @@ def timestamp_with_timezone(dt=None):
     fails, consider localtime to be UTC.
     """
     dt = dt or datetime.now()
+    if timezone is None:
+        return dt.strftime('%Y-%m-%d %H:%M%z')
     if not dt.tzinfo:
         tz = timezone.get_current_timezone()
         if not tz:
