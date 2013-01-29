@@ -37,6 +37,13 @@
         <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
         <li {% ifequal rosetta_i18n_filter 'all' %}class="active"{% endifequal %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
+
+    REF : <select onchange="javascript:window.location.href = this.value;">
+    {% for langid, langname in LANGUAGES %}
+    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url rosetta-reference-selection langid=langid %}">{{langname}}</option>
+    {% endfor %}
+    </select>
+
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
         <div id="toolbar">
         <form id="changelist-search" action="" method="post">
@@ -97,7 +104,7 @@
                             </td>
                         {% else %}
                             <td class="original">
-                                <span class="message">{{ message.msgid|format_message|linebreaksbr }}</span>
+                                <span class="message">{{ message.ref_txt|format_message|linebreaksbr }}</span>
                             {% if message.msgctxt %}
                                 <span class="context">{% trans "Context hint" %}: "{{message.msgctxt|safe}}"</span>
                                 {% else %}
