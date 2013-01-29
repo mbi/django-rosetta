@@ -3,11 +3,33 @@ import django
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 from django.core.cache import cache
+from datetime import datetime
+try:
+    from django.utils import timezone
+except:
+    timezone = None
+
 
 try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
+
+def timestamp_with_timezone(dt=None):
+    """
+    Return a timestamp with a timezone for the configured locale.  If all else
+    fails, consider localtime to be UTC.
+    """
+    dt = dt or datetime.now()
+    if timezone is None:
+        return dt.strftime('%Y-%m-%d %H:%M%z')
+    if not dt.tzinfo:
+        tz = timezone.get_current_timezone()
+        if not tz:
+            tz = timezone.utc
+        dt = dt.replace(tzinfo=timezone.get_current_timezone())
+    return dt.strftime("%Y-%m-%d %H:%M%z")
 
 
 def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False):

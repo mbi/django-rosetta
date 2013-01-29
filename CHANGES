@@ -1,3 +1,7 @@
+* Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
+* Actually move to the next block when submitting a lot of translations (Issue #13)
+* Add msgctxt to the entry hash to differentiate entries with context. Thanks @metalpriest (Issue #39)
+
 Version 0.6.8
 -------------
 * Switched to a pluggable storage backend model to increase compatibility with Django 1.4. Cache and Session-based storages are provided.

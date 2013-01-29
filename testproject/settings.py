@@ -17,6 +17,17 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+        'KEY_PREFIX': 'ROSETTA_TEST'
+    }
+}
+
+
+#CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
+
 TEST_DATABASE_CHARSET = "utf8"
 TEST_DATABASE_COLLATION = "utf8_general_ci"
 
@@ -49,12 +60,9 @@ ROOT_URLCONF = 'testproject.urls'
 
 DEBUG = True
 TEMPLATE_DEBUG = True
+
+STATIC_URL = '/static/'
 #SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 #ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11212',
-    }
-}
+SECRET_KEY = 'empty'

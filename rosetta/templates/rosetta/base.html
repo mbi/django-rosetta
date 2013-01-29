@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+<!DOCTYPE html>{% load url from future %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>{% block pagetitle %}Rosetta{% endblock %}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
     <link rel="stylesheet" href="{{ADMIN_MEDIA_PREFIX}}css/base.css" type="text/css"/>
     <link rel="stylesheet" href="{{ADMIN_MEDIA_PREFIX}}css/forms.css" type="text/css"/>
-    <link rel="stylesheet" href="{{ADMIN_MEDIA_PREFIX}}css/changelists.css" type="text/css"/>	
+    <link rel="stylesheet" href="{{ADMIN_MEDIA_PREFIX}}css/changelists.css" type="text/css"/>
     <style type="text/css" media="screen">
         {% include 'rosetta/css/rosetta.css' %}
     </style>
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script>    
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
     <script type="text/javascript">
     //<!--
         google.load("jquery", "1.3");
@@ -24,7 +24,7 @@
         <div id="header">
             {% block header %}
             <div id="branding">
-                <h1 id="site-name"><a href="{% url rosetta-pick-file %}">Rosetta</a> </h1>
+                <h1 id="site-name"><a href="{% url 'rosetta-pick-file' %}">Rosetta</a> </h1>
             </div>
             {% endblock %}
         </div>

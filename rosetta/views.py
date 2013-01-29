@@ -10,7 +10,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
-from rosetta.poutil import find_pos, pagination_range
+from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
@@ -65,7 +65,11 @@ def home(request):
         if rosetta_i18n_write:
             rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
-                entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
+                entry.md5hash = hashlib.md5(
+                    entry.msgid.encode("utf8") +
+                    entry.msgstr.encode("utf8") +
+                    (entry.msgctxt and entry.msgctxt.encode("utf8") or "") 
+                ).hexdigest()
 
         else:
             rosetta_i18n_pofile = storage.get('rosetta_i18n_pofile')
@@ -140,7 +144,7 @@ def home(request):
 
                     rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (request.user.first_name, request.user.last_name, request.user.email)).encode('ascii', 'ignore')
                     rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
-                    rosetta_i18n_pofile.metadata['PO-Revision-Date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M%z')
+                    rosetta_i18n_pofile.metadata['PO-Revision-Date'] = timestamp_with_timezone()
                 except UnicodeDecodeError:
                     pass
 
@@ -176,15 +180,11 @@ def home(request):
                 storage.set('rosetta_i18n_pofile', rosetta_i18n_pofile)
 
                 # Retain query arguments
-                query_arg = ''
-                if 'query' in request.REQUEST:
-                    query_arg = '?query=%s' % request.REQUEST.get('query')
+                query_arg = '?_next=1'
+                if 'query' in request.GET or 'query' in request.POST:
+                    query_arg += '&query=%s' % request.REQUEST.get('query')
                 if 'page' in request.GET:
-                    if query_arg:
-                        query_arg = query_arg + '&'
-                    else:
-                        query_arg = '?'
-                    query_arg = query_arg + 'page=%d' % int(request.GET.get('page'))
+                    query_arg += '&page=%d&_next=1' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
         rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
@@ -215,6 +215,14 @@ def home(request):
             page = int(request.GET.get('page'))
         else:
             page = 1
+
+        if '_next' in request.GET or '_next' in request.POST:
+            page += 1
+            if page > paginator.num_pages:
+                page = 1
+            query_arg = '?page=%d' % page
+            return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
+
         rosetta_messages = paginator.page(page).object_list
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
 
@@ -367,7 +375,11 @@ def lang_sel(request, langid, idx):
         storage.set('rosetta_i18n_fn',  file_)
         po = pofile(file_)
         for entry in po:
-            entry.md5hash = hashlib.md5(entry.msgid.encode("utf8") + entry.msgstr.encode("utf8")).hexdigest()
+            entry.md5hash = hashlib.md5(
+                entry.msgid.encode("utf8") +
+                entry.msgstr.encode("utf8") +
+                (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
+            ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)
         try:
