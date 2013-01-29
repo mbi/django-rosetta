@@ -51,7 +51,7 @@ def home(request):
     if storage.has('rosetta_i18n_fn'):
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
 
-        ref_lang = request.session.get('rosetta_i18n_ref_lang_code', 'fr')
+        ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
         ref_pofile = None
         if ref_lang != 'msgid':
             ref_fn = re.sub('/locale/[a-z]{2}/','/locale/%s/'%ref_lang, rosetta_i18n_fn)
@@ -259,8 +259,7 @@ def home(request):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
 
-        LANGUAGES = [ (langid, _(langname)) for langid,langname in settings.LANGUAGES]
-        LANGUAGES.append( ('msgid', 'MSGID') )
+        LANGUAGES = list(settings.LANGUAGES) + [('msgid', 'MSGID')]
 
         return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
     else:
@@ -393,13 +392,13 @@ lang_sel = never_cache(lang_sel)
 lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
 
 def ref_sel(request, langid):
-    ALLOWED_LANGUAGES = [l[0] for l in settings.LANGUAGES]
-    ALLOWED_LANGUAGES.append('msgid')
+    storage = get_storage(request)
+    ALLOWED_LANGUAGES = [l[0] for l in settings.LANGUAGES] + ['msgid']
 
     if langid not in ALLOWED_LANGUAGES:
         raise Http404
 
-    request.session['rosetta_i18n_ref_lang_code'] = langid
+    storage.set('rosetta_i18n_ref_lang_code', langid)
 
     return HttpResponseRedirect(reverse('rosetta-home'))
 ref_sel = never_cache(ref_sel)
