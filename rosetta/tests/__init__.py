@@ -7,7 +7,9 @@ from django.test import TestCase
 from django.test.client import Client
 from rosetta.conf import settings as rosetta_settings
 from rosetta.signals import entry_changed, post_save
-import os, shutil, django
+import os
+import shutil
+import django
 
 
 try:
@@ -20,16 +22,15 @@ except ImportError:
             return func
         return _decorator
 
+
 class RosettaTestCase(TestCase):
     urls = 'rosetta.tests.urls'
-    
-    
-    def __init__(self, *args,**kwargs):
-        super(RosettaTestCase,self).__init__(*args,**kwargs)
+
+    def __init__(self, *args, **kwargs):
+        super(RosettaTestCase, self).__init__(*args, **kwargs)
         self.curdir = os.path.dirname(__file__)
         self.dest_file = os.path.normpath(os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/django.po'))
-        self.django_version_major, self.django_version_minor = django.VERSION[0],django.VERSION[1]
-        
+        self.django_version_major, self.django_version_minor = django.VERSION[0], django.VERSION[1]
 
     def setUp(self):
         user    = User.objects.create_user('test_admin', 'test@test.com', 'test_password')
@@ -282,10 +283,10 @@ class RosettaTestCase(TestCase):
         
         # reset the original file
         shutil.move(self.dest_file+'.orig', self.dest_file)
-    
+
     def test_11_issue_80_tab_indexes(self):
-        self.client.get(reverse('rosetta-pick-file')+'?filter=third-party')
-        r = self.client.get(reverse('rosetta-language-selection', args=('xx',0,), kwargs=dict() ))
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0,), kwargs=dict()))
         r = self.client.get(reverse('rosetta-home'))
         self.assertTrue('tabindex="3"' in r.content)
 

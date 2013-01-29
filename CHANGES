@@ -1,3 +1,8 @@
+Version 0.6.6
+-------------
+* Django 1.4 support (Issue #30, #33)
+* Better handling of translation callbacks on Bing's translation API and support of composite locales (Issue #26) 
+
 Version 0.6.5
 -------------
 * Updated polib to 0.7.0

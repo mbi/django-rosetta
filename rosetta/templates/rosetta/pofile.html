@@ -49,7 +49,7 @@
         <form id="changelist-search" action="" method="post">
             <div><!-- DIV needed for valid HTML -->
                 {% rosetta_csrf_token %}
-                <label for="searchbar"><img src="{{ADMIN_MEDIA_PREFIX}}img/admin/icon_searchbox.png" alt="{% trans "Search" %}" /></label>
+                <label for="searchbar"><img src="{{ADMIN_IMAGE_DIR}}/icon_searchbox.png" alt="{% trans "Search" %}" /></label>
                 <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
                 <input type="submit" name="search" value="{% trans "Go" %}" />
             </div>
@@ -70,7 +70,7 @@
                 <thead>
                     <tr>
                         {% rosetta_csrf_token %}
-                        <th>{% trans "Original" %}</th>
+                        <th><div class="text">{% trans "Original" %}</div></th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
                         <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
