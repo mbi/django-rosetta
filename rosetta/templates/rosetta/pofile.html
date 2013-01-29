@@ -41,7 +41,7 @@
 
     REF : <select onchange="javascript:window.location.href = this.value;">
     {% for langid, langname in LANGUAGES %}
-    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url rosetta-reference-selection langid=langid %}">{{langname}}</option>
+    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
     {% endfor %}
     </select>
 
