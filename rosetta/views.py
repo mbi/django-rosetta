@@ -51,13 +51,6 @@ def home(request):
     if storage.has('rosetta_i18n_fn'):
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
 
-        ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
-        ref_pofile = None
-        if ref_lang != 'msgid':
-            ref_fn = re.sub('/locale/[a-z]{2}/','/locale/%s/'%ref_lang, rosetta_i18n_fn)
-            ref_pofile = pofile(ref_fn)
-
-
         rosetta_i18n_app = get_app_name(rosetta_i18n_fn)
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
         rosetta_i18n_lang_bidi = rosetta_i18n_lang_code.split('-')[0] in settings.LANGUAGES_BIDI
@@ -203,13 +196,23 @@ def home(request):
             else:
                 paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
 
-        for o in paginator.object_list:
-            # default
-            o.ref_txt = o.msgid
-            if ref_pofile is not None:
-                ref_entry = ref_pofile.find(o.msgid)
-                if ref_entry is not None and ref_entry.msgstr:
-                    o.ref_txt = ref_entry.msgstr
+        # We put constants in the local namespace so that they're sent to the template context
+        ENABLE_REFLANG = rosetta_settings.ENABLE_REFLANG
+        if ENABLE_REFLANG:
+            ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
+            ref_pofile = None
+            if ref_lang != 'msgid':
+                ref_fn = re.sub('/locale/[a-z]{2}/','/locale/%s/' % ref_lang, rosetta_i18n_fn)
+                ref_pofile = pofile(ref_fn)
+
+            for o in paginator.object_list:
+                # default
+                o.ref_txt = o.msgid
+                if ref_pofile is not None:
+                    ref_entry = ref_pofile.find(o.msgid)
+                    if ref_entry is not None and ref_entry.msgstr:
+                        o.ref_txt = ref_entry.msgstr
+            LANGUAGES = list(settings.LANGUAGES) + [('msgid', 'MSGID')]
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
             page = int(request.GET.get('page'))
@@ -258,8 +261,6 @@ def home(request):
         if storage.has('rosetta_last_save_error'):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
-
-        LANGUAGES = list(settings.LANGUAGES) + [('msgid', 'MSGID')]
 
         return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
     else:

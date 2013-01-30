@@ -61,6 +61,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_REQUIRES_AUTH``: Require authentication for all Rosetta views. Defaults to ``True``.
 * ``ROSETTA_POFILE_WRAP_WIDTH``: Sets the line-length of the edited PO file. Set this to ``0`` to mimic ``makemessage``'s ``--no-wrap`` option. Defaults to ``78``.
 * ``ROSETTA_STORAGE_CLASS``: See the note below on Storages. Defaults to ``rosetta.storage.CacheRosettaStorage``
+* ``ROSETTA_ENABLE_REFLANG``: See the note below on Reference Language. Defaults to ``False``.
 
 ********
 Storages
@@ -84,6 +85,18 @@ If you wish to grant editing access to other users:
  
 1. Create a 'translators' group in your admin interface
 2. Add the user you wish to grant translating rights to this group
+
+******************
+Reference Language
+******************
+
+If this option is enabled, a selector will appear on the translation page allowing you to choose
+a reference language. A reference language will allow you to display your ``msgid`` in a laguage
+that has already been translated. For example, if you already have a translation in French, a
+translator that only knows French and Spanish (but not English) could select French as a reference
+language to perform a "second hand" translation.
+
+The last row of the reference language selector, "MSGID", is to directly display ``msgid``.
 
 *****
 Usage
