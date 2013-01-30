@@ -15,7 +15,6 @@ from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
 import rosetta
-import datetime
 import unicodedata
 import hashlib
 import os
