@@ -203,7 +203,12 @@ def home(request):
             ref_pofile = None
             if ref_lang != 'msgid':
                 ref_fn = re.sub('/locale/[a-z]{2}/','/locale/%s/' % ref_lang, rosetta_i18n_fn)
-                ref_pofile = pofile(ref_fn)
+                try:
+                    ref_pofile = pofile(ref_fn)
+                except IOError:
+                    # there's a syntax error in the PO file and polib can't open it. Let's just
+                    # do nothing and thus display msgids.
+                    pass
 
             for o in paginator.object_list:
                 # default
