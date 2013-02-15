@@ -4,7 +4,6 @@ Version 0.7.0
 * Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
 * Actually move to the next block when submitting a lot of translations (Issue #13)
 * Add msgctxt to the entry hash to differentiate entries with context. Thanks @metalpriest (Issue #39)
-* Added Dutch translation. Thanks, @leonderijke
 
 Version 0.6.8
 -------------
