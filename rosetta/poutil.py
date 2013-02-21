@@ -46,7 +46,12 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     project = __import__(parts[0], {}, {}, [])
     abs_project_path = os.path.normpath(os.path.abspath(os.path.dirname(project.__file__)))
     if project_apps:
-        paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale')))
+        # for Django <= 1.3 project layouts
+        if os.path.exists(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'manage.py')))
+            paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale')))
+        # for Django > 1.4 project layouts
+        elif os.path.exists(os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(project.__file__)), 'manage.py')))
+            paths.append(os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(project.__file__)), 'locale')))
 
     # django/locale
     if django_apps:
@@ -59,6 +64,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
                     continue
             cache.set('rosetta_django_paths', django_paths, 60 * 60)
         paths = paths + django_paths
+
     # settings
     for localepath in settings.LOCALE_PATHS:
         if os.path.isdir(localepath):
