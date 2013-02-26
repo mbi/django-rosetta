@@ -1,4 +1,4 @@
-VERSION = (0, 7, 0)
+VERSION = (0, 7, '15-compat')
 
 
 def get_version(svn=False, limit=3):
