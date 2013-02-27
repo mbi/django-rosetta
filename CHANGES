@@ -1,5 +1,6 @@
 Version 0.7.0
 -------------
+* Support for Django 1.5 and HEAD, support for Python 3.
 * Upgraded bundled polib to version 1.0.3 - http://pypi.python.org/pypi/polib/1.0.3
 * Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
 * Actually move to the next block when submitting a lot of translations (Issue #13)
