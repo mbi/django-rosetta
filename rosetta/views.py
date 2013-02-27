@@ -60,7 +60,7 @@ def home(request):
                 entry.md5hash = hashlib.md5(
                     (six.text_type(entry.msgid) +
                     six.text_type(entry.msgstr) +
-                    six.text_type(entry.msgctxt and entry.msgctxt.encode("utf8") or "")).encode('utf8')
+                    six.text_type(entry.msgctxt or "")).encode('utf8')
                 ).hexdigest()
 
         else:
@@ -252,7 +252,6 @@ home = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ho
 
 def download_file(request):
     import zipfile
-    from StringIO import StringIO
     storage = get_storage(request)
     # original filename
     rosetta_i18n_fn = storage.get('rosetta_i18n_fn', None)
@@ -270,7 +269,7 @@ def download_file(request):
             offered_fn = rosetta_i18n_fn.split('/')[-1]
         po_fn = str(rosetta_i18n_fn.split('/')[-1])
         mo_fn = str(po_fn.replace('.po', '.mo'))  # not so smart, huh
-        zipdata = StringIO()
+        zipdata = six.BytesIO()
         zipf = zipfile.ZipFile(zipdata, mode="w")
         zipf.writestr(po_fn, six.text_type(rosetta_i18n_pofile).encode("utf8"))
         zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
@@ -359,7 +358,7 @@ def lang_sel(request, langid, idx):
             entry.md5hash = hashlib.new('md5',
                 (six.text_type(entry.msgid) +
                 six.text_type(entry.msgstr) +
-                six.text_type(entry.msgctxt and entry.msgctxt.encode("utf8") or "")).encode('utf8')
+                six.text_type(entry.msgctxt or "")).encode('utf8')
             ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)

@@ -120,8 +120,8 @@ class RosettaTestCase(TestCase):
         f_ = open(self.dest_file, 'rb')
         content = f_.read()
         f_.close()
-        self.assertTrue(u'Hello, world' not in content)
-        self.assertTrue(u'|| n%100>=20) ? 1 : 2)' in content)
+        self.assertTrue('Hello, world' not in six.text_type(content))
+        self.assertTrue('|| n%100>=20) ? 1 : 2)' in six.text_type(content))
         del(content)
 
         # Load the template file
@@ -144,9 +144,9 @@ class RosettaTestCase(TestCase):
         f_ = open(self.dest_file, 'rb')
         content = f_.read()
         f_.close()
-        self.assertTrue(u'Hello, world' in content)
-        self.assertTrue(u'|| n%100>=20) ? 1 : 2)' in content)
-        self.assertTrue(u'or n%100>=20) ? 1 : 2)' not in content)
+        self.assertTrue('Hello, world' in str(content))
+        self.assertTrue('|| n%100>=20) ? 1 : 2)' in str(content))
+        self.assertTrue('or n%100>=20) ? 1 : 2)' not in str(content))
         del(content)
 
     def test_6_ExcludedApps(self):
@@ -202,15 +202,15 @@ class RosettaTestCase(TestCase):
         r2 = self.client2.get(reverse('rosetta-home'))
 
         self.assertTrue('String 1' in str(r.content))
-        self.assertTrue('String 1' in r2.content)
+        self.assertTrue('String 1' in str(r2.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
         r = self.client.post(reverse('rosetta-home'), dict(m_08e4e11e2243d764fc45a5a4fba5d0f2='Hello, world', _next='_next'), follow=True)
         r2 = self.client2.get(reverse('rosetta-home'))
 
         # Client 2 reloads the home, forces a reload of the catalog,
         # the untranslated string1 is now translated
-        self.assertTrue('String 1' not in r2.content)
-        self.assertTrue('String 2' in r2.content)
+        self.assertTrue('String 1' not in str(r2.content))
+        self.assertTrue('String 2' in str(r2.content))
 
         r = self.client.get(reverse('rosetta-home') + '?filter=untranslated')
         r = self.client.get(reverse('rosetta-home'))
@@ -223,7 +223,7 @@ class RosettaTestCase(TestCase):
         # client 2 posts!
         r2 = self.client2.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client two!', _next='_next'), follow=True)
 
-        self.assertTrue('save-conflict' not in r2.content)
+        self.assertTrue('save-conflict' not in str(r2.content))
 
         # uh-oh here comes client 1
         r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world, from client one!', _next='_next'), follow=True)
@@ -238,16 +238,16 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-home') + '?filter=translated')
         self.assertTrue('save-conflict' not in str(r.content))
         r2 = self.client2.get(reverse('rosetta-home') + '?filter=translated')
-        self.assertTrue('save-conflict' not in r2.content)
+        self.assertTrue('save-conflict' not in str(r2.content))
         r = self.client.get(reverse('rosetta-home'))
         self.assertTrue('save-conflict' not in str(r.content))
         r2 = self.client2.get(reverse('rosetta-home'))
-        self.assertTrue('save-conflict' not in r2.content)
+        self.assertTrue('save-conflict' not in str(r2.content))
 
         # Both have client's two version
         self.assertTrue('Hello, world, from client two!' in str(r.content))
-        self.assertTrue('Hello, world, from client two!' in r2.content)
-        self.assertTrue('save-conflict' not in r2.content)
+        self.assertTrue('Hello, world, from client two!' in str(r2.content))
+        self.assertTrue('save-conflict' not in str(r2.content))
         self.assertTrue('save-conflict' not in str(r.content))
 
     def test_10_issue_79_num_entries(self):
@@ -486,6 +486,6 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
         r = self.client.get(reverse('rosetta-home'))
         # We have distinct hashes, even though the msgid and msgstr are identical
+        #print (r.content)
         self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
-
