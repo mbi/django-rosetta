@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import escape
 import re
 from django.template import Node
-from django.utils.encoding import smart_unicode
+import six
 
 
 register = template.Library()
@@ -60,7 +60,7 @@ class IncrNode(template.Node):
 
     def render(self, context):
         self.val += 1
-        return smart_unicode(self.val)
+        return six.text_type(self.val)
 
 
 def is_fuzzy(message):

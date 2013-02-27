@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.encoding import smart_unicode, iri_to_uri
+from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
@@ -18,6 +18,7 @@ import rosetta
 import unicodedata
 import hashlib
 import os
+import six
 
 
 def home(request):
@@ -57,9 +58,9 @@ def home(request):
             rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(
-                    entry.msgid.encode("utf8") +
-                    entry.msgstr.encode("utf8") +
-                    (entry.msgctxt and entry.msgctxt.encode("utf8") or "") 
+                    (six.text_type(entry.msgid) +
+                    six.text_type(entry.msgstr) +
+                    six.text_type(entry.msgctxt and entry.msgctxt.encode("utf8") or "")).encode('utf8')
                 ).hexdigest()
 
         else:
@@ -86,7 +87,7 @@ def home(request):
                     # polib parses .po files into unicode strings, but
                     # doesn't bother to convert plural indexes to int,
                     # so we need unicode here.
-                    plural_id = unicode(rx_plural.match(key).groups()[1])
+                    plural_id = six.text_type(rx_plural.match(key).groups()[1])
 
                 elif rx.match(key):
                     md5hash = str(rx.match(key).groups()[0])
@@ -183,7 +184,7 @@ def home(request):
         if 'query' in request.REQUEST and request.REQUEST.get('query', '').strip():
             query = request.REQUEST.get('query').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
-            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(smart_unicode(e.msgstr) + smart_unicode(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
+            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
         else:
             if rosetta_i18n_filter == 'untranslated':
                 paginator = Paginator(rosetta_i18n_pofile.untranslated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
@@ -271,7 +272,7 @@ def download_file(request):
         mo_fn = str(po_fn.replace('.po', '.mo'))  # not so smart, huh
         zipdata = StringIO()
         zipf = zipfile.ZipFile(zipdata, mode="w")
-        zipf.writestr(po_fn, unicode(rosetta_i18n_pofile).encode("utf8"))
+        zipf.writestr(po_fn, six.text_type(rosetta_i18n_pofile).encode("utf8"))
         zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
         zipf.close()
         zipdata.seek(0)
@@ -351,14 +352,14 @@ def lang_sel(request, langid, idx):
         file_ = find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)[int(idx)]
 
         storage.set('rosetta_i18n_lang_code', langid)
-        storage.set('rosetta_i18n_lang_name', unicode([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
+        storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
         storage.set('rosetta_i18n_fn',  file_)
         po = pofile(file_)
         for entry in po:
-            entry.md5hash = hashlib.md5(
-                entry.msgid.encode("utf8") +
-                entry.msgstr.encode("utf8") +
-                (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
+            entry.md5hash = hashlib.new('md5',
+                (six.text_type(entry.msgid) +
+                six.text_type(entry.msgstr) +
+                six.text_type(entry.msgctxt and entry.msgctxt.encode("utf8") or "")).encode('utf8')
             ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)
