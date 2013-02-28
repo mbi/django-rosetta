@@ -20,7 +20,7 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.3 or later
+Rosetta requires Django 1.3, 1.4 or 1.5. When running with Django 1.5, Python 3.x is supported.
 
 ************
 Installation
