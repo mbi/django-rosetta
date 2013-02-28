@@ -337,9 +337,14 @@ def list_languages(request, do_session_warn=False):
     except AttributeError:
         ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
 
-    version = rosetta.get_version(True)
     do_session_warn = do_session_warn and 'SessionRosettaStorage' in rosetta_settings.STORAGE_CLASS and 'signed_cookies' in settings.SESSION_ENGINE
-    return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))
+    return render_to_response('rosetta/languages.html', dict(
+        version=rosetta.get_version(True),
+        ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
+        do_session_warn=do_session_warn,
+        languages=languages,
+        has_pos=has_pos
+    ), context_instance=RequestContext(request))
 list_languages = never_cache(list_languages)
 list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
 
