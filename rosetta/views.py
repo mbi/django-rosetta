@@ -21,6 +21,8 @@ import os
 import six
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def home(request):
     """
     Displays a list of messages to be translated
@@ -261,10 +263,10 @@ def home(request):
         ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)
-home = never_cache(home)
-home = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(home)
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def download_file(request):
     import zipfile
     storage = get_storage(request)
@@ -298,10 +300,10 @@ def download_file(request):
 
     except Exception:
         return HttpResponseRedirect(reverse('rosetta-home'))
-download_file = never_cache(download_file)
-download_file = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(download_file)
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def list_languages(request, do_session_warn=False):
     """
     Lists the languages for the current project, the gettext catalog files
@@ -337,6 +339,7 @@ def list_languages(request, do_session_warn=False):
     except AttributeError:
         ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
     do_session_warn = do_session_warn and 'SessionRosettaStorage' in rosetta_settings.STORAGE_CLASS and 'signed_cookies' in settings.SESSION_ENGINE
+
     return render_to_response('rosetta/languages.html', dict(
         version=rosetta.get_version(True),
         ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
@@ -344,8 +347,6 @@ def list_languages(request, do_session_warn=False):
         languages=languages,
         has_pos=has_pos
     ), context_instance=RequestContext(request))
-list_languages = never_cache(list_languages)
-list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
 
 
 def get_app_name(path):
@@ -353,6 +354,8 @@ def get_app_name(path):
     return app
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def lang_sel(request, langid, idx):
     """
     Selects a file to be translated
@@ -388,8 +391,6 @@ def lang_sel(request, langid, idx):
             storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
-lang_sel = never_cache(lang_sel)
-lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
 
 
 def can_translate(user):
