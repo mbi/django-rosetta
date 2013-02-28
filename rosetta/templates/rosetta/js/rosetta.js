@@ -7,16 +7,16 @@ google.setOnLoadCallback(function() {
         $('.hide', $(this).parent()).hide();
     });
 
-{% if ENABLE_TRANSLATION_SUGGESTIONS and BING_APP_ID %}    
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.BING_APP_ID %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
         var str = a.html();
         var orig = $('.original .message', a.parents('tr')).html();
         var trans=$('textarea',a.parent());
-        var sourceLang = '{{ MESSAGES_SOURCE_LANGUAGE_CODE }}';
+        var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
         var destLang = '{{ rosetta_i18n_lang_code }}';
-        var app_id = '{{ BING_APP_ID }}';
+        var app_id = '{{ rosetta_settings.BING_APP_ID }}';
         var apiUrl = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate";
 
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
@@ -50,7 +50,7 @@ google.setOnLoadCallback(function() {
             $($('.part',td).get(j)).css('top',textareaY + 'px');
         });
     });
-    
+
     $('.translation textarea').blur(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
@@ -70,7 +70,7 @@ google.setOnLoadCallback(function() {
             } else {
                 if (!(origs === null && trads === null)) {
                     $(this).before(error);
-                    return false;                    
+                    return false;
                 }
             }
             return true;
@@ -78,5 +78,5 @@ google.setOnLoadCallback(function() {
     });
 
     $('.translation textarea').eq(0).focus();
-    
+
 });

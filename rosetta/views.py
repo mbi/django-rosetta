@@ -47,7 +47,7 @@ def home(request):
         return out_
 
     storage = get_storage(request)
-    version = rosetta.get_version(True)
+    query = ''
     if storage.has('rosetta_i18n_fn'):
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
         rosetta_i18n_app = get_app_name(rosetta_i18n_fn)
@@ -178,7 +178,6 @@ def home(request):
                 if 'page' in request.GET:
                     query_arg += '&page=%d&_next=1' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
-        rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
 
         if 'query' in request.REQUEST and request.REQUEST.get('query', '').strip():
@@ -208,9 +207,8 @@ def home(request):
             return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
 
         rosetta_messages = paginator.page(page).object_list
+        main_language = None
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
-
-            main_language = None
             for language in settings.LANGUAGES:
                 if language[0] == rosetta_settings.MAIN_LANGUAGE:
                     main_language = _(language[1])
@@ -219,7 +217,6 @@ def home(request):
             fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % rosetta_i18n_lang_code))
             po = pofile(fl)
 
-            main_messages = []
             for message in rosetta_messages:
                 message.main_lang = po.find(message.msgid).msgstr
 
@@ -235,15 +232,33 @@ def home(request):
         except AttributeError:
             ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
             ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
-        ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.BING_APP_ID and rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
-        BING_APP_ID = rosetta_settings.BING_APP_ID
-        MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
-        MESSAGES_SOURCE_LANGUAGE_CODE = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE
+
         if storage.has('rosetta_last_save_error'):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
+        else:
+            rosetta_last_save_error = False
 
-        return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
+        return render_to_response('rosetta/pofile.html', dict(
+            version=rosetta.get_version(True),
+            ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
+            ADMIN_IMAGE_DIR=ADMIN_IMAGE_DIR,
+            rosetta_settings=rosetta_settings,
+            rosetta_i18n_lang_name=_(storage.get('rosetta_i18n_lang_name')),
+            rosetta_i18n_lang_code=rosetta_i18n_lang_code,
+            rosetta_i18n_lang_bidi=rosetta_i18n_lang_bidi,
+            rosetta_last_save_error=rosetta_last_save_error,
+            rosetta_i18n_filter=rosetta_i18n_filter,
+            rosetta_i18n_write=rosetta_i18n_write,
+            rosetta_messages=rosetta_messages,
+            page_range=needs_pagination and page_range,
+            needs_pagination=needs_pagination,
+            main_language=main_language,
+            rosetta_i18n_app=rosetta_i18n_app,
+            page=page,
+            query=query,
+            paginator=paginator
+        ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)
 home = never_cache(home)
