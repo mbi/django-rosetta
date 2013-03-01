@@ -490,7 +490,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
 
-    def test_0_save_header_data(self):
+    def test_22_save_header_data(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
         unicode_user = User.objects.create_user('test_unicode', 'save_header_data@test.com', 'test_unicode')
@@ -524,3 +524,16 @@ class RosettaTestCase(TestCase):
         self.assertTrue('save_header_data@test.com' in content)
         self.assertTrue('aeaeae aaaaaaa aaaa uuuu' in content)
 
+    def test_23_percent_transaltion(self):
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
+
+        # Load the template file
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home') + '?filter=untranslated')
+        r = self.client.get(reverse('rosetta-home'))
+
+        self.assertTrue('Progress: 0.00%' in str(r.content))
+        r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world', _next='_next'))
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue('Progress: 25.00%' in str(r.content))

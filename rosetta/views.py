@@ -259,7 +259,8 @@ def home(request):
             rosetta_i18n_app=rosetta_i18n_app,
             page=page,
             query=query,
-            paginator=paginator
+            paginator=paginator,
+            rosetta_i18n_pofile=rosetta_i18n_pofile
         ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)

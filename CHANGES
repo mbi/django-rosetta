@@ -1,3 +1,7 @@
+Version 0.7.1
+-------------
+* Fix: value missing in context
+
 Version 0.7.0
 -------------
 * Support for Django 1.5 and HEAD, support for Python 3.
