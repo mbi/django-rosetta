@@ -92,7 +92,7 @@ Usage
 Generate a batch of files to translate
 --------------------------------------
 
-See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/dev/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
+See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.5/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
 
 Translate away!
 ---------------
