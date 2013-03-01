@@ -92,7 +92,7 @@ Usage
 Generate a batch of files to translate
 --------------------------------------
 
-See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/dev/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
+See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.5/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
 
 Translate away!
 ---------------
@@ -128,5 +128,5 @@ By default Rosetta hides its own catalog files in the file selection interface (
 Acknowledgments
 ***************
 
-* Rosetta uses the excellent `polib <http://code.google.com/p/polib/>`_ library to parse and handle gettext files.
+* Rosetta uses the excellent `polib <https://bitbucket.org/izi/polib>`_ library to parse and handle gettext files.
 
