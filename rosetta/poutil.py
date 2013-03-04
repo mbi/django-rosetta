@@ -1,9 +1,10 @@
-import os
-import django
-from django.conf import settings
-from rosetta.conf import settings as rosetta_settings
-from django.core.cache import cache
 from datetime import datetime
+from django.conf import settings
+from django.core.cache import cache
+from rosetta.conf import settings as rosetta_settings
+import django
+import os
+import six
 try:
     from django.utils import timezone
 except:
@@ -73,7 +74,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
             continue
         p = appname.rfind('.')
         if p >= 0:
-            app = getattr(__import__(appname[:p], {}, {}, [appname[p + 1:]]), appname[p + 1:])
+            app = getattr(__import__(appname[:p], {}, {}, [str(appname[p + 1:])]), appname[p + 1:])
         else:
             app = __import__(appname, {}, {}, [])
 

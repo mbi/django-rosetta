@@ -1,3 +1,7 @@
+Version 0.7.2
+-------------
+* Fix for when settings imports unicode_literals for some reason (Issue #67)
+
 Version 0.7.1
 -------------
 * Fix: value missing in context
