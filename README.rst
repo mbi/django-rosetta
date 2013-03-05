@@ -20,7 +20,7 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.3 or later
+Rosetta requires Django 1.3, 1.4 or 1.5. When running with Django 1.5, Python 3.x is supported.
 
 ************
 Installation
@@ -105,7 +105,7 @@ Usage
 Generate a batch of files to translate
 --------------------------------------
 
-See `Django's documentation on Internationalization <http://www.djangoproject.com/documentation/i18n/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
+See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.5/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
 
 Translate away!
 ---------------
@@ -141,5 +141,5 @@ By default Rosetta hides its own catalog files in the file selection interface (
 Acknowledgments
 ***************
 
-* Rosetta uses the excellent `polib <http://code.google.com/p/polib/>`_ library to parse and handle gettext files.
+* Rosetta uses the excellent `polib <https://bitbucket.org/izi/polib>`_ library to parse and handle gettext files.
 

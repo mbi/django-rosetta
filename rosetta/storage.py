@@ -4,6 +4,7 @@ from django.utils import importlib
 from django.core.exceptions import ImproperlyConfigured
 import hashlib
 import time
+import six
 
 
 class BaseRosettaStorage(object):
@@ -62,7 +63,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
         if 'rosetta_cache_storage_key_prefix' in self.request.session:
             self._key_prefix = self.request.session['rosetta_cache_storage_key_prefix']
         else:
-            self._key_prefix = hashlib.new('sha1', str(time.time())).hexdigest()
+            self._key_prefix = hashlib.new('sha1', six.text_type(time.time()).encode('utf8')).hexdigest()
             self.request.session['rosetta_cache_storage_key_prefix'] = self._key_prefix
 
         if self.request.session['rosetta_cache_storage_key_prefix'] != self._key_prefix:
@@ -86,7 +87,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
 
     def set(self, key, val):
         #print ('set', self._key_prefix + key)
-        cache.set(self._key_prefix + key, val)
+        cache.set(self._key_prefix + key, val, 86400)
 
     def has(self, key):
         #print ('has', self._key_prefix + key)

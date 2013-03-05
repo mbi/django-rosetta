@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 import django
 import os
 import sys
+
 
 SITE_ID = 1
 

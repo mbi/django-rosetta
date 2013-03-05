@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.encoding import smart_unicode, iri_to_uri
+from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 from rosetta.conf import settings as rosetta_settings
@@ -15,12 +15,14 @@ from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 import re
 import rosetta
-import datetime
 import unicodedata
 import hashlib
 import os
+import six
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def home(request):
     """
     Displays a list of messages to be translated
@@ -47,7 +49,7 @@ def home(request):
         return out_
 
     storage = get_storage(request)
-    version = rosetta.get_version(True)
+    query = ''
     if storage.has('rosetta_i18n_fn'):
         rosetta_i18n_fn = storage.get('rosetta_i18n_fn')
 
@@ -59,9 +61,9 @@ def home(request):
             rosetta_i18n_pofile = pofile(rosetta_i18n_fn, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(
-                    entry.msgid.encode("utf8") +
-                    entry.msgstr.encode("utf8") +
-                    (entry.msgctxt and entry.msgctxt.encode("utf8") or "") 
+                    (six.text_type(entry.msgid) +
+                    six.text_type(entry.msgstr) +
+                    six.text_type(entry.msgctxt or "")).encode('utf8')
                 ).hexdigest()
 
         else:
@@ -88,7 +90,7 @@ def home(request):
                     # polib parses .po files into unicode strings, but
                     # doesn't bother to convert plural indexes to int,
                     # so we need unicode here.
-                    plural_id = unicode(rx_plural.match(key).groups()[1])
+                    plural_id = six.text_type(rx_plural.match(key).groups()[1])
 
                 elif rx.match(key):
                     md5hash = str(rx.match(key).groups()[0])
@@ -179,13 +181,12 @@ def home(request):
                 if 'page' in request.GET:
                     query_arg += '&page=%d&_next=1' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
-        rosetta_i18n_lang_name = _(storage.get('rosetta_i18n_lang_name'))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
 
         if 'query' in request.REQUEST and request.REQUEST.get('query', '').strip():
             query = request.REQUEST.get('query').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
-            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(smart_unicode(e.msgstr) + smart_unicode(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
+            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
         else:
             if rosetta_i18n_filter == 'untranslated':
                 paginator = Paginator(rosetta_i18n_pofile.untranslated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
@@ -232,9 +233,8 @@ def home(request):
             return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
 
         rosetta_messages = paginator.page(page).object_list
+        main_language = None
         if rosetta_settings.MAIN_LANGUAGE and rosetta_settings.MAIN_LANGUAGE != rosetta_i18n_lang_code:
-
-            main_language = None
             for language in settings.LANGUAGES:
                 if language[0] == rosetta_settings.MAIN_LANGUAGE:
                     main_language = _(language[1])
@@ -243,7 +243,6 @@ def home(request):
             fl = ("/%s/" % rosetta_settings.MAIN_LANGUAGE).join(rosetta_i18n_fn.split("/%s/" % rosetta_i18n_lang_code))
             po = pofile(fl)
 
-            main_messages = []
             for message in rosetta_messages:
                 message.main_lang = po.find(message.msgid).msgstr
 
@@ -259,24 +258,42 @@ def home(request):
         except AttributeError:
             ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
             ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
-        ENABLE_TRANSLATION_SUGGESTIONS = rosetta_settings.BING_APP_ID and rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
-        BING_APP_ID = rosetta_settings.BING_APP_ID
-        MESSAGES_SOURCE_LANGUAGE_NAME = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME
-        MESSAGES_SOURCE_LANGUAGE_CODE = rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE
+
         if storage.has('rosetta_last_save_error'):
             storage.delete('rosetta_last_save_error')
             rosetta_last_save_error = True
+        else:
+            rosetta_last_save_error = False
 
-        return render_to_response('rosetta/pofile.html', locals(), context_instance=RequestContext(request))
+        return render_to_response('rosetta/pofile.html', dict(
+            version=rosetta.get_version(True),
+            ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
+            ADMIN_IMAGE_DIR=ADMIN_IMAGE_DIR,
+            rosetta_settings=rosetta_settings,
+            rosetta_i18n_lang_name=_(storage.get('rosetta_i18n_lang_name')),
+            rosetta_i18n_lang_code=rosetta_i18n_lang_code,
+            rosetta_i18n_lang_bidi=rosetta_i18n_lang_bidi,
+            rosetta_last_save_error=rosetta_last_save_error,
+            rosetta_i18n_filter=rosetta_i18n_filter,
+            rosetta_i18n_write=rosetta_i18n_write,
+            rosetta_messages=rosetta_messages,
+            page_range=needs_pagination and page_range,
+            needs_pagination=needs_pagination,
+            main_language=main_language,
+            rosetta_i18n_app=rosetta_i18n_app,
+            page=page,
+            query=query,
+            paginator=paginator,
+            rosetta_i18n_pofile=rosetta_i18n_pofile
+        ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)
-home = never_cache(home)
-home = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(home)
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def download_file(request):
     import zipfile
-    from StringIO import StringIO
     storage = get_storage(request)
     # original filename
     rosetta_i18n_fn = storage.get('rosetta_i18n_fn', None)
@@ -294,9 +311,9 @@ def download_file(request):
             offered_fn = rosetta_i18n_fn.split('/')[-1]
         po_fn = str(rosetta_i18n_fn.split('/')[-1])
         mo_fn = str(po_fn.replace('.po', '.mo'))  # not so smart, huh
-        zipdata = StringIO()
+        zipdata = six.BytesIO()
         zipf = zipfile.ZipFile(zipdata, mode="w")
-        zipf.writestr(po_fn, unicode(rosetta_i18n_pofile).encode("utf8"))
+        zipf.writestr(po_fn, six.text_type(rosetta_i18n_pofile).encode("utf8"))
         zipf.writestr(mo_fn, rosetta_i18n_pofile.to_binary())
         zipf.close()
         zipdata.seek(0)
@@ -308,10 +325,10 @@ def download_file(request):
 
     except Exception:
         return HttpResponseRedirect(reverse('rosetta-home'))
-download_file = never_cache(download_file)
-download_file = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(download_file)
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def list_languages(request, do_session_warn=False):
     """
     Lists the languages for the current project, the gettext catalog files
@@ -339,19 +356,22 @@ def list_languages(request, do_session_warn=False):
         languages.append(
             (language[0],
             _(language[1]),
-            [(get_app_name(l), os.path.realpath(l), pofile(l)) for l in  pos],
+            sorted([(get_app_name(l), os.path.realpath(l), pofile(l)) for l in  pos], key=lambda app: app[0]),
             )
         )
     try:
         ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
     except AttributeError:
         ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
-
-    version = rosetta.get_version(True)
     do_session_warn = do_session_warn and 'SessionRosettaStorage' in rosetta_settings.STORAGE_CLASS and 'signed_cookies' in settings.SESSION_ENGINE
-    return render_to_response('rosetta/languages.html', locals(), context_instance=RequestContext(request))
-list_languages = never_cache(list_languages)
-list_languages = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(list_languages)
+
+    return render_to_response('rosetta/languages.html', dict(
+        version=rosetta.get_version(True),
+        ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
+        do_session_warn=do_session_warn,
+        languages=languages,
+        has_pos=has_pos
+    ), context_instance=RequestContext(request))
 
 
 def get_app_name(path):
@@ -359,6 +379,8 @@ def get_app_name(path):
     return app
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def lang_sel(request, langid, idx):
     """
     Selects a file to be translated
@@ -376,14 +398,14 @@ def lang_sel(request, langid, idx):
         file_ = find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)[int(idx)]
 
         storage.set('rosetta_i18n_lang_code', langid)
-        storage.set('rosetta_i18n_lang_name', unicode([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
+        storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
         storage.set('rosetta_i18n_fn',  file_)
         po = pofile(file_)
         for entry in po:
-            entry.md5hash = hashlib.md5(
-                entry.msgid.encode("utf8") +
-                entry.msgstr.encode("utf8") +
-                (entry.msgctxt and entry.msgctxt.encode("utf8") or "")
+            entry.md5hash = hashlib.new('md5',
+                (six.text_type(entry.msgid) +
+                six.text_type(entry.msgstr) +
+                six.text_type(entry.msgctxt or "")).encode('utf8')
             ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)
@@ -394,8 +416,6 @@ def lang_sel(request, langid, idx):
             storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
-lang_sel = never_cache(lang_sel)
-lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
 
 def ref_sel(request, langid):
     storage = get_storage(request)

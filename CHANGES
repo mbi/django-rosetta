@@ -1,6 +1,20 @@
+Version 0.7.2
+-------------
+* Fix for when settings imports unicode_literals for some reason (Issue #67)
+
+Version 0.7.1
+-------------
+* Fix: value missing in context
+
+Version 0.7.0
+-------------
+* Support for Django 1.5 and HEAD, support for Python 3.
+* Upgraded bundled polib to version 1.0.3 - http://pypi.python.org/pypi/polib/1.0.3
 * Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
 * Actually move to the next block when submitting a lot of translations (Issue #13)
 * Add msgctxt to the entry hash to differentiate entries with context. Thanks @metalpriest (Issue #39)
+* Better discovery of locale files on Django 1.4+ Thanks @tijs (Issues #63, #64)
+* List apps in alphabetical order
 
 Version 0.6.8
 -------------
@@ -16,7 +30,7 @@ Version 0.6.7
 Version 0.6.6
 -------------
 * Django 1.4 support (Issue #30, #33)
-* Better handling of translation callbacks on Bing's translation API and support of composite locales (Issue #26) 
+* Better handling of translation callbacks on Bing's translation API and support of composite locales (Issue #26)
 
 Version 0.6.5
 -------------
@@ -26,7 +40,7 @@ Version 0.6.5
 
 Version 0.6.4
 -------------
-* Added ROSETTA_REQUIRES_AUTH option to grant access to non authenticated users (False by default) 
+* Added ROSETTA_REQUIRES_AUTH option to grant access to non authenticated users (False by default)
 
 Version 0.6.3
 -------------
