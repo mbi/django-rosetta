@@ -113,7 +113,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
                 filename = os.path.join(dirname, fn)
                 if os.path.isfile(filename):
                     ret.add(os.path.abspath(filename))
-    return list(ret)
+    return list(sorted(ret))
 
 
 def pagination_range(first, last, current):
