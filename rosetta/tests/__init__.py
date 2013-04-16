@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
@@ -537,3 +537,8 @@ class RosettaTestCase(TestCase):
         r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world', _next='_next'))
         r = self.client.get(reverse('rosetta-home'))
         self.assertTrue('Progress: 25.00%' in str(r.content))
+
+    def test_24_urlconf_accept_dots_and_underscores(self):
+        resolver_match = resolve("/rosetta/select/fr_FR.utf8/0/")
+        self.assertEqual(resolver_match.url_name, "rosetta-language-selection")
+        self.assertEqual(resolver_match.kwargs['langid'], 'fr_FR.utf8')
