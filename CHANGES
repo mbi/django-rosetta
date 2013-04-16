@@ -3,6 +3,7 @@ Version 0.7.2
 * Fix for when settings imports unicode_literals for some reason (Issue #67)
 * Fixed mess with app_id between pages (Issue #68, thanks @tsouvarev)
 * Added Farsi translation. Thanks, @amiraliakbari
+* Improved the permission system, allowing for more advanced permission mechanisms. Thanks, @tangentlabs
 
 Version 0.7.1
 -------------
