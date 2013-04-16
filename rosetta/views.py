@@ -13,6 +13,7 @@ from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
+from rosetta.access import can_translate
 import re
 import rosetta
 import unicodedata
@@ -392,20 +393,3 @@ def lang_sel(request, langid, idx):
             storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
-
-
-def can_translate(user):
-    if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
-        return True
-    if not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        try:
-            from django.contrib.auth.models import Group
-            translators = Group.objects.get(name='translators')
-            return translators in user.groups.all()
-        except Group.DoesNotExist:
-            return False
-
