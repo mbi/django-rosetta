@@ -198,7 +198,6 @@ def home(request):
             else:
                 paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
 
-        # We put constants in the local namespace so that they're sent to the template context
         if rosetta_settings.ENABLE_REFLANG:
             ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
             ref_pofile = None
