@@ -219,6 +219,8 @@ def home(request):
                     if ref_entry is not None and ref_entry.msgstr:
                         o.ref_txt = ref_entry.msgstr
             LANGUAGES = list(settings.LANGUAGES) + [('msgid', 'MSGID')]
+        else:
+            LANGUAGES = settings.LANGUAGES
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
             page = int(request.GET.get('page'))
