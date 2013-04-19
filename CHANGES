@@ -1,6 +1,10 @@
 Version 0.7.2
 -------------
 * Fix for when settings imports unicode_literals for some reason (Issue #67)
+* Fixed mess with app_id between pages (Issue #68, thanks @tsouvarev)
+* Added Farsi translation. Thanks, @amiraliakbari
+* Improved the permission system, allowing for more advanced permission mechanisms. Thanks, @codeinthehole and @tangentlabs
+* Fixed the ordering of apps in the language selection screen. (Issue #73, thanks @tsouvarev, @kanu and everyone else involved in tracking this one down)
 
 Version 0.7.1
 -------------

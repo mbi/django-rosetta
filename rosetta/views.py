@@ -13,6 +13,7 @@ from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
+from rosetta.access import can_translate
 import re
 import rosetta
 import unicodedata
@@ -269,6 +270,7 @@ def home(request):
             ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
             ADMIN_IMAGE_DIR=ADMIN_IMAGE_DIR,
             ENABLE_REFLANG=rosetta_settings.ENABLE_REFLANG,
+            LANGUAGES=LANGUAGES,
             rosetta_settings=rosetta_settings,
             rosetta_i18n_lang_name=_(storage.get('rosetta_i18n_lang_name')),
             rosetta_i18n_lang_code=rosetta_i18n_lang_code,
@@ -395,7 +397,7 @@ def lang_sel(request, langid, idx):
         third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
         django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
         project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
-        file_ = find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)[int(idx)]
+        file_ = sorted(find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps), key=get_app_name)[int(idx)]
 
         storage.set('rosetta_i18n_lang_code', langid)
         storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
@@ -429,20 +431,3 @@ def ref_sel(request, langid):
     return HttpResponseRedirect(reverse('rosetta-home'))
 ref_sel = never_cache(ref_sel)
 ref_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ref_sel)
-
-
-def can_translate(user):
-    if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
-        return True
-    if not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        try:
-            from django.contrib.auth.models import Group
-            translators = Group.objects.get(name='translators')
-            return translators in user.groups.all()
-        except Group.DoesNotExist:
-            return False
-
