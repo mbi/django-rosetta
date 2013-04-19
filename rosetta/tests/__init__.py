@@ -552,6 +552,21 @@ class RosettaTestCase(TestCase):
         # Restore setting to default
         settings.ROSETTA_ACCESS_CONTROL_FUNCTION = None
 
+    def test_25_reflang(self):
+        rosetta_settings.ENABLE_REFLANG = True
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue60.template')), self.dest_file)
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+
+        # Verify that there's an option to select a reflang
+        self.assertTrue('<option value="/rosetta/select-ref/xx/">dummy language</option>' in str(r.content))
+
+        r = self.client.get('/rosetta/select-ref/xx/')
+        r = self.client.get(reverse('rosetta-home'))
+        # The translated string in the test PO file ends up in the "Reference" column
+        self.assertTrue('<span class="message">translated-string1</span>' in str(r.content))
+
 
 # Stubbed access control function
 def no_access(user):
