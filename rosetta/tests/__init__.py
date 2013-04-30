@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, resolve
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
@@ -50,7 +50,7 @@ class RosettaTestCase(TestCase):
         self.client.login(username='test_admin', password='test_password')
         self.client2.login(username='test_admin2', password='test_password')
 
-        settings.LANGUAGES = (('xx', 'dummy language'),)
+        settings.LANGUAGES = (('xx', 'dummy language'), ('fr_FR.utf8', 'French (France), UTF8'))
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
@@ -317,7 +317,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('This is a text of the base template' in str(r.content))
         self.assertTrue('Context hint' in str(r.content))
 
-    def test_14_issue_87_entry_changed_signal(self):
+    def test_15_issue_87_entry_changed_signal(self):
         # copy the template file
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
@@ -341,7 +341,7 @@ class RosettaTestCase(TestCase):
 
         del(self.test_old_msgstr, self.test_new_msgstr, self.test_msg_id)
 
-    def test_15_issue_101_post_save_signal(self):
+    def test_16_issue_101_post_save_signal(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
         r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
@@ -359,7 +359,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue(self.test_sig_lang == 'xx')
         del(self.test_sig_lang)
 
-    def test_16_issue_103_post_save_signal_has_request(self):
+    def test_17_issue_103_post_save_signal_has_request(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
@@ -379,7 +379,7 @@ class RosettaTestCase(TestCase):
         del(self.test_16_has_request)
         # reset the original file
 
-    def test_17_Test_Issue_gh24(self):
+    def test_18_Test_Issue_gh24(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue24gh.template')), self.dest_file)
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
@@ -404,7 +404,7 @@ class RosettaTestCase(TestCase):
         pofile_content = open(self.dest_file, 'r').read()
         self.assertTrue('felis eu pede mollis pretium."' in pofile_content)
 
-    def test_18_Test_Issue_gh34(self):
+    def test_19_Test_Issue_gh34(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue34gh.template')), self.dest_file)
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
@@ -424,7 +424,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('msgstr[0] ""\n"\\n"\n"Foo %s\\n"' in pofile_content)
         self.assertTrue('msgstr[1] ""\n"\\n"\n"Bar %s\\n"' in pofile_content)
 
-    def test_19_Test_Issue_gh38(self):
+    def test_20_Test_Issue_gh38(self):
         if self.django_version_minor >= 4 and self.django_version_major >= 1:
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
 
@@ -467,7 +467,7 @@ class RosettaTestCase(TestCase):
 
             self.assertFalse('m_9efd113f7919952523f06e0d88da9c54' in str(r.content))
 
-    def test_20_concurrency_of_cache_backend(self):
+    def test_21_concurrency_of_cache_backend(self):
         rosetta_settings.STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue38gh.template')), self.dest_file)
 
@@ -479,7 +479,7 @@ class RosettaTestCase(TestCase):
 
         self.assertTrue(self.client.session.get('rosetta_cache_storage_key_prefix') != self.client2.session.get('rosetta_cache_storage_key_prefix'))
 
-    def test_21_Test_Issue_gh39(self):
+    def test_22_Test_Issue_gh39(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue39gh.template')), self.dest_file)
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
@@ -490,7 +490,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
 
-    def test_22_save_header_data(self):
+    def test_23_save_header_data(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
         unicode_user = User.objects.create_user('test_unicode', 'save_header_data@test.com', 'test_unicode')
@@ -524,7 +524,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('save_header_data@test.com' in content)
         self.assertTrue('aeaeae aaaaaaa aaaa uuuu' in content)
 
-    def test_23_percent_transaltion(self):
+    def test_24_percent_transaltion(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
         # Load the template file
@@ -538,7 +538,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-home'))
         self.assertTrue('Progress: 25.00%' in str(r.content))
 
-    def test_24_replace_access_control(self):
+    def test_25_replace_access_control(self):
         # Test default access control allows access
         url = reverse('rosetta-home')
         response = self.client.get(url)
@@ -551,6 +551,18 @@ class RosettaTestCase(TestCase):
 
         # Restore setting to default
         settings.ROSETTA_ACCESS_CONTROL_FUNCTION = None
+
+    def test_26_urlconf_accept_dots_and_underscores(self):
+        resolver_match = resolve("/rosetta/select/fr_FR.utf8/0/")
+        self.assertEqual(resolver_match.url_name, "rosetta-language-selection")
+        self.assertEqual(resolver_match.kwargs['langid'], 'fr_FR.utf8')
+
+    def test_27_extended_urlconf_language_code_loads_file(self):
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
+        r = self.client.get(reverse('rosetta-language-selection', args=('fr_FR.utf8', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue('French (France), UTF8' in str(r.content))
+        self.assertTrue('m_71a6479faf8712e37dd5755cd1d11804' in str(r.content))
 
 
 # Stubbed access control function

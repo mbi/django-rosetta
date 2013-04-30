@@ -96,19 +96,20 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
             paths.append(apppath)
 
     ret = set()
-    langs = (lang,)
+    langs = [lang, ]
     if u'-' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'-'))
-        langs += (u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), )
+        langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), ]
     elif u'_' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'_'))
-        langs += (u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), )
+        langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), ]
 
     paths = map(os.path.normpath, paths)
     paths = list(set(paths))
     for path in paths:
         for lang_ in langs:
             dirname = os.path.join(path, lang_, 'LC_MESSAGES')
+            #print dirname
             for fn in ('django.po', 'djangojs.po',):
                 filename = os.path.join(dirname, fn)
                 if os.path.isfile(filename):
