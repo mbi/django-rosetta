@@ -6,6 +6,7 @@ Version 0.7.2
 * Improved the permission system, allowing for more advanced permission mechanisms. Thanks, @codeinthehole and @tangentlabs
 * Fixed the ordering of apps in the language selection screen. (Issue #73, thanks @tsouvarev, @kanu and everyone else involved in tracking this one down)
 * Support for complex locale names. (Issue #71, Thanks @strycore)
+* Configurable cache name (Issue #75, Thanks @Karmak23)
 
 Version 0.7.1
 -------------
