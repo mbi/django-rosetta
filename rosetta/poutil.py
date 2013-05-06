@@ -1,10 +1,10 @@
 from datetime import datetime
 from django.conf import settings
-from django.core.cache import cache
+from django.core.cache import get_cache
 from rosetta.conf import settings as rosetta_settings
 import django
 import os
-import six
+
 try:
     from django.utils import timezone
 except:
@@ -15,6 +15,8 @@ try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
+cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
 
 
 def timestamp_with_timezone(dt=None):

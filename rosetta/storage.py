@@ -1,10 +1,14 @@
-from django.core.cache import cache
+from django.core.cache import get_cache
 from django.conf import settings
 from django.utils import importlib
 from django.core.exceptions import ImproperlyConfigured
+from rosetta.conf import settings as rosetta_settings
 import hashlib
 import time
 import six
+
+
+cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
 
 
 class BaseRosettaStorage(object):
@@ -70,7 +74,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
             raise ImproperlyConfigured("You can't use the CacheRosettaStorage because your Django Session storage doesn't seem to be working. The CacheRosettaStorage relies on the Django Session storage to avoid conflicts.")
 
         # Make sure we're not using DummyCache
-        if 'dummycache' in settings.CACHES['default']['BACKEND'].lower():
+        if 'dummycache' in settings.CACHES[rosetta_settings.ROSETTA_CACHE_NAME]['BACKEND'].lower():
             raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are use the DummyCache cache backend).")
 
         # Make sure the actually actually works
