@@ -219,6 +219,7 @@ def home(request):
                         o.ref_txt = ref_entry.msgstr
             LANGUAGES = list(settings.LANGUAGES) + [('msgid', 'MSGID')]
         else:
+            ref_lang = None
             LANGUAGES = settings.LANGUAGES
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
@@ -287,7 +288,8 @@ def home(request):
             page=page,
             query=query,
             paginator=paginator,
-            rosetta_i18n_pofile=rosetta_i18n_pofile
+            rosetta_i18n_pofile=rosetta_i18n_pofile,
+            ref_lang=ref_lang,
         ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)

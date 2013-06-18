@@ -40,11 +40,11 @@
     </ul>
 
     {% if ENABLE_REFLANG %}
-    REF : <select onchange="javascript:window.location.href = this.value;">
-    {% for langid, langname in LANGUAGES %}
-    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
-    {% endfor %}
-    </select>
+        REF : <select onchange="javascript:window.location.href = this.value;">
+            {% for langid, langname in LANGUAGES %}
+                <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
+            {% endfor %}
+        </select>
     {% endif %}
 
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
