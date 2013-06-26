@@ -1,3 +1,8 @@
+Version 0.7.3
+-------------
+* Fix for test settings leaking onto global settings: LANGUAGES was overridden and not set back (Issue #81 - Thanks @zsoldosp)
+
+
 Version 0.7.2
 -------------
 * Fix for when settings imports unicode_literals for some reason (Issue #67)

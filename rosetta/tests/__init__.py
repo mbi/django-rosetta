@@ -50,11 +50,13 @@ class RosettaTestCase(TestCase):
         self.client.login(username='test_admin', password='test_password')
         self.client2.login(username='test_admin2', password='test_password')
 
+        self.__old_settings_languages = settings.LANGUAGES
         settings.LANGUAGES = (('xx', 'dummy language'), ('fr_FR.utf8', 'French (France), UTF8'))
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
     def tearDown(self):
+        settings.LANGUAGES = self.__old_settings_languages
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
