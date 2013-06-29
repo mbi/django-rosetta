@@ -28,6 +28,22 @@ then
     pip install Django==1.5 coverage python3-memcached six
     deactivate
 fi
+if [ ! -d venv_16 ]
+then
+    virtualenv --no-site-packages --distribute --python=python2 venv_16
+    . venv_16/bin/activate
+    pip install https://github.com/django/django/archive/1.6b1.zip
+    pip install coverage python-memcached six
+    deactivate
+fi
+if [ ! -d venv_16_p3 ]
+then
+    virtualenv --no-site-packages --distribute --python=python3 venv_16_p3
+    . venv_16_p3/bin/activate
+    pip install https://github.com/django/django/archive/1.6b1.zip
+    pip install coverage python3-memcached six
+    deactivate
+fi
 
 
 
@@ -53,6 +69,21 @@ cd ..
 deactivate
 
 . venv_15_p3/bin/activate
+cd testproject
+python manage.py --version
+python --version
+python manage.py test rosetta
+cd ..
+deactivate
+
+. venv_16/bin/activate
+cd testproject
+python manage.py --version
+python manage.py test rosetta
+cd ..
+deactivate
+
+. venv_16_p3/bin/activate
 cd testproject
 python manage.py --version
 python --version
