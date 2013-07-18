@@ -20,5 +20,6 @@ setup(
         'Framework :: Django',
     ],
     include_package_data=True,
+    requires=['microsofttranslator==0.4',],
     zip_safe=False
 )
