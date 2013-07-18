@@ -74,4 +74,3 @@ google.setOnLoadCallback(function() {
     $('.translation textarea').eq(0).focus();
     
 });
-
