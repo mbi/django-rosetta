@@ -8,12 +8,17 @@ from django.template import RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
+
+from microsofttranslator import Translator, TranslateApiException
+
 from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 from rosetta.access import can_translate
+
+import json
 import re
 import rosetta
 import unicodedata
@@ -356,6 +361,8 @@ def get_app_name(path):
     return app
 
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def lang_sel(request, langid, idx):
     """
     Selects a file to be translated
@@ -391,26 +398,6 @@ def lang_sel(request, langid, idx):
             storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
-lang_sel = never_cache(lang_sel)
-lang_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(lang_sel)
-
-
-def can_translate(user):
-    if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
-        return True
-    if not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        try:
-            from django.contrib.auth.models import Group
-            translators = Group.objects.get(name='translators')
-            return translators in user.groups.all()
-        except Group.DoesNotExist:
-            return False
-
-from microsofttranslator import Translator, TranslateApiException
 
 def translate_text(request):
     language_from = request.GET.get('from', None)
@@ -432,4 +419,4 @@ def translate_text(request):
         except TranslateApiException as e:
             data = { 'success' : False, 'error' : "Translation API Exception: {0}".format(e.message) }
 
-    return HttpResponse(simplejson.dumps(data), mimetype='application/json')
+    return HttpResponse(json.dumps(data), mimetype='application/json')
