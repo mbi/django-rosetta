@@ -8,9 +8,9 @@ then
     deactivate
 fi
 
-
 . venv_13/bin/activate
 cd testproject
-python manage.py test rosetta
+coverage run --rcfile=.coveragerc manage.py test --failfast rosetta
+coverage xml
+coverage html
 cd ..
-deactivate

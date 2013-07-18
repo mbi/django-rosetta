@@ -18,8 +18,16 @@ setup(
         'Topic :: Software Development :: Localization',
         'Topic :: Software Development :: Internationalization',
         'Framework :: Django',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.3',
     ],
     include_package_data=True,
-    requires=['microsofttranslator==0.4',],
-    zip_safe=False
+    zip_safe=False,
+    install_requires=[
+        'six >=1.2.0',
+        'microsofttranslator==0.4',
+        'Django >= 1.3'
+    ]
 )
+

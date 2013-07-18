@@ -7,14 +7,14 @@ google.setOnLoadCallback(function() {
         $('.hide', $(this).parent()).hide();
     });
 
-{% if ENABLE_TRANSLATION_SUGGESTIONS and AZURE_CLIENT_ID and AZURE_CLIENT_SECRET %}    
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET %}    
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
         var str = a.html();
         var orig = $('.original .message', a.parents('tr')).html();
         var trans=$('textarea',a.parent());
-        var sourceLang = '{{ MESSAGES_SOURCE_LANGUAGE_CODE }}';
+        var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
         var destLang = '{{ rosetta_i18n_lang_code }}';
 
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
@@ -64,7 +64,7 @@ google.setOnLoadCallback(function() {
             } else {
                 if (!(origs === null && trads === null)) {
                     $(this).before(error);
-                    return false;                    
+                    return false;
                 }
             }
             return true;
@@ -74,3 +74,4 @@ google.setOnLoadCallback(function() {
     $('.translation textarea').eq(0).focus();
     
 });
+
