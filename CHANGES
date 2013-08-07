@@ -2,6 +2,7 @@ Version 0.7.3
 -------------
 * Fix for test settings leaking onto global settings: LANGUAGES was overridden and not set back (Issue #81 - Thanks @zsoldosp)
 * Test against Django 1.6b1
+* Missing context variable in catalog list (Issue #87 - Thanks @kunitoki)
 
 Version 0.7.2
 -------------

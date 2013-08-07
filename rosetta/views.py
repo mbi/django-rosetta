@@ -347,7 +347,8 @@ def list_languages(request, do_session_warn=False):
         ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
         do_session_warn=do_session_warn,
         languages=languages,
-        has_pos=has_pos
+        has_pos=has_pos,
+        rosetta_i18n_catalog_filter=rosetta_i18n_catalog_filter
     ), context_instance=RequestContext(request))
 
 
