@@ -26,6 +26,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'six >=1.2.0',
+        'microsofttranslator==0.4',
         'Django >= 1.3'
     ]
 )
