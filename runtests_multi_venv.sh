@@ -40,7 +40,7 @@ if [ ! -d venv_16_p3 ]
 then
     virtualenv --no-site-packages --distribute --python=python3 venv_16_p3
     . venv_16_p3/bin/activate
-    pip install https://github.com/django/django/archive/1.6b1.zip
+    pip install https://github.com/django/django/archive/stable/1.6.x.zip
     pip install coverage python3-memcached six microsofttranslator
     deactivate
 fi
