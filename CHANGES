@@ -3,6 +3,7 @@ Version 0.7.3
 * Fix for test settings leaking onto global settings: LANGUAGES was overridden and not set back (Issue #81 - Thanks @zsoldosp)
 * Test against Django 1.6b1
 * Missing context variable in catalog list (Issue #87 - Thanks @kunitoki)
+* Added support for Yandex translation API (Issue #89 - Thanks @BlackWizard) See supported languages and limitations here: https://github.com/mbi/django-rosetta/pull/89
 
 Version 0.7.2
 -------------

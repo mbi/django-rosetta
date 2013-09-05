@@ -53,7 +53,7 @@ google.setOnLoadCallback(function() {
         var apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/translate";
 
         a.attr('class','suggesting').html('...');
-                
+
         var apiData = {
             error: 'onTranslationError',
             success: 'onTranslationComplete',

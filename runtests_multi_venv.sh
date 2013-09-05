@@ -32,7 +32,7 @@ if [ ! -d .venv_16 ]
 then
     virtualenv --no-site-packages --distribute --python=python2 .venv_16
     . .venv_16/bin/activate
-    pip install https://github.com/django/django/archive/1.6b1.zip
+    pip install https://github.com/django/django/archive/stable/1.6.x.zip
     pip install coverage python-memcached six microsofttranslator
     deactivate
 fi
@@ -44,8 +44,6 @@ then
     pip install coverage python3-memcached six microsofttranslator
     deactivate
 fi
-
-
 
 . .venv_13/bin/activate
 cd testproject
