@@ -2,6 +2,7 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, resolve
+from django.core.cache import cache
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
@@ -287,6 +288,7 @@ class RosettaTestCase(TestCase):
 
     def test_13_catalog_filters(self):
         settings.LANGUAGES = (('fr', 'French'), ('xx', 'Dummy Language'),)
+        cache.delete('rosetta_django_paths')
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
