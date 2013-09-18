@@ -49,6 +49,7 @@ LANGUAGE_CODE = "en"
 LANGUAGES = (
     ('ja', u'日本語'),
     ('xx', u'XXXXX'),
+    ('fr', u'French'),
     ('fr_FR.utf8', u'French (France), UTF8'),
 )
 LOCALE_PATHS = [

@@ -43,6 +43,45 @@ google.setOnLoadCallback(function() {
     });
 {% endif %}
 
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.YANDEX_TRANSLATE_KEY %}
+    $('a.suggest').click(function(e){
+        e.preventDefault();
+        var a = $(this);
+        var str = a.html();
+        var orig = $('.original .message', a.parents('tr')).html();
+        var trans=$('textarea',a.parent());
+        var apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+
+        a.attr('class','suggesting').html('...');
+
+        var apiData = {
+            error: 'onTranslationError',
+            success: 'onTranslationComplete',
+            lang: '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}-{{ rosetta_i18n_lang_code }}',
+            key: '{{ rosetta_settings.YANDEX_TRANSLATE_KEY }}',
+            format: 'html',
+            text: orig
+        };
+
+        $.ajax({
+            url: apiUrl,
+            data: apiData,
+            dataType: 'jsonp',
+            success: function(response) {
+                if (response.code == 200) {
+                    trans.val(response.text[0]);
+                    a.hide();
+                } else {
+                    a.text(response);
+                }
+            },
+            error: function(response) {
+                a.text(response);
+            }
+        });
+    });
+{% endif %}
+
     $('td.plural').each(function(i) {
         var td = $(this), trY = parseInt(td.closest('tr').offset().top);
         $('textarea', $(this).closest('tr')).each(function(j) {

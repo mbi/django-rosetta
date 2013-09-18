@@ -4,13 +4,13 @@ Rosetta
 
 Rosetta is a `Django <http://www.djangoproject.com/>`_ application that eases the translation process of your Django projects.
 
-Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file. 
+Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file.
 
 ********
 Features
 ********
 
-* Database independent 
+* Database independent
 * Reads and writes your project's `gettext` catalogs (po and mo files)
 * Installed and uninstalled in under a minute
 * Uses Django's admin interface CSS
@@ -34,7 +34,7 @@ To install Rosetta:
 3. Add an URL entry to your project's ``urls.py``, for example::
 
     from django.conf import settings
-    
+
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls')),
@@ -55,6 +55,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_MESSAGES_PER_PAGE``: Number of messages to display per page. Defaults to ``10``.
 * ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
 * ``BING_APP_ID``: Translation suggestions used to come from the Google Translation API service, but free service has been discontinued, and the next best thing is Microsoft `Bing's Translation API <http://msdn.microsoft.com/en-us/library/ff512404.aspx>`_. To use this service you must first `obtain an AppID key <https://ssl.bing.com/webmaster/Developers/AppIds/>`_, then specify the key here. Defaults to ``None``.
+* ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <https://translate.yandex.com/apikeys>`_, then specify the key here. Defaults to ``None``.
 * ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English. Default to ``'en'`` and ``'English'`` respectively.
 * ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
 * ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated. Defaults to ``()``.
@@ -68,9 +69,9 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 Storages
 ********
 
-To prevent re-reading and parsing the PO file catalogs over and over again, Rosetta stores them in a volatile location. This can be either the HTTP session or the Django cache. 
+To prevent re-reading and parsing the PO file catalogs over and over again, Rosetta stores them in a volatile location. This can be either the HTTP session or the Django cache.
 
-Django 1.4 has introduced a signed cookie session backend, which stores the whole content of the session in an encrypted cookie. Unfortunately this doesn't work with large PO files, as the limit of 4096 chars that can be stored in a cookie are easily exceeded. 
+Django 1.4 has introduced a signed cookie session backend, which stores the whole content of the session in an encrypted cookie. Unfortunately this doesn't work with large PO files, as the limit of 4096 chars that can be stored in a cookie are easily exceeded.
 
 In this case the Cache-based backend should be used (by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'``). Please make sure that a proper CACHES backend is configured in your Django settings. You can specify an alternate cache name in ``ROSETTA_CACHE_NAME`` if for some reasons your don't want Rosetta to populate your ``default`` cache.
 
@@ -83,7 +84,7 @@ Security
 Because Rosetta requires write access to some of the files in your Django project, access to the application is restricted to the administrator user only (as defined in your project's Admin interface)
 
 If you wish to grant editing access to other users:
- 
+
 1. Create a 'translators' group in your admin interface
 2. Add the user you wish to grant translating rights to this group
 

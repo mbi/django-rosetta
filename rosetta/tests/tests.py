@@ -2,6 +2,8 @@
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, resolve
+from django.core.exceptions import ImproperlyConfigured
+from django.core.cache import cache
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
@@ -53,10 +55,15 @@ class RosettaTestCase(TestCase):
         self.__old_settings_languages = settings.LANGUAGES
         settings.LANGUAGES = (('xx', 'dummy language'), ('fr_FR.utf8', 'French (France), UTF8'))
 
+        self.__session_engine = settings.SESSION_ENGINE
+        self.__storage_class = rosetta_settings.STORAGE_CLASS
+
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
     def tearDown(self):
         settings.LANGUAGES = self.__old_settings_languages
+        settings.SESSION_ENGINE = self.__session_engine
+        rosetta_settings.STORAGE_CLASS = self.__storage_class
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
@@ -287,6 +294,7 @@ class RosettaTestCase(TestCase):
 
     def test_13_catalog_filters(self):
         settings.LANGUAGES = (('fr', 'French'), ('xx', 'Dummy Language'),)
+        cache.delete('rosetta_django_paths')
         self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
@@ -455,19 +463,20 @@ class RosettaTestCase(TestCase):
             self.assertTrue('m_9f6c442c6d579707440ba9dada0fb373' in str(r.content))
 
             # Two, the cookie backend
-            rosetta_settings.STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
+            if self.django_version_minor < 6:
+                rosetta_settings.STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 
-            shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue38gh.template')), self.dest_file)
+                shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue38gh.template')), self.dest_file)
 
-            self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
-            self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
-            r = self.client.get(reverse('rosetta-home'))
-            self.assertTrue(len(str(self.client.cookies.get('sessionid'))) > 4096)
-            # boom: be a good browser, truncate the cookie
-            self.client.cookies['sessionid'] = six.text_type(self.client.cookies.get('sessionid'))[:4096]
-            r = self.client.get(reverse('rosetta-home'))
+                self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+                self.client.get(reverse('rosetta-language-selection', args=('xx', 0, ), kwargs=dict()))
+                r = self.client.get(reverse('rosetta-home'))
+                self.assertTrue(len(str(self.client.cookies.get('sessionid'))) > 4096)
+                # boom: be a good browser, truncate the cookie
+                self.client.cookies['sessionid'] = six.text_type(self.client.cookies.get('sessionid'))[:4096]
+                r = self.client.get(reverse('rosetta-home'))
 
-            self.assertFalse('m_9efd113f7919952523f06e0d88da9c54' in str(r.content))
+                self.assertFalse('m_9efd113f7919952523f06e0d88da9c54' in str(r.content))
 
     def test_21_concurrency_of_cache_backend(self):
         rosetta_settings.STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
@@ -572,6 +581,18 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue('<li class="active"><a href="?filter=third-party">' in str(r.content))
 
+    def test_1_unsupported_p3_django_16_storage(self):
+        if self.django_version_minor >= 6 and self.django_version_major >= 1:
+            self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
+
+            settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+            rosetta_settings.STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
+
+            try:
+                self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+                self.fail()
+            except ImproperlyConfigured:
+                pass
 
 # Stubbed access control function
 def no_access(user):
