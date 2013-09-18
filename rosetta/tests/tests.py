@@ -57,6 +57,7 @@ class RosettaTestCase(TestCase):
 
         self.__session_engine = settings.SESSION_ENGINE
         self.__storage_class = rosetta_settings.STORAGE_CLASS
+        self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
@@ -64,6 +65,7 @@ class RosettaTestCase(TestCase):
         settings.LANGUAGES = self.__old_settings_languages
         settings.SESSION_ENGINE = self.__session_engine
         rosetta_settings.STORAGE_CLASS = self.__storage_class
+        rosetta_settings.ROSETTA_REQUIRES_AUTH = self.__require_auth
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
@@ -581,7 +583,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue('<li class="active"><a href="?filter=third-party">' in str(r.content))
 
-    def test_1_unsupported_p3_django_16_storage(self):
+    def test_29_unsupported_p3_django_16_storage(self):
         if self.django_version_minor >= 6 and self.django_version_major >= 1:
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
 

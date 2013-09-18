@@ -60,3 +60,7 @@ STORAGE_CLASS = getattr(settings, 'ROSETTA_STORAGE_CLASS', 'rosetta.storage.Cach
 ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'default'
                              if settings.CACHES.get('rosetta', None) is None
                              else 'rosetta')
+
+# Require users to be authenticated (and Superusers or in group "translators").
+# Set this to False at your own risk
+ROSETTA_REQUIRES_AUTH = getattr(settings, 'ROSETTA_REQUIRES_AUTH', True)
