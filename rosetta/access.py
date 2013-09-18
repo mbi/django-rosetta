@@ -28,9 +28,4 @@ def is_superuser_staff_or_in_translators_group(user):
     elif user.is_superuser and user.is_staff:
         return True
     else:
-        try:
-            from django.contrib.auth.models import Group
-            translators = Group.objects.get(name='translators')
-            return translators in user.groups.all()
-        except Group.DoesNotExist:
-            return False
+        return user.groups.filter(name="translators").exists()
