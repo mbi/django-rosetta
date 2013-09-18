@@ -28,4 +28,4 @@ def is_superuser_staff_or_in_translators_group(user):
     elif user.is_superuser and user.is_staff:
         return True
     else:
-        return user.groups.filter(name="translators").exists()
+        return user.groups.filter(name='translators').exists()
