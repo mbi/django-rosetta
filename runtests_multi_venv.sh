@@ -32,7 +32,7 @@ if [ ! -d venv_16 ]
 then
     virtualenv --no-site-packages --distribute --python=python2 venv_16
     . venv_16/bin/activate
-    pip install https://github.com/django/django/archive/1.6b1.zip
+    pip install https://github.com/django/django/archive/stable/1.6.x.zip
     pip install coverage python-memcached six microsofttranslator
     deactivate
 fi
@@ -50,6 +50,7 @@ fi
 . venv_13/bin/activate
 cd testproject
 python manage.py --version
+python --version
 python manage.py test rosetta
 cd ..
 deactivate
@@ -57,6 +58,7 @@ deactivate
 . venv_14/bin/activate
 cd testproject
 python manage.py --version
+python --version
 python manage.py test rosetta
 cd ..
 deactivate
@@ -64,6 +66,7 @@ deactivate
 . venv_15/bin/activate
 cd testproject
 python manage.py --version
+python --version
 python manage.py test rosetta
 cd ..
 deactivate
@@ -79,6 +82,7 @@ deactivate
 . venv_16/bin/activate
 cd testproject
 python manage.py --version
+python --version
 python manage.py test rosetta
 cd ..
 deactivate
