@@ -1,0 +1,12 @@
+Changelog
+=========
+
+Version 0.4
+-----------
+ * Updated to use the Oauth based token issued by Bing
+ * This release is not backward compatibleas the class signature has changed
+
+Version 0.3
+-----------
+ * Encode text as UTF-8 before sending to translator
+ * Improved JSON Error handling

@@ -6,10 +6,14 @@ MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
 
 # Enable Google translation suggestions
 ENABLE_TRANSLATION_SUGGESTIONS = getattr(settings, 'ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS', False)
-# Can be obtained for free here: https://ssl.bing.com/webmaster/Developers/AppIds/
-BING_APP_ID = getattr(settings, 'BING_APP_ID', None)
+
+
 # Can be obtained for free here: https://translate.yandex.com/apikeys
 YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
+
+# Can be obtained for free here: https://ssl.bing.com/webmaster/Developers/AppIds/
+AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)

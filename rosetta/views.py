@@ -8,12 +8,17 @@ from django.template import RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
+
+from rosetta.utils.microsofttranslator import Translator, TranslateApiException
+
 from rosetta.conf import settings as rosetta_settings
 from rosetta.polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 from rosetta.access import can_translate
+
+import json
 import re
 import rosetta
 import unicodedata
@@ -394,3 +399,25 @@ def lang_sel(request, langid, idx):
             storage.set('rosetta_i18n_write', False)
 
         return HttpResponseRedirect(reverse('rosetta-home'))
+
+def translate_text(request):
+    language_from = request.GET.get('from', None)
+    language_to = request.GET.get('to', None)
+    text = request.GET.get('text', None)
+
+    if language_from == language_to:
+        data = { 'success' : True, 'translation' : text }
+    else:
+        # run the translation:
+        AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+        AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+
+        translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
+
+        try:
+            translated_text = translator.translate(text, language_to)
+            data = { 'success' : True, 'translation' : translated_text }
+        except TranslateApiException as e:
+            data = { 'success' : False, 'error' : "Translation API Exception: {0}".format(e.message) }
+
+    return HttpResponse(json.dumps(data), mimetype='application/json')

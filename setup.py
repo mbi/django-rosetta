@@ -26,6 +26,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'six >=1.2.0',
-        'Django >= 1.3'
+        'Django >= 1.3',
+        'requests >= 2.1.0',
     ]
 )
