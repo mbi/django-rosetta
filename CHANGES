@@ -7,7 +7,9 @@ Version 0.7.3
 * Added support for the Azure translation API, replacing the BING API. (Issue #86, thanks @davidkuchar and @maikelwever)
 * Removed support for the signed_cookies SESSION_ENGINE + SessionRosettaStorage in Django 1.6, because serialization of POFiles would fail
 * Simplified the group membership test (Issue #90 - Thanks @dotsbb)
+* Better serving of admin static files. (Issue #61, thanks @tback)
 * Dropped Django 1.3 support
+
 
 Version 0.7.2
 -------------
