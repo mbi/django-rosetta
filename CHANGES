@@ -4,6 +4,7 @@ Version 0.7.3
 * Test against Django 1.6.1
 * Missing context variable in catalog list (Issue #87 - Thanks @kunitoki)
 * Added support for Yandex translation API (Issue #89 - Thanks @BlackWizard) See supported languages and limitations here: https://github.com/mbi/django-rosetta/pull/89
+* Added support for the Azure translation API, replacing the BING API. (Issue #86, thanks @davidkuchar and @maikelwever)
 * Removed support for the signed_cookies SESSION_ENGINE + SessionRosettaStorage in Django 1.6, because serialization of POFiles would fail
 * Simplified the group membership test (Issue #90 - Thanks @dotsbb)
 
