@@ -8,3 +8,5 @@ recursive-include rosetta/utils *
 recursive-include rosetta/templates *
 prune testproject
 prune rosetta/tests/__pycache__
+prune rosetta/utils/__pycache__
+prune rosetta/utils/microsofttranslator/__pycache__
