@@ -4,6 +4,7 @@ exclude *.pyc
 exclude *.sh
 recursive-include rosetta/locale *
 recursive-include rosetta/tests *
+recursive-include rosetta/utils *
 recursive-include rosetta/templates *
 prune testproject
 prune rosetta/tests/__pycache__

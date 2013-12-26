@@ -156,7 +156,7 @@ def home(request):
 
                     post_save.send(sender=None, language_code=rosetta_i18n_lang_code, request=request)
                     # Try auto-reloading via the WSGI daemon mode reload mechanism
-                    if  rosetta_settings.WSGI_AUTO_RELOAD and \
+                    if rosetta_settings.WSGI_AUTO_RELOAD and \
                         'mod_wsgi.process_group' in request.environ and \
                         request.environ.get('mod_wsgi.process_group', None) and \
                         'SCRIPT_FILENAME' in request.environ and \
@@ -338,7 +338,7 @@ def list_languages(request, do_session_warn=False):
         languages.append(
             (language[0],
             _(language[1]),
-            sorted([(get_app_name(l), os.path.realpath(l), pofile(l)) for l in  pos], key=lambda app: app[0]),
+            sorted([(get_app_name(l), os.path.realpath(l), pofile(l)) for l in pos], key=lambda app: app[0]),
             )
         )
     try:
@@ -382,7 +382,7 @@ def lang_sel(request, langid, idx):
 
         storage.set('rosetta_i18n_lang_code', langid)
         storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
-        storage.set('rosetta_i18n_fn',  file_)
+        storage.set('rosetta_i18n_fn', file_)
         po = pofile(file_)
         for entry in po:
             entry.md5hash = hashlib.new('md5',
@@ -400,13 +400,15 @@ def lang_sel(request, langid, idx):
 
         return HttpResponseRedirect(reverse('rosetta-home'))
 
+
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def translate_text(request):
     language_from = request.GET.get('from', None)
     language_to = request.GET.get('to', None)
     text = request.GET.get('text', None)
 
     if language_from == language_to:
-        data = { 'success' : True, 'translation' : text }
+        data = {'success': True, 'translation': text}
     else:
         # run the translation:
         AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
@@ -416,8 +418,8 @@ def translate_text(request):
 
         try:
             translated_text = translator.translate(text, language_to)
-            data = { 'success' : True, 'translation' : translated_text }
+            data = {'success': True, 'translation': translated_text}
         except TranslateApiException as e:
-            data = { 'success' : False, 'error' : "Translation API Exception: {0}".format(e.message) }
+            data = {'success': False, 'error': "Translation API Exception: {0}".format(e.message)}
 
     return HttpResponse(json.dumps(data), mimetype='application/json')
