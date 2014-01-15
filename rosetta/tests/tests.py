@@ -596,6 +596,28 @@ class RosettaTestCase(TestCase):
             except ImproperlyConfigured:
                 pass
 
+    def test_30_pofile_names(self):
+        POFILENAMES = rosetta_settings.POFILENAMES
+        rosetta_settings.POFILENAMES = ('pr44.po', )
+
+        os.unlink(self.dest_file)
+        destfile = os.path.normpath(os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/pr44.po'))
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './pr44.po.template')), destfile)
+
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue('xx/LC_MESSAGES/pr44.po' in str(r.content))
+
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0,), kwargs=dict()) + '?rosetta')
+        r = self.client.get(reverse('rosetta-home'))
+
+        self.assertTrue('dummy language' in str(r.content))
+
+        os.unlink(destfile)
+        rosetta_settings.POFILENAMES = POFILENAMES
+
+
+
 # Stubbed access control function
 def no_access(user):
     return False
