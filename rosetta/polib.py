@@ -623,6 +623,32 @@ class POFile(_BaseFile):
         translated = len(self.translated_entries())
         return int((100.00 / float(total)) * translated)
 
+    def all_symbols_count(self):
+        """
+        Convenience method that returns count of symbols in all messages
+        """
+        return sum(len(e.msgid) for e in self if not e.obsolete)
+
+    def symbols_translated(self):
+        """
+        Convenience method that returns count of symbols in translated messages
+        """
+        return sum(len(e.msgid) for e in self.translated_entries())
+
+    def symbols_percents(self):
+        """
+        Convenience method that returns the percentage of translated symbols
+        """
+        if self.all_symbols_count() == 0:
+            return 100
+        return float(self.symbols_translated())/self.all_symbols_count()*100
+
+    def symbols_in_translations(self):
+        """
+        Convenience method that returns count of symbols in translations
+        """
+        return sum(len(e.msgstr) for e in self.translated_entries())
+
     def translated_entries(self):
         """
         Convenience method that returns the list of translated entries.
