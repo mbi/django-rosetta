@@ -136,9 +136,6 @@ Acknowledgments
 
 * Rosetta uses the excellent `polib <https://bitbucket.org/izi/polib>`_ library to parse and handle gettext files.
 
-
-
 .. image:: https://d2weczhvl823v0.cloudfront.net/mbi/django-rosetta/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
-
