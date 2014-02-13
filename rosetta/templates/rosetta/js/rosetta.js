@@ -1,56 +1,81 @@
+{% load rosetta %}
+
 google.setOnLoadCallback(function() {
     $('.location a').show().toggle(function() {
         $('.hide', $(this).parent()).show();
     }, function() {
         $('.hide', $(this).parent()).hide();
     });
-{% if ENABLE_TRANSLATION_SUGGESTIONS and BING_APP_ID %}    
-    $('a.suggest').click(function() {
-        var a = $(this),
-            str = a.html(),
-            orig = $('.original .message', a.parents('tr')).html(),
-            trans=$('textarea',a.parent()),
-            sourceLang = '{{MESSAGES_SOURCE_LANGUAGE_CODE}}',
-            destLang = '{{rosetta_i18n_lang_code|slice:":2"}}',
-            app_id = '{{BING_APP_ID}}';
-        
-        orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/g,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
-        a.attr('class','suggesting').html('...');
-        window.onTranslationComplete = function(resp) {
-            trans.val(unescape(resp).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
-            a.hide();
-            
-        };
-        var s = document.createElement("script");
-            s.src = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate?oncomplete=onTranslationComplete&appId="+app_id +"&from=" + sourceLang + "&to=" + destLang + "&text=" + orig;
-            document.getElementsByTagName("head")[0].appendChild(s);
 
-        /*
-        google.language.translate(orig, , function(result) {
-            if (!result.error) {
-                trans.val(unescape(result.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
-                a.hide();
-            } else {
-                a.hide().before($('<span class="alert">'+result.error.message+'</span>'));
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET %}    
+    $('a.suggest').click(function(e){
+        e.preventDefault();
+        var a = $(this);
+        var str = a.html();
+        var orig = $('.original .message', a.parents('tr')).html();
+        var trans=$('textarea',a.parent());
+        var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
+        var destLang = '{{ rosetta_i18n_lang_code }}';
+
+        orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+        a.attr('class','suggesting').html('...');
+
+        $.getJSON("/rosetta/translate/", {
+                from: sourceLang,
+                to: destLang,
+                text: orig
+            }, 
+            function(data) {
+                if (data.success){
+                    trans.val(unescape(data.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+                    a.hide();
+                } else {
+                    a.text(data.error);
+                }
+            }
+        );
+    });
+{% endif %}
+
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.YANDEX_TRANSLATE_KEY %}
+    $('a.suggest').click(function(e){
+        e.preventDefault();
+        var a = $(this);
+        var str = a.html();
+        var orig = $('.original .message', a.parents('tr')).html();
+        var trans=$('textarea',a.parent());
+        var apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+
+        a.attr('class','suggesting').html('...');
+
+        var apiData = {
+            error: 'onTranslationError',
+            success: 'onTranslationComplete',
+            lang: '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}-{{ rosetta_i18n_lang_code }}',
+            key: '{{ rosetta_settings.YANDEX_TRANSLATE_KEY }}',
+            format: 'html',
+            text: orig
+        };
+
+        $.ajax({
+            url: apiUrl,
+            data: apiData,
+            dataType: 'jsonp',
+            success: function(response) {
+                if (response.code == 200) {
+                    trans.val(response.text[0]);
+                    a.hide();
+                } else {
+                    a.text(response);
+                }
+            },
+            error: function(response) {
+                a.text(response);
             }
         });
-        */
-        return false;
     });
-    
-    
-    $('#translate-all').submit(function() {
-        $('a.suggest').click();
-        return false;
-    });
-    $('.checkall').click(function(){
-        $('td.c input').attr('checked', '');
-        $('td.c input').attr('value', '0');
-    });
-    
-    
-    
 {% endif %}
+
     $('td.plural').each(function(i) {
         var td = $(this), trY = parseInt(td.closest('tr').offset().top);
         $('textarea', $(this).closest('tr')).each(function(j) {
@@ -78,7 +103,7 @@ google.setOnLoadCallback(function() {
             } else {
                 if (!(origs === null && trads === null)) {
                     $(this).before(error);
-                    return false;                    
+                    return false;
                 }
             }
             return true;

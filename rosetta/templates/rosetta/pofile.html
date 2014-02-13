@@ -1,26 +1,27 @@
-{% extends "rosetta/base.html" %}
+{% extends "rosetta/base.html" %}{% load admin_static %}
 {% load rosetta i18n %}
+{% load url from future %}
 
 {% block header %}
     {{block.super}}
     <div id="user-tools">
         <p>
-            <span><a href="{% url rosetta-pick-file %}">{% trans "Pick another file" %}</a> / 
-            <a href="{% url rosetta-download-file %}">{% trans "Download this catalog" %}</a></span>
+            <span><a href="{% url 'rosetta-pick-file' %}">{% trans "Pick another file" %}</a> /
+            <a href="{% url 'rosetta-download-file' %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
     <script type="text/javascript">
     </script>
-    
+
 {% endblock %}
 
-{% block pagetitle %}{{block.super}} - {{MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
+{% block pagetitle %}{{block.super}} - {{rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
 
 {% block breadcumbs %}
     <div>
-        <a href="{% url rosetta-pick-file %}">{% trans "Home" %}</a> &rsaquo; 
-        {{ rosetta_i18n_lang_name }} &rsaquo; 
-        {{ rosetta_i18n_app|title }} &rsaquo; 
+        <a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo;
+        {{ rosetta_i18n_lang_name }} &rsaquo;
+        {{ rosetta_i18n_app|title }} &rsaquo;
         {% blocktrans with rosetta_i18n_pofile.percent_translated|floatformat:2 as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
@@ -29,41 +30,32 @@
 
 {% block main %}
     <h1>{% blocktrans  %}Translate into {{rosetta_i18n_lang_name}}{% endblocktrans %}</h1>
-    
+
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
-        <li {% ifequal rosetta_i18n_filter 'untranslated' %}class="active"{% endifequal %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'translated' %}class="active"{% endifequal %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'fuzzy' %}class="active"{% endifequal %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
-        <li {% ifequal rosetta_i18n_filter 'all' %}class="active"{% endifequal %}><a href="?filter=all">{% trans "All" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
         <div id="toolbar">
-        <form id="changelist-search" action="" method="post">
-            <div><!-- DIV needed for valid HTML -->
-                {% rosetta_csrf_token %}
-                <label for="searchbar"><img src="{{ADMIN_MEDIA_PREFIX}}img/admin/icon_searchbox.png" alt="{% trans "Search" %}" /></label>
-                <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
-                <input type="submit" name="search" value="{% trans "Go" %}" />
-            </div>
-        </form>
-        {% comment %}
-        {% if ENABLE_TRANSLATION_SUGGESTIONS %}
-        <form id="translate-all">
-            <div>
-                <input type="submit" class="googleall" value="{% trans "Suggest All Translations" %}" />
-            </div>
-        </form>
-        {% endif %}
-        {% endcomment %}
+            <form id="changelist-search" action="" method="post">
+                <div>
+                    {% rosetta_csrf_token %}
+                    <label for="searchbar"><img src="{% static "admin/img/icon_searchbox.png" %}" alt="{% trans "Search" %}" /></label>
+                    <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
+                    <input type="submit" name="search" value="{% trans "Go" %}" />
+                </div>
+            </form>
         </div>
-        
+
         <form method="post" action="">
             <table>
                 <thead>
                     <tr>
                         {% rosetta_csrf_token %}
-                        <th>{% trans "Original" %}</th>
+                        <th><div class="text">{% trans "Original" %}</div></th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
                         <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
@@ -71,7 +63,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for  message in messages %}
+                    {% for message in rosetta_messages %}
                     <tr class="{% cycle row1,row2 %}">
                         {% if message.msgid_plural %}
                             <td class="original plural">
@@ -79,7 +71,7 @@
                                     <span class="part">{{message.msgid|format_message|linebreaksbr}}</span>
                                     <span class="part">{{message.msgid_plural|format_message|linebreaksbr}}</span>
                                 </div>
-                                
+
                                 {% if message.msgctxt %}
                                     <span class="context">{% trans "Context hint" %}: {{message.msgctxt|safe}}</span>
                                 {% else %}
@@ -87,7 +79,7 @@
                                     <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
                                     {% endif %}
                                 {% endif %}
-                                
+
                             </td>
                             <td class="translation">
                                 {% for k, msgstr in message.msgstr_plural.items|dictsort:"0"  %}
@@ -103,13 +95,13 @@
                                 {% else %}
                                 {% if message.comment %}
                                 <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
-                                {% endif %}                        
+                                {% endif %}
                             {% endif %}
                             </td>
                             {% if main_language %}<td class="original">{{ message.main_lang|format_message|linebreaksbr }}</td>{% endif %}
                             <td class="translation">
                                 <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" name="m_{{message.md5hash}}" tabindex="{% increment tab_idx %}">{{message.msgstr}}</textarea>
-                                {% if ENABLE_TRANSLATION_SUGGESTIONS %}<a href="#" class="suggest">{% trans "suggest" %}</a>{% endif %}
+                                {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}<a href="#" class="suggest">{% trans "suggest" %}</a>{% endif %}
                             </td>
                         {% endif %}
                             <td class="c">
@@ -117,7 +109,7 @@
                             </td>
                             <td class="location">
                                 {% for fn,lineno in message.occurrences %}
-                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code> 
+                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
                                 {% endfor %}
                                 {% if message.occurrences|length|gt:"3" %}
                                     <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
@@ -133,30 +125,30 @@
                         <input type="hidden" name="query" value="{{query}}"  />
                     {% endif %}
                     <input type="submit" class="default" name="_next" value="{% trans "Save and translate next block" %}" tabindex="{% increment tab_idx %}"/>
-                    
-                    
+
+
                     {% if needs_pagination %}
                     {% trans "Skip to page:" %}
                     {% for i in page_range %}
-                        {% ifequal i '...' %}
+                        {% if i == '...' %}
                         <span class="space">{{ i }}</span>
                         {% else %}
-                        {% ifequal i page %}
+                        {% if i == page %}
                             <span class="this-page">{{i}}</span>
-                        {% else %}    
+                        {% else %}
                             <a href="?page={{i}}{% if query %}&amp;query={{query}}{% endif %}">{{i}}</a>
-                        {% endifequal %}
-                        {% endifequal %}
+                        {% endif %}
+                        {% endif %}
                     {% endfor %}
                     {% else %}
                     {% trans "Displaying:" %}
                     {% endif %}
-                    
+
                     {% with paginator.object_list|length as hits %}
-                    <strong>{% blocktrans count rosetta_i18n_pofile|length as message_number %}{{hits}}/{{message_number}} message{% plural %}{{hits}}/{{message_number}} messages{% endblocktrans %}</strong>    
+                    <strong>{% blocktrans count rosetta_i18n_pofile|length as message_number %}{{hits}}/{{message_number}} message{% plural %}{{hits}}/{{message_number}} messages{% endblocktrans %}</strong>
                     {% endwith %}
 
-                    
+
                 </p>
             </div>
         </form>

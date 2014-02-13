@@ -1,0 +1,70 @@
+Version 0.7.4
+-------------
+* New ROSETTA_POFILENAMES setting. (PR #44, thanks @wrboyce)
+
+Version 0.7.3
+-------------
+* Fix for test settings leaking onto global settings: LANGUAGES was overridden and not set back (Issue #81 - Thanks @zsoldosp)
+* Test against Django 1.6.1
+* Missing context variable in catalog list (Issue #87 - Thanks @kunitoki)
+* Added support for Yandex translation API (Issue #89 - Thanks @BlackWizard) See supported languages and limitations here: https://github.com/mbi/django-rosetta/pull/89
+* Added support for the Azure translation API, replacing the BING API. (Issue #86, thanks @davidkuchar and @maikelwever)
+* Removed support for the signed_cookies SESSION_ENGINE + SessionRosettaStorage in Django 1.6, because serialization of POFiles would fail
+* Simplified the group membership test (Issue #90 - Thanks @dotsbb)
+* Better serving of admin static files. (Issue #61, thanks @tback)
+* Dropped Django 1.3 support
+
+
+Version 0.7.2
+-------------
+* Fix for when settings imports unicode_literals for some reason (Issue #67)
+* Fixed mess with app_id between pages (Issue #68, thanks @tsouvarev)
+* Added Farsi translation. Thanks, @amiraliakbari
+* Improved the permission system, allowing for more advanced permission mechanisms. Thanks, @codeinthehole and @tangentlabs
+* Fixed the ordering of apps in the language selection screen. (Issue #73, thanks @tsouvarev, @kanu and everyone else involved in tracking this one down)
+* Support for complex locale names. (Issue #71, Thanks @strycore)
+* Configurable cache name (Issue #75, Thanks @Karmak23)
+
+Version 0.7.1
+-------------
+* Fix: value missing in context
+
+Version 0.7.0
+-------------
+* Support for Django 1.5 and HEAD, support for Python 3.
+* Upgraded bundled polib to version 1.0.3 - http://pypi.python.org/pypi/polib/1.0.3
+* Support timezones on the last modified PO header. Thanks @jmoiron (Issue #43)
+* Actually move to the next block when submitting a lot of translations (Issue #13)
+* Add msgctxt to the entry hash to differentiate entries with context. Thanks @metalpriest (Issue #39)
+* Better discovery of locale files on Django 1.4+ Thanks @tijs (Issues #63, #64)
+* List apps in alphabetical order
+
+Version 0.6.8
+-------------
+* Switched to a pluggable storage backend model to increase compatibility with Django 1.4. Cache and Session-based storages are provided.
+
+Version 0.6.7
+-------------
+* Added a testproject to run tests
+* Updated french translation. Thanks, @BertrandBordage
+* Merged @sleepyjames' PR that fixes an error when pofile save path contains '.po' in the path
+* Merged @rory's PR to correcty handle plural strings that have a leading/trailing newline (Issue #34)
+
+Version 0.6.6
+-------------
+* Django 1.4 support (Issue #30, #33)
+* Better handling of translation callbacks on Bing's translation API and support of composite locales (Issue #26)
+
+Version 0.6.5
+-------------
+* Updated polib to 0.7.0
+* Added ROSETTA_POFILE_WRAP_WIDTH setting to track the line-length of the updated Po file. (Issue #24)
+* Renamed the ``messages``context variable to ``rosetta_messages`` prevent conflicts with ``django.contrib.messages`` (Issue #23)
+
+Version 0.6.4
+-------------
+* Added ROSETTA_REQUIRES_AUTH option to grant access to non authenticated users (False by default)
+
+Version 0.6.3
+-------------
+* Support for the Bing transation API service to replace Google's service which is no longer free.

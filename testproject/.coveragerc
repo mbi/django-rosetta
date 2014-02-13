@@ -1,0 +1,10 @@
+[run]
+branch = True
+source =
+    rosetta
+omit =
+    ../*migrations*
+    ../*tests*
+    ../*polib*
+[report]
+precision = 2

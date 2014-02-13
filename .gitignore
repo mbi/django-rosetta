@@ -6,3 +6,11 @@ dist
 .svnexternals
 build
 rosetta/locale/xx/LC_MESSAGES/*.mo
+/.settings
+/.project
+testproject/coverage.xml
+testproject/htmlcov/
+testproject/rosetta.db
+testproject/src/
+testproject/.coverage
+.venv_*
