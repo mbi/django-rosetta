@@ -12,7 +12,7 @@ from django.views.decorators.cache import never_cache
 from rosetta.utils.microsofttranslator import Translator, TranslateApiException
 
 from rosetta.conf import settings as rosetta_settings
-from rosetta.polib import pofile
+from polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
@@ -96,6 +96,10 @@ def home(request):
                     # doesn't bother to convert plural indexes to int,
                     # so we need unicode here.
                     plural_id = six.text_type(rx_plural.match(key).groups()[1])
+
+                    # Above no longer true as of Polib 1.0.4
+                    if plural_id and plural_id.isdigit():
+                        plural_id = int(plural_id)
 
                 elif rx.match(key):
                     md5hash = str(rx.match(key).groups()[0])
