@@ -1,7 +1,7 @@
 Version 0.7.4
 -------------
 * New ROSETTA_POFILENAMES setting. (PR #44, thanks @wrboyce)
-* Updated Czech translation (#97, thanks @cuchac)
+* Updated Czech translation (#97, #99 thanks @cuchac)
 * Fixed gettext standard compliance of all shipped translations
 * No longer ship polib, rely on the Cheeseshop instead
 
