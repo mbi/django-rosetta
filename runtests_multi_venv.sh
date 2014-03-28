@@ -35,6 +35,23 @@ then
     pip install --use-mirrors coverage python3-memcached six  Django==1.6.1 requests==2.1.0 polib==1.0.4
     deactivate
 fi
+if [ ! -d .venv_17b ]
+then
+    virtualenv --no-site-packages --distribute --python=python2 .venv_17b
+    . .venv_17b/bin/activate
+    pip install https://github.com/django/django/archive/1.7b1.zip
+    pip install --use-mirrors coverage python-memcached six  requests==2.1.0 polib==1.0.4
+    deactivate
+fi
+if [ ! -d .venv_17b_p3 ]
+then
+    virtualenv --no-site-packages --distribute --python=python3 .venv_17b_p3
+    . .venv_17b_p3/bin/activate
+    pip install https://github.com/django/django/archive/1.7b1.zip
+    pip install --use-mirrors coverage python3-memcached six  requests==2.1.0 polib==1.0.4
+    deactivate
+fi
+
 
 . .venv_14/bin/activate
 cd testproject
@@ -69,6 +86,22 @@ cd ..
 deactivate
 
 . .venv_16_p3/bin/activate
+cd testproject
+python manage.py --version
+python --version
+python manage.py test rosetta
+cd ..
+deactivate
+
+. .venv_17b/bin/activate
+cd testproject
+python manage.py --version
+python --version
+python manage.py test rosetta
+cd ..
+deactivate
+
+. .venv_17b_p3/bin/activate
 cd testproject
 python manage.py --version
 python --version
