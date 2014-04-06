@@ -1,6 +1,8 @@
 Version 0.7.5
 -------------
 * Fixed external JavaScript import to be url scheme independent (PR #101, thanks @tsouvarev)
+* Fixed a test
+
 
 Version 0.7.4
 -------------
