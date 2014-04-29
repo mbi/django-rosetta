@@ -16,7 +16,7 @@ from polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
-from rosetta.access import can_translate
+from rosetta.access import can_translate, can_translate_language
 
 import json
 import re
@@ -337,6 +337,9 @@ def list_languages(request, do_session_warn=False):
 
     has_pos = False
     for language in settings.LANGUAGES:
+        if not can_translate_language(request.user, language[0]):
+            continue
+        
         pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
         has_pos = has_pos or len(pos)
         languages.append(
@@ -373,7 +376,7 @@ def lang_sel(request, langid, idx):
     Selects a file to be translated
     """
     storage = get_storage(request)
-    if langid not in [l[0] for l in settings.LANGUAGES]:
+    if langid not in [l[0] for l in settings.LANGUAGES] or not can_translate_language(request.user, langid):
         raise Http404
     else:
 
