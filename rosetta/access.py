@@ -1,24 +1,11 @@
 from django.conf import settings
+from rosetta.conf import settings as rosetta_settings
+
 from django.utils import importlib
 
 
 def can_translate(user):
     return get_access_control_function()(user)
-
-
-def can_translate_language(user, langid):
-    
-    use_language_groups = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)
-    
-    if not use_language_groups:
-        return can_translate(user)
-    elif not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        return user.groups.filter(name='translators-%s' % langid).exists()
-        
 
 
 def get_access_control_function():
@@ -44,3 +31,14 @@ def is_superuser_staff_or_in_translators_group(user):
         return True
     else:
         return user.groups.filter(name='translators').exists()
+
+
+def can_translate_language(user, langid):
+    if not rosetta_settings.ROSETTA_LANGUAGE_GROUPS:
+        return can_translate(user)
+    elif not user.is_authenticated():
+        return False
+    elif user.is_superuser and user.is_staff:
+        return True
+    else:
+        return user.groups.filter(name='translators-%s' % langid).exists()

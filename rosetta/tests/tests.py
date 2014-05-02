@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse, resolve
 from django.core.exceptions import ImproperlyConfigured
 from django.core.cache import cache
@@ -632,6 +632,42 @@ class RosettaTestCase(TestCase):
         self.assertFalse(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
 
         rosetta_settings.ROSETTA_EXCLUDED_PATHS = ROSETTA_EXCLUDED_PATHS
+
+    def test_32_pr_103__language_groups(self):
+        ROSETTA_LANGUAGE_GROUPS = rosetta_settings.ROSETTA_LANGUAGE_GROUPS
+        rosetta_settings.ROSETTA_LANGUAGE_GROUPS = False
+
+        # Default behavior: non admins need to be in a translators group, they see
+        # all catalogs
+        translators = Group.objects.create(name='translators')
+        translators_xx = Group.objects.create(name='translators-xx')
+
+        user4 = User.objects.create_user('test_admin4', 'test@test3.com', 'test_password')
+        user4.groups.add(translators)
+        user4.is_superuser = False
+        user4.is_staff = True
+        user4.save()
+        self.client.login(username='test_admin4', password='test_password')
+
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
+
+        # Activate the option, user doesn't see the XX catalog
+        rosetta_settings.ROSETTA_LANGUAGE_GROUPS = True
+
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertFalse(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
+
+        # Now add them to the custom group
+        user4.groups.add(translators_xx)
+
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
+
+        rosetta_settings.ROSETTA_LANGUAGE_GROUPS = ROSETTA_LANGUAGE_GROUPS
 
 
 # Stubbed access control function
