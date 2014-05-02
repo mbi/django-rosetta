@@ -66,6 +66,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_LANGUAGE_GROUPS``: Set to ``True`` to enable language-specific groups, which can be used to give different translators access to different languages.
 * ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
 * ``ROSETTA_POFILENAMES``: Defines which po filenames are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
+* ``ROSETTA_EXCLUDE_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
 
 ********
 Storages

@@ -72,3 +72,6 @@ ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'default'
 # Require users to be authenticated (and Superusers or in group "translators").
 # Set this to False at your own risk
 ROSETTA_REQUIRES_AUTH = getattr(settings, 'ROSETTA_REQUIRES_AUTH', True)
+
+# Exclude paths defined in this list from being searched (usually ends with "locale")
+ROSETTA_EXCLUDED_PATHS =  getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())

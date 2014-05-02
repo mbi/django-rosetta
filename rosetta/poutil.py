@@ -110,12 +110,14 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     paths = map(os.path.normpath, paths)
     paths = list(set(paths))
     for path in paths:
-        for lang_ in langs:
-            dirname = os.path.join(path, lang_, 'LC_MESSAGES')
-            for fn in rosetta_settings.POFILENAMES:
-                filename = os.path.join(dirname, fn)
-                if os.path.isfile(filename):
-                    ret.add(os.path.abspath(filename))
+        # Exclude paths
+        if not path in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
+            for lang_ in langs:
+                dirname = os.path.join(path, lang_, 'LC_MESSAGES')
+                for fn in rosetta_settings.POFILENAMES:
+                    filename = os.path.join(dirname, fn)
+                    if os.path.isfile(filename):
+                        ret.add(os.path.abspath(filename))
     return list(sorted(ret))
 
 
