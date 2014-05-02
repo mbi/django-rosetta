@@ -617,6 +617,22 @@ class RosettaTestCase(TestCase):
         rosetta_settings.POFILENAMES = POFILENAMES
 
 
+    def test_31_pr_102__exclude_paths(self):
+        ROSETTA_EXCLUDED_PATHS = rosetta_settings.ROSETTA_EXCLUDED_PATHS
+
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
+
+        exclude_path = os.path.normpath(os.path.join(self.curdir, '../locale'))
+        rosetta_settings.ROSETTA_EXCLUDED_PATHS = [exclude_path, ]
+
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertFalse(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
+
+        rosetta_settings.ROSETTA_EXCLUDED_PATHS = ROSETTA_EXCLUDED_PATHS
+
 
 # Stubbed access control function
 def no_access(user):

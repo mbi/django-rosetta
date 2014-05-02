@@ -65,6 +65,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_ACCESS_CONTROL_FUNCTION``: An alternative function that determines if a given user can access the translation views. This function receives a ``user`` as its argument, and returns a boolean specifying whether the passed user is allowed to use Rosetta or not.
 * ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
 * ``ROSETTA_POFILENAMES``: Defines which po filenames are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
+* ``ROSETTA_EXCLUDE_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
 
 ********
 Storages

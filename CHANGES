@@ -2,6 +2,7 @@ Version 0.7.5
 -------------
 * Fixed external JavaScript import to be url scheme independent (PR #101, thanks @tsouvarev)
 * Fixed a test
+* Added support for excluding certain locale paths from the list of PO catalogs (PR #102, thanks @elpaso)
 
 
 Version 0.7.4
