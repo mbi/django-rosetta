@@ -6,6 +6,21 @@ def can_translate(user):
     return get_access_control_function()(user)
 
 
+def can_translate_language(user, langid):
+    
+    use_language_groups = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)
+    
+    if not use_language_groups:
+        return can_translate(user)
+    elif not user.is_authenticated():
+        return False
+    elif user.is_superuser and user.is_staff:
+        return True
+    else:
+        return user.groups.filter(name='translators-%s' % langid).exists()
+        
+
+
 def get_access_control_function():
     """
     Return a predicate for determining if a user can access the Rosetta views
