@@ -4,6 +4,7 @@ Version 0.7.5
 * Fixed a test
 * Added support for excluding certain locale paths from the list of PO catalogs (PR #102, thanks @elpaso)
 * Added support for translator groups (PR #103, thanks @barklund)
+* Removed Microsoft Translator as a shipped lib, relying on an external version instead
 
 
 Version 0.7.4

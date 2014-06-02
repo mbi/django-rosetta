@@ -9,7 +9,7 @@ from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
 
-from rosetta.utils.microsofttranslator import Translator, TranslateApiException
+from microsofttranslator import Translator, TranslateApiException
 
 from rosetta.conf import settings as rosetta_settings
 from polib import pofile
@@ -339,7 +339,7 @@ def list_languages(request, do_session_warn=False):
     for language in settings.LANGUAGES:
         if not can_translate_language(request.user, language[0]):
             continue
-        
+
         pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
         has_pos = has_pos or len(pos)
         languages.append(
