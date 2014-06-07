@@ -4,6 +4,7 @@ from django.core.cache import get_cache
 from rosetta.conf import settings as rosetta_settings
 import django
 import os
+import inspect
 
 try:
     from django.utils import timezone
@@ -86,7 +87,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         # of an app module. This code converts the AppConfig to its application
         # module.
         if django.VERSION[0:2] >= (1,7):
-            if issubclass(app, AppConfig):
+            if inspect.isclass(app) and issubclass(app, AppConfig):
                 app = apps.get_app_config(app.name).module
 
         try:
