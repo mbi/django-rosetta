@@ -10,11 +10,14 @@ try:
 except:
     timezone = None
 
-
 try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
+if django.VERSION[0:2] >= (1,7):
+    from django.apps import AppConfig
+    from django.apps import apps
 
 cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
 
@@ -79,6 +82,20 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
             app = getattr(__import__(appname[:p], {}, {}, [str(appname[p + 1:])]), appname[p + 1:])
         else:
             app = __import__(appname, {}, {}, [])
+        # For django 1.7, an imported INSTALLED_APP can be an AppConfig instead
+        # of an app module. This code converts the AppConfig to its application
+        # module.
+        if django.VERSION[0:2] >= (1,7):
+            if issubclass(app, AppConfig):
+                app = apps.get_app_config(app.name).module
+
+        try:
+            if issubclass(app, AppConfig):
+                app = apps.get_app_config(app.name).module
+            else:
+                pass
+        except:
+            pass
 
         apppath = os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(app.__file__), 'locale')))
 
