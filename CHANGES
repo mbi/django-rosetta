@@ -5,6 +5,7 @@ Version 0.7.5
 * Added support for excluding certain locale paths from the list of PO catalogs (PR #102, thanks @elpaso)
 * Added support for translator groups (PR #103, thanks @barklund)
 * Removed Microsoft Translator as a shipped lib, relying on an external version instead
+* Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
 
 
 Version 0.7.4
