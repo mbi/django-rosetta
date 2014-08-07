@@ -1,10 +1,15 @@
-from django.core.cache import cache
+from django.core.cache import get_cache
 from django.conf import settings
 from django.utils import importlib
 from django.core.exceptions import ImproperlyConfigured
+from rosetta.conf import settings as rosetta_settings
 import hashlib
 import time
 import six
+import django
+
+
+cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
 
 
 class BaseRosettaStorage(object):
@@ -39,6 +44,12 @@ class DummyRosettaStorage(BaseRosettaStorage):
 
 
 class SessionRosettaStorage(BaseRosettaStorage):
+    def __init__(self, request):
+        super(SessionRosettaStorage, self).__init__(request)
+
+        if 'signed_cookies' in settings.SESSION_ENGINE and django.VERSION[1] >= 6 and 'pickle' not in settings.SESSION_SERIALIZER.lower():
+            raise ImproperlyConfigured("Sorry, but django-rosetta doesn't support the `signed_cookies` SESSION_ENGINE in Django >= 1.6, because rosetta specific session files cannot be serialized.")
+
     def get(self, key, default=None):
         if key in self.request.session:
             return self.request.session[key]
@@ -70,7 +81,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
             raise ImproperlyConfigured("You can't use the CacheRosettaStorage because your Django Session storage doesn't seem to be working. The CacheRosettaStorage relies on the Django Session storage to avoid conflicts.")
 
         # Make sure we're not using DummyCache
-        if 'dummycache' in settings.CACHES['default']['BACKEND'].lower():
+        if 'dummycache' in settings.CACHES[rosetta_settings.ROSETTA_CACHE_NAME]['BACKEND'].lower():
             raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are use the DummyCache cache backend).")
 
         # Make sure the actually actually works

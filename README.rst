@@ -4,13 +4,13 @@ Rosetta
 
 Rosetta is a `Django <http://www.djangoproject.com/>`_ application that eases the translation process of your Django projects.
 
-Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file. 
+Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file.
 
 ********
 Features
 ********
 
-* Database independent 
+* Database independent
 * Reads and writes your project's `gettext` catalogs (po and mo files)
 * Installed and uninstalled in under a minute
 * Uses Django's admin interface CSS
@@ -20,7 +20,7 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.3, 1.4 or 1.5. When running with Django 1.5, Python 3.x is supported.
+Rosetta requires Django 1.4 or newer. When running with Django 1.5, Python 3.x is supported.
 
 ************
 Installation
@@ -34,7 +34,7 @@ To install Rosetta:
 3. Add an URL entry to your project's ``urls.py``, for example::
 
     from django.conf import settings
-    
+
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls')),
@@ -54,7 +54,8 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 
 * ``ROSETTA_MESSAGES_PER_PAGE``: Number of messages to display per page. Defaults to ``10``.
 * ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
-* ``BING_APP_ID``: Translation suggestions used to come from the Google Translation API service, but free service has been discontinued, and the next best thing is Microsoft `Bing's Translation API <http://msdn.microsoft.com/en-us/library/ff512404.aspx>`_. To use this service you must first `obtain an AppID key <https://ssl.bing.com/webmaster/Developers/AppIds/>`_, then specify the key here. Defaults to ``None``.
+* ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <http://api.yandex.com/key/form.xml?service=trnsl>`_, then specify the key here. Defaults to ``None``.
+* ``AZURE_CLIENT_ID`` and ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure API. To use this service, you must first `register for the service <https://datamarket.azure.com/dataset/5BA839F1-12CE-4CCE-BF57-A49D98D29A44>`_, then specify the 'Customer ID' and 'Primary Account Key' respectively, which you can find on your `account information page on Azure Marketplace <https://datamarket.azure.com/account?lang=en>`_.
 * ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English. Default to ``'en'`` and ``'English'`` respectively.
 * ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
 * ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated. Defaults to ``()``.
@@ -63,18 +64,24 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_STORAGE_CLASS``: See the note below on Storages. Defaults to ``rosetta.storage.CacheRosettaStorage``
 * ``ROSETTA_ENABLE_REFLANG``: See the note below on Reference Language. Defaults to ``False``.
 * ``ROSETTA_ACCESS_CONTROL_FUNCTION``: An alternative function that determines if a given user can access the translation views. This function receives a ``user`` as its argument, and returns a boolean specifying whether the passed user is allowed to use Rosetta or not.
+* ``ROSETTA_LANGUAGE_GROUPS``: Set to ``True`` to enable language-specific groups, which can be used to give different translators access to different languages. Instead of creating a global ``translators`` group, create individual per-language groups, e.g. ``translators-de``, ``translators-fr``, and assign users to these.
+* ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
+* ``ROSETTA_POFILENAMES``: Defines which po filenames are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
+* ``ROSETTA_EXCLUDE_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
 
 ********
 Storages
 ********
 
-To prevent re-reading and parsing the PO file catalogs over and over again, Rosetta stores them in a volatile location. This can be either the HTTP session or the Django cache. 
+To prevent re-reading and parsing the PO file catalogs over and over again, Rosetta stores them in a volatile location. This can be either the HTTP session or the Django cache.
 
-Django 1.4 has introduced a signed cookie session backend, which stores the whole content of the session in an encrypted cookie. Unfortunately this doesn't work with large PO files, as the limit of 4096 chars that can be stored in a cookie are easily exceeded. 
+Django 1.4 has introduced a signed cookie session backend, which stores the whole content of the session in an encrypted cookie. Unfortunately this doesn't work with large PO files, as the limit of 4096 chars that can be stored in a cookie are easily exceeded.
 
-In this case the Cache-based backend should be used (by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'``). Please make sure that a proper CACHES backend is configured in your Django settings.
+In this case the Cache-based backend should be used (by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'``). Please make sure that a proper ``CACHES`` backend is configured in your Django settings if your Django app is being served in a multi-process environment, or the different server processes, serving subsequent requests, won't find the storage data left by previous requests.
 
 Alternatively you can switch back to using the Session based storage by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage`` in your settings. This is perfectly safe on Django 1.3. On Django 1.4 or higher make sure you have DON'T use the `signed_cookies <https://docs.djangoproject.com/en/dev/topics/http/sessions/#using-cookie-based-sessions>`_ ``SESSION_BACKEND`` with this Rosetta storage backend or funky things might happen.
+
+**TL;DR**: if you run Django with gunincorn, mod-wsgi or other multi-process environment, the Django-default ``CACHES`` ``LocMemCache`` backend won't suffice: use memcache instead, or you will run into issues.
 
 ********
 Security
@@ -83,7 +90,7 @@ Security
 Because Rosetta requires write access to some of the files in your Django project, access to the application is restricted to the administrator user only (as defined in your project's Admin interface)
 
 If you wish to grant editing access to other users:
- 
+
 1. Create a 'translators' group in your admin interface
 2. Add the user you wish to grant translating rights to this group
 
@@ -144,3 +151,6 @@ Acknowledgments
 
 * Rosetta uses the excellent `polib <https://bitbucket.org/izi/polib>`_ library to parse and handle gettext files.
 
+.. image:: https://d2weczhvl823v0.cloudfront.net/mbi/django-rosetta/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free

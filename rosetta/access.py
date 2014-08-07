@@ -1,4 +1,6 @@
 from django.conf import settings
+from rosetta.conf import settings as rosetta_settings
+
 from django.utils import importlib
 
 
@@ -28,9 +30,15 @@ def is_superuser_staff_or_in_translators_group(user):
     elif user.is_superuser and user.is_staff:
         return True
     else:
-        try:
-            from django.contrib.auth.models import Group
-            translators = Group.objects.get(name='translators')
-            return translators in user.groups.all()
-        except Group.DoesNotExist:
-            return False
+        return user.groups.filter(name='translators').exists()
+
+
+def can_translate_language(user, langid):
+    if not rosetta_settings.ROSETTA_LANGUAGE_GROUPS:
+        return can_translate(user)
+    elif not user.is_authenticated():
+        return False
+    elif user.is_superuser and user.is_staff:
+        return True
+    else:
+        return user.groups.filter(name='translators-%s' % langid).exists()

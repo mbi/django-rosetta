@@ -7,7 +7,7 @@ google.setOnLoadCallback(function() {
         $('.hide', $(this).parent()).hide();
     });
 
-{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.BING_APP_ID %}
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET %}    
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
@@ -16,30 +16,63 @@ google.setOnLoadCallback(function() {
         var trans=$('textarea',a.parent());
         var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
         var destLang = '{{ rosetta_i18n_lang_code }}';
-        var app_id = '{{ rosetta_settings.BING_APP_ID }}';
-        var apiUrl = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate";
 
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
-        window.onTranslationComplete = function(resp) {
-            trans.val(unescape(resp).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
-            a.hide();
-        };
-        window.onTranslationError = function(response){
-            a.text(response);
-        };
+
+        $.getJSON("/rosetta/translate/", {
+                from: sourceLang,
+                to: destLang,
+                text: orig
+            }, 
+            function(data) {
+                if (data.success){
+                    trans.val(unescape(data.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+                    a.hide();
+                } else {
+                    a.text(data.error);
+                }
+            }
+        );
+    });
+{% endif %}
+
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.YANDEX_TRANSLATE_KEY %}
+    $('a.suggest').click(function(e){
+        e.preventDefault();
+        var a = $(this);
+        var str = a.html();
+        var orig = $('.original .message', a.parents('tr')).html();
+        var trans=$('textarea',a.parent());
+        var apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+
+        a.attr('class','suggesting').html('...');
+
         var apiData = {
-            onerror: 'onTranslationError',
-            appid: app_id,
-            from: sourceLang,
-            to: destLang,
-            oncomplete: "onTranslationComplete",
+            error: 'onTranslationError',
+            success: 'onTranslationComplete',
+            lang: '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}-{{ rosetta_i18n_lang_code }}',
+            key: '{{ rosetta_settings.YANDEX_TRANSLATE_KEY }}',
+            format: 'html',
             text: orig
         };
+
         $.ajax({
             url: apiUrl,
             data: apiData,
-            dataType: 'jsonp'});
+            dataType: 'jsonp',
+            success: function(response) {
+                if (response.code == 200) {
+                    trans.val(response.text[0]);
+                    a.hide();
+                } else {
+                    a.text(response);
+                }
+            },
+            error: function(response) {
+                a.text(response);
+            }
+        });
     });
 {% endif %}
 
@@ -50,7 +83,7 @@ google.setOnLoadCallback(function() {
             $($('.part',td).get(j)).css('top',textareaY + 'px');
         });
     });
-
+    
     $('.translation textarea').blur(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
@@ -78,5 +111,5 @@ google.setOnLoadCallback(function() {
     });
 
     $('.translation textarea').eq(0).focus();
-
+    
 });

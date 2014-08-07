@@ -1,3 +1,34 @@
+Version 0.7.5
+-------------
+* Fixed external JavaScript import to be url scheme independent (PR #101, thanks @tsouvarev)
+* Fixed a test
+* Added support for excluding certain locale paths from the list of PO catalogs (PR #102, thanks @elpaso)
+* Added support for translator groups (PR #103, thanks @barklund)
+* Removed Microsoft Translator as a shipped lib, relying on an external version instead
+* Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
+
+
+Version 0.7.4
+-------------
+* New ROSETTA_POFILENAMES setting. (PR #44, thanks @wrboyce)
+* Updated Czech translation (#97, #99 thanks @cuchac)
+* Fixed gettext standard compliance of all shipped translations
+* No longer ship polib, rely on the Cheeseshop instead
+
+
+Version 0.7.3
+-------------
+* Fix for test settings leaking onto global settings: LANGUAGES was overridden and not set back (Issue #81 - Thanks @zsoldosp)
+* Test against Django 1.6.1
+* Missing context variable in catalog list (Issue #87 - Thanks @kunitoki)
+* Added support for Yandex translation API (Issue #89 - Thanks @BlackWizard) See supported languages and limitations here: https://github.com/mbi/django-rosetta/pull/89
+* Added support for the Azure translation API, replacing the BING API. (Issue #86, thanks @davidkuchar and @maikelwever)
+* Removed support for the signed_cookies SESSION_ENGINE + SessionRosettaStorage in Django 1.6, because serialization of POFiles would fail
+* Simplified the group membership test (Issue #90 - Thanks @dotsbb)
+* Better serving of admin static files. (Issue #61, thanks @tback)
+* Dropped Django 1.3 support
+
+
 Version 0.7.2
 -------------
 * Fix for when settings imports unicode_literals for some reason (Issue #67)
@@ -5,6 +36,8 @@ Version 0.7.2
 * Added Farsi translation. Thanks, @amiraliakbari
 * Improved the permission system, allowing for more advanced permission mechanisms. Thanks, @codeinthehole and @tangentlabs
 * Fixed the ordering of apps in the language selection screen. (Issue #73, thanks @tsouvarev, @kanu and everyone else involved in tracking this one down)
+* Support for complex locale names. (Issue #71, Thanks @strycore)
+* Configurable cache name (Issue #75, Thanks @Karmak23)
 
 Version 0.7.1
 -------------

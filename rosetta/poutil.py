@@ -1,20 +1,26 @@
 from datetime import datetime
 from django.conf import settings
-from django.core.cache import cache
+from django.core.cache import get_cache
 from rosetta.conf import settings as rosetta_settings
 import django
 import os
-import six
+import inspect
+
 try:
     from django.utils import timezone
 except:
     timezone = None
 
-
 try:
     set
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
+
+if django.VERSION[0:2] >= (1,7):
+    from django.apps import AppConfig
+    from django.apps import apps
+
+cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
 
 
 def timestamp_with_timezone(dt=None):
@@ -77,6 +83,20 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
             app = getattr(__import__(appname[:p], {}, {}, [str(appname[p + 1:])]), appname[p + 1:])
         else:
             app = __import__(appname, {}, {}, [])
+        # For django 1.7, an imported INSTALLED_APP can be an AppConfig instead
+        # of an app module. This code converts the AppConfig to its application
+        # module.
+        if django.VERSION[0:2] >= (1,7):
+            if inspect.isclass(app) and issubclass(app, AppConfig):
+                app = apps.get_app_config(app.name).module
+
+        try:
+            if issubclass(app, AppConfig):
+                app = apps.get_app_config(app.name).module
+            else:
+                pass
+        except:
+            pass
 
         apppath = os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(app.__file__), 'locale')))
 
@@ -92,27 +112,30 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         if not project_apps and abs_project_path in apppath:
             continue
 
+
         if os.path.isdir(apppath):
             paths.append(apppath)
 
     ret = set()
-    langs = (lang,)
+    langs = [lang, ]
     if u'-' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'-'))
-        langs += (u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), )
+        langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), ]
     elif u'_' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'_'))
-        langs += (u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), )
+        langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), ]
 
     paths = map(os.path.normpath, paths)
     paths = list(set(paths))
     for path in paths:
-        for lang_ in langs:
-            dirname = os.path.join(path, lang_, 'LC_MESSAGES')
-            for fn in ('django.po', 'djangojs.po',):
-                filename = os.path.join(dirname, fn)
-                if os.path.isfile(filename):
-                    ret.add(os.path.abspath(filename))
+        # Exclude paths
+        if not path in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
+            for lang_ in langs:
+                dirname = os.path.join(path, lang_, 'LC_MESSAGES')
+                for fn in rosetta_settings.POFILENAMES:
+                    filename = os.path.join(dirname, fn)
+                    if os.path.isfile(filename):
+                        ret.add(os.path.abspath(filename))
     return list(sorted(ret))
 
 

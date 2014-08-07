@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-11 15:45+0200\n"
+"POT-Creation-Date: 2014-02-28 13:36+0100\n"
 "PO-Revision-Date: 2008-06-16 10:11+0100\n"
 "Last-Translator: RECEP KIRMIZI <rkirmizi@gmail.com>\n"
 "Language-Team: \n"
@@ -19,47 +19,71 @@ msgstr ""
 "X-Poedit-Language: \n"
 "X-Poedit-Country: \n"
 
-#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
+#: templates/rosetta/languages.html:5 templates/rosetta/languages.html.py:8
 msgid "Language selection"
 msgstr "Dil seçimi"
 
-#: templates/rosetta/languages.html:6 templates/rosetta/pofile.html:18
+#: templates/rosetta/languages.html:8 templates/rosetta/pofile.html:22
 msgid "Home"
 msgstr "Ana Sayfa"
 
+#: templates/rosetta/languages.html:9
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
+">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
+"your settings file should fix this."
+msgstr ""
+
+#: templates/rosetta/languages.html:15
+msgid "Filter"
+msgstr ""
+
+#: templates/rosetta/languages.html:16
+msgid "Project"
+msgstr ""
+
 #: templates/rosetta/languages.html:17
+msgid "Third party"
+msgstr ""
+
+#: templates/rosetta/languages.html:19 templates/rosetta/pofile.html:39
+msgid "All"
+msgstr "Hepsi"
+
+#: templates/rosetta/languages.html:32
 msgid "Application"
 msgstr "Uygulama"
 
-#: templates/rosetta/languages.html:18
+#: templates/rosetta/languages.html:33
 msgid "Progress"
 msgstr "İlerleme"
 
-#: templates/rosetta/languages.html:19
+#: templates/rosetta/languages.html:34
 msgid "Messages"
 msgstr "Mesaj"
 
-#: templates/rosetta/languages.html:20
+#: templates/rosetta/languages.html:35
 msgid "Translated"
 msgstr "Çevrildi"
 
-#: templates/rosetta/languages.html:21 templates/rosetta/pofile.html:57
+#: templates/rosetta/languages.html:36 templates/rosetta/pofile.html:61
 msgid "Fuzzy"
 msgstr "Belirsiz"
 
-#: templates/rosetta/languages.html:22
+#: templates/rosetta/languages.html:37
 msgid "Obsolete"
 msgstr "Kullanımda olmayan"
 
-#: templates/rosetta/languages.html:23
+#: templates/rosetta/languages.html:38
 msgid "File"
 msgstr "Dosya"
 
-#: templates/rosetta/languages.html:44
+#: templates/rosetta/languages.html:61
 msgid "Nothing to translate!"
 msgstr "Çevrilecek birşey yok!"
 
-#: templates/rosetta/languages.html:45
+#: templates/rosetta/languages.html:62
 msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
@@ -68,7 +92,7 @@ msgstr ""
 "kataloglarını oluşturmadınız."
 
 # python-format
-#: templates/rosetta/languages.html:46
+#: templates/rosetta/languages.html:63
 #, python-format
 msgid ""
 "Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
@@ -77,25 +101,25 @@ msgstr ""
 "Projenizdeki çoklu dilde geliştirebilmek için lütfen Django'nun <a href="
 "\"%(i18n_doc_link)s\">Django'nun I18N dökümantasyonuna</a> başvurun."
 
-#: templates/rosetta/pofile.html:8
+#: templates/rosetta/pofile.html:9
 msgid "Pick another file"
 msgstr "Başka bir dosya alın"
 
-#: templates/rosetta/pofile.html:9
+#: templates/rosetta/pofile.html:10
 msgid "Download this catalog"
 msgstr "Bu kataloğu bilgisayarınıza indirin"
 
-#: templates/rosetta/pofile.html:21
+#: templates/rosetta/pofile.html:25
 #, fuzzy, python-format
 msgid "Progress: %(percent_translated)s%%"
 msgstr "İlerleme: %(percent_translated)s%"
 
-#: templates/rosetta/pofile.html:23
+#: templates/rosetta/pofile.html:27
 msgid "File is read-only: download the file when done editing!"
 msgstr ""
 "Dosya salt-okunur: İşlemleriniz bittikten sonra bilgisayarınıza indirin"
 
-#: templates/rosetta/pofile.html:24
+#: templates/rosetta/pofile.html:28
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
@@ -103,71 +127,72 @@ msgstr ""
 "Çeviri bloğunuzdaki bazı öğeler kayıt edilemedi: bu genellikle üzerinde "
 "çalıştığınız dosyanın sunucu tarafında değişmesi sonucundaortaya çıkar."
 
-#: templates/rosetta/pofile.html:28
+#: templates/rosetta/pofile.html:32
 #, python-format
 msgid "Translate into %(rosetta_i18n_lang_name)s"
 msgstr "Şuna çevir %(rosetta_i18n_lang_name)s"
 
-#: templates/rosetta/pofile.html:31
+#: templates/rosetta/pofile.html:35
 msgid "Display:"
 msgstr "Göster:"
 
-#: templates/rosetta/pofile.html:32
+#: templates/rosetta/pofile.html:36
 msgid "Untranslated only"
 msgstr "Sadece çevirilmemiş"
 
-#: templates/rosetta/pofile.html:33
+#: templates/rosetta/pofile.html:37
 msgid "Translated only"
 msgstr "Sadece çevirilmiş"
 
-#: templates/rosetta/pofile.html:34
+#: templates/rosetta/pofile.html:38
 msgid "Fuzzy only"
 msgstr "Sadece belirsiz"
 
-#: templates/rosetta/pofile.html:35
-msgid "All"
-msgstr "Hepsi"
-
-#: templates/rosetta/pofile.html:42
+#: templates/rosetta/pofile.html:46
 msgid "Search"
 msgstr "Arama"
 
-#: templates/rosetta/pofile.html:44
+#: templates/rosetta/pofile.html:48
 msgid "Go"
 msgstr "Git"
 
-#: templates/rosetta/pofile.html:54
+#: templates/rosetta/pofile.html:58
 msgid "Original"
 msgstr "Orijinal"
 
-#: templates/rosetta/pofile.html:58
+#: templates/rosetta/pofile.html:62
 msgid "Occurrences(s)"
 msgstr ""
 
-#: templates/rosetta/pofile.html:82
+#: templates/rosetta/pofile.html:76 templates/rosetta/pofile.html.py:79
+#: templates/rosetta/pofile.html:94 templates/rosetta/pofile.html.py:97
+msgid "Context hint"
+msgstr ""
+
+#: templates/rosetta/pofile.html:104
 msgid "suggest"
 msgstr "öneri"
 
-#: templates/rosetta/pofile.html:93
+#: templates/rosetta/pofile.html:115
 #, python-format
 msgid "%(more_count)s more"
 msgid_plural "%(more_count)s more"
 msgstr[0] "%(more_count)s daha"
 msgstr[1] "%(more_count)s daha"
 
-#: templates/rosetta/pofile.html:105
+#: templates/rosetta/pofile.html:127
 msgid "Save and translate next block"
 msgstr "Kaydet ve sonraki bloğu çevir"
 
-#: templates/rosetta/pofile.html:109
+#: templates/rosetta/pofile.html:131
 msgid "Skip to page:"
 msgstr "Sayfaya geç:"
 
-#: templates/rosetta/pofile.html:122
+#: templates/rosetta/pofile.html:144
 msgid "Displaying:"
 msgstr "Gösteriliyor:"
 
-#: templates/rosetta/pofile.html:124
+#: templates/rosetta/pofile.html:148
 #, python-format
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"

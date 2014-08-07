@@ -6,8 +6,14 @@ MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
 
 # Enable Google translation suggestions
 ENABLE_TRANSLATION_SUGGESTIONS = getattr(settings, 'ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS', False)
+
+
+# Can be obtained for free here: https://translate.yandex.com/apikeys
+YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
+
 # Can be obtained for free here: https://ssl.bing.com/webmaster/Developers/AppIds/
-BING_APP_ID = getattr(settings, 'BING_APP_ID', None)
+AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
@@ -56,3 +62,23 @@ POFILE_WRAP_WIDTH = getattr(settings, 'ROSETTA_POFILE_WRAP_WIDTH', 78)
 STORAGE_CLASS = getattr(settings, 'ROSETTA_STORAGE_CLASS', 'rosetta.storage.CacheRosettaStorage')
 
 ENABLE_REFLANG = getattr(settings, 'ROSETTA_ENABLE_REFLANG', False)
+
+# Allow overriding of the default filenames, you mostly won't need to change this
+POFILENAMES = getattr(settings, 'ROSETTA_POFILENAMES', ('django.po', 'djangojs.po'))
+
+ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'default'
+                             if settings.CACHES.get('rosetta', None) is None
+                             else 'rosetta')
+
+# Require users to be authenticated (and Superusers or in group "translators").
+# Set this to False at your own risk
+ROSETTA_REQUIRES_AUTH = getattr(settings, 'ROSETTA_REQUIRES_AUTH', True)
+
+# Exclude paths defined in this list from being searched (usually ends with "locale")
+ROSETTA_EXCLUDED_PATHS =  getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())
+
+# Set to True to enable language-specific groups, which can be used to give
+# different translators access to different languages. Instead of creating a
+# 'translators` group, create individual per-language groups, e.g.
+# 'translators-de', 'translators-fr', ...
+ROSETTA_LANGUAGE_GROUPS = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)

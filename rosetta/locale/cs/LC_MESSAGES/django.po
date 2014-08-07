@@ -7,56 +7,83 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-04 13:42+0200\n"
+"POT-Creation-Date: 2014-02-28 13:36+0100\n"
 "PO-Revision-Date: 2008-09-12 12:16\n"
 "Last-Translator: <tomasz@napierala.org>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: cs <LL@li.org>\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Translated-Using: django-rosetta 0.4.RC2\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: templates/rosetta/languages.html:4 templates/rosetta/languages.html.py:6
+
+#: templates/rosetta/languages.html:5 templates/rosetta/languages.html.py:8
 msgid "Language selection"
 msgstr "Výběr jazyka"
 
-#: templates/rosetta/languages.html:6 templates/rosetta/pofile.html:18
+#: templates/rosetta/languages.html:8 templates/rosetta/pofile.html:22
 msgid "Home"
 msgstr "Domů"
 
+#: templates/rosetta/languages.html:9
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
+">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
+"your settings file should fix this."
+msgstr ""
+
+#: templates/rosetta/languages.html:15
+msgid "Filter"
+msgstr "Filtr"
+
+#: templates/rosetta/languages.html:16
+msgid "Project"
+msgstr "Projekt"
+
 #: templates/rosetta/languages.html:17
+msgid "Third party"
+msgstr "Třetích stran"
+
+#: templates/rosetta/languages.html:19 templates/rosetta/pofile.html:39
+msgid "All"
+msgstr "Vše"
+
+#: templates/rosetta/languages.html:32
 msgid "Application"
 msgstr "Aplikace"
 
-#: templates/rosetta/languages.html:18
+#: templates/rosetta/languages.html:33
 msgid "Progress"
 msgstr "Hotovo"
 
-#: templates/rosetta/languages.html:19
+#: templates/rosetta/languages.html:34
 msgid "Messages"
 msgstr "Textů"
 
-#: templates/rosetta/languages.html:20
+#: templates/rosetta/languages.html:35
 msgid "Translated"
 msgstr "Přeloženo"
 
-#: templates/rosetta/languages.html:21 templates/rosetta/pofile.html:57
+#: templates/rosetta/languages.html:36 templates/rosetta/pofile.html:61
 msgid "Fuzzy"
-msgstr ""
+msgstr "Nepřesné"
 
-#: templates/rosetta/languages.html:22
+#: templates/rosetta/languages.html:37
 msgid "Obsolete"
 msgstr "Zastaralé"
 
-#: templates/rosetta/languages.html:23
+#: templates/rosetta/languages.html:38
 msgid "File"
 msgstr "Soubor"
 
-#: templates/rosetta/languages.html:44
+#: templates/rosetta/languages.html:61
 msgid "Nothing to translate!"
 msgstr "Nic k překladu!"
 
-#: templates/rosetta/languages.html:45
+#: templates/rosetta/languages.html:62
 msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
@@ -65,111 +92,110 @@ msgstr ""
 "spuštěn proces překladu katalogů."
 
 # python-format
-#: templates/rosetta/languages.html:46
+#: templates/rosetta/languages.html:63
 #, python-format
 msgid ""
 "Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
 "a> for a guide on how to set up internationalization for your project."
 msgstr ""
-"Podívejte se prosím do <a href=\"%(i18n_doc_link)s\">Django dokumentace "
-"I18N </a>, kde naleznete podklady pro nastavení Vašeho vícejazyčného projektu."
+"Podívejte se prosím do <a href=\"%(i18n_doc_link)s\">Django dokumentace I18N "
+"</a>, kde naleznete podklady pro nastavení Vašeho vícejazyčného projektu."
 
-#: templates/rosetta/pofile.html:8
+#: templates/rosetta/pofile.html:9
 msgid "Pick another file"
 msgstr "Vybrat jiný soubor"
 
-#: templates/rosetta/pofile.html:9
+#: templates/rosetta/pofile.html:10
 msgid "Download this catalog"
 msgstr "Stáhnout tento katalog"
 
-#: templates/rosetta/pofile.html:21
-msgid "Progress: %(percent_translated)s%"
+#: templates/rosetta/pofile.html:25
+#, fuzzy, python-format
+msgid "Progress: %(percent_translated)s%%"
 msgstr "Hotovo: %(percent_translated)s %"
 
-#: templates/rosetta/pofile.html:23
+#: templates/rosetta/pofile.html:27
 msgid "File is read-only: download the file when done editing!"
 msgstr "Soubor je pouze pro čtení: pro dokončení úprav si soubor stáhněte!"
 
-#: templates/rosetta/pofile.html:24
+#: templates/rosetta/pofile.html:28
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
-msgstr "Některé z Vámi přeložených textových položek nebyly uloženy: důvodem je"
-", že Váš kolega Vám provedl pod rukami nějaké úpravy :-)."
+msgstr ""
+"Některé z Vámi přeložených textových položek nebyly uloženy: důvodem je, že "
+"Váš kolega Vám provedl pod rukami nějaké úpravy :-)."
 
-#: templates/rosetta/pofile.html:28
+#: templates/rosetta/pofile.html:32
 #, python-format
 msgid "Translate into %(rosetta_i18n_lang_name)s"
 msgstr "Překlad do %(rosetta_i18n_lang_name)s "
 
-#: templates/rosetta/pofile.html:31
+#: templates/rosetta/pofile.html:35
 msgid "Display:"
 msgstr "Zobrazit:"
 
-#: templates/rosetta/pofile.html:32
+#: templates/rosetta/pofile.html:36
 msgid "Untranslated only"
 msgstr "Pouze nepřeložené"
 
-#: templates/rosetta/pofile.html:33
+#: templates/rosetta/pofile.html:37
 msgid "Translated only"
 msgstr "Pouze přeložené"
 
-#: templates/rosetta/pofile.html:34
+#: templates/rosetta/pofile.html:38
 msgid "Fuzzy only"
-msgstr "Pouze Fuzzy"
+msgstr "Pouze nepřesné"
 
-#: templates/rosetta/pofile.html:35
-msgid "All"
-msgstr "Vše"
-
-#: templates/rosetta/pofile.html:42
+#: templates/rosetta/pofile.html:46
 msgid "Search"
 msgstr "Hledat"
 
-#: templates/rosetta/pofile.html:44
+#: templates/rosetta/pofile.html:48
 msgid "Go"
 msgstr "Hledat"
 
-#: templates/rosetta/pofile.html:54
-msgid "Original"
-msgstr ""
-
 #: templates/rosetta/pofile.html:58
+msgid "Original"
+msgstr "Originál"
+
+#: templates/rosetta/pofile.html:62
 msgid "Occurrences(s)"
 msgstr "Výskyt(y)"
 
-#: templates/rosetta/pofile.html:82
+#: templates/rosetta/pofile.html:76 templates/rosetta/pofile.html.py:79
+#: templates/rosetta/pofile.html:94 templates/rosetta/pofile.html.py:97
+msgid "Context hint"
+msgstr "Nápověda"
+
+#: templates/rosetta/pofile.html:104
 msgid "suggest"
 msgstr "navrhnout"
 
-#: templates/rosetta/pofile.html:93
+#: templates/rosetta/pofile.html:115
 #, python-format
 msgid "%(more_count)s more"
 msgid_plural "%(more_count)s more"
-msgstr[0] "%(more_count)s více"
-msgstr[1] "%(more_count)s více"
+msgstr[0] "další %(more_count)s"
+msgstr[1] "další %(more_count)s"
+msgstr[2] "dalších %(more_count)s"
 
-#: templates/rosetta/pofile.html:105
+#: templates/rosetta/pofile.html:127
 msgid "Save and translate next block"
 msgstr "Uložit a přeložit další část"
 
-#: templates/rosetta/pofile.html:109
+#: templates/rosetta/pofile.html:131
 msgid "Skip to page:"
 msgstr "Přejít na stránku:"
 
-#: templates/rosetta/pofile.html:122
+#: templates/rosetta/pofile.html:144
 msgid "Displaying:"
 msgstr "Zobrazeno:"
 
-#: templates/rosetta/pofile.html:124
+#: templates/rosetta/pofile.html:148
 #, python-format
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
 msgstr[0] "%(hits)s/%(message_number)s text"
-msgstr[1] "%(hits)s/%(message_number)s textů"
-
-#~ msgid "English"
-#~ msgstr "Anglicky"
-
-#~ msgid "Both"
-#~ msgstr "Oba"
+msgstr[1] "%(hits)s/%(message_number)s texty"
+msgstr[2] "%(hits)s/%(message_number)s textů"
