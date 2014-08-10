@@ -141,3 +141,8 @@ Acknowledgments
 .. image:: https://d2weczhvl823v0.cloudfront.net/mbi/django-rosetta/trend.png
    :alt: Bitdeli badge
    :target: https://bitdeli.com/free
+
+.. image:: https://rawgithub.com/twolfson/gittip-badge/0.2.0/dist/gittip.png
+   :alt: Support via Gittip
+   :target: https://www.gittip.com/mbi/
+   :align: right
