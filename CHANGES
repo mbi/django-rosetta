@@ -6,6 +6,7 @@ Version 0.7.5
 * Added support for translator groups (PR #103, thanks @barklund)
 * Removed Microsoft Translator as a shipped lib, relying on an external version instead
 * Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
+* Fixed a couple inconsistencies in the German translation. (thanks @benebun)
 
 
 Version 0.7.4
