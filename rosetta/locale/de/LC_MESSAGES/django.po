@@ -104,7 +104,7 @@ msgstr ""
 
 #: templates/rosetta/pofile.html:9
 msgid "Pick another file"
-msgstr "Wähle eine andere Datei"
+msgstr "Wählen Sie eine andere Datei"
 
 #: templates/rosetta/pofile.html:10
 msgid "Download this catalog"
