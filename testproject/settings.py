@@ -46,6 +46,14 @@ INSTALLED_APPS = [
 ]
 LANGUAGE_CODE = "en"
 
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
+)
+
 LANGUAGES = (
     ('ja', u'日本語'),
     ('xx', u'XXXXX'),
