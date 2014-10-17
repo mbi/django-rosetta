@@ -7,6 +7,7 @@ Version 0.7.5
 * Removed Microsoft Translator as a shipped lib, relying on an external version instead
 * Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
 * Fixed a couple inconsistencies in the German translation. (thanks @benebun)
+* Use content_type instead of mimetype in HttpResponse. (Issue #115, thanks @vesteinn)
 
 
 Version 0.7.4
