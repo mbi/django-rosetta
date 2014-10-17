@@ -8,6 +8,7 @@ Version 0.7.5
 * Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
 * Fixed a couple inconsistencies in the German translation. (thanks @benebun)
 * Use content_type instead of mimetype in HttpResponse. (Issue #115, thanks @vesteinn)
+* Don't assume that request.user has settable properties, this was a silly idea anyway (Issue #114, thanks @stevejalim)
 
 
 Version 0.7.4

@@ -141,12 +141,11 @@ def home(request):
 
             if file_change and rosetta_i18n_write:
                 try:
-                    # Provide defaults in case authorization is not required.
-                    request.user.first_name = getattr(request.user, 'first_name', 'Anonymous')
-                    request.user.last_name = getattr(request.user, 'last_name', 'User')
-                    request.user.email = getattr(request.user, 'email', 'anonymous@user.tld')
-
-                    rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (request.user.first_name, request.user.last_name, request.user.email)).encode('ascii', 'ignore')
+                    rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (
+                        getattr(request.user, 'first_name', 'Anonymous'),
+                        getattr(request.user, 'last_name', 'User'),
+                        getattr(request.user, 'email', 'anonymous@user.tld')
+                    )).encode('ascii', 'ignore')
                     rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
                     rosetta_i18n_pofile.metadata['PO-Revision-Date'] = timestamp_with_timezone()
                 except UnicodeDecodeError:
