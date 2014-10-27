@@ -63,7 +63,7 @@ google.setOnLoadCallback(function() {
             dataType: 'jsonp',
             success: function(response) {
                 if (response.code == 200) {
-                    trans.val(response.text[0]);
+                    trans.val(response.text[0].replace(/<br>/g, '\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
                     a.hide();
                 } else {
                     a.text(response);
