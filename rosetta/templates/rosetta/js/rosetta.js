@@ -7,7 +7,8 @@ google.setOnLoadCallback(function() {
         $('.hide', $(this).parent()).hide();
     });
 
-{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET %}    
+{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}
+   {% if rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET or rosetta_settings.GOOGLE_TRANSLATE %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
@@ -20,7 +21,7 @@ google.setOnLoadCallback(function() {
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
 
-        $.getJSON("/rosetta/translate/", {
+        $.getJSON("./translate/", {
                 from: sourceLang,
                 to: destLang,
                 text: orig
@@ -35,9 +36,9 @@ google.setOnLoadCallback(function() {
             }
         );
     });
-{% endif %}
+   {% endif %}
 
-{% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS and rosetta_settings.YANDEX_TRANSLATE_KEY %}
+   {% if rosetta_settings.YANDEX_TRANSLATE_KEY %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
@@ -74,6 +75,7 @@ google.setOnLoadCallback(function() {
             }
         });
     });
+   {% endif %}
 {% endif %}
 
     $('td.plural').each(function(i) {

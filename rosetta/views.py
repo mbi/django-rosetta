@@ -417,13 +417,18 @@ def translate_text(request):
         data = {'success': True, 'translation': text}
     else:
         # run the translation:
-        AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
-        AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-        translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
+        if getattr(rosetta_settings, 'GOOGLE_TRANSLATE', False):
+            import goslate
+            translator = goslate.Goslate()
+        else:
+            AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+            AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+
+            translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
 
         try:
-            translated_text = translator.translate(text, language_to)
+            translated_text = translator.translate(text, language_to, language_from)
             data = {'success': True, 'translation': translated_text}
         except TranslateApiException as e:
             data = {'success': False, 'error': "Translation API Exception: {0}".format(e.message)}

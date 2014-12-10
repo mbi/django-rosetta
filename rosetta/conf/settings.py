@@ -15,6 +15,9 @@ YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
 AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
 AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
+# Use Google translator
+GOOGLE_TRANSLATE = getattr(settings, 'ROSETTA_GOOGLE_TRANSLATE', None)
+
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
 
