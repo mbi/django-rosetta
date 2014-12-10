@@ -2,22 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-28 13:36+0100\n"
-"PO-Revision-Date: 2008-09-12 12:16\n"
-"Last-Translator: <tomasz@napierala.org>\n"
+"PO-Revision-Date: 2014-12-10 17:26+0124\n"
+"Last-Translator: Anonymous User <arrviasto@gmail.com>\n"
 "Language-Team: pl <LL@li.org>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Translated-Using: django-rosetta 0.4.RC2\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Translated-Using: django-rosetta 0.7.4\n"
 
 #: templates/rosetta/languages.html:5 templates/rosetta/languages.html.py:8
 msgid "Language selection"
@@ -30,30 +29,35 @@ msgstr "Początek"
 #: templates/rosetta/languages.html:9
 msgid ""
 "Couldn't load the specified language file. This usually happens when using "
-"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
-">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
-"your settings file should fix this."
+"the Encrypted Cookies Session Storage backend on Django 1.4 or "
+"higher.<br/>Setting ROSETTA_STORAGE_CLASS = "
+"'rosetta.storage.CacheRosettaStorage' in your settings file should fix this."
 msgstr ""
+"Nie można załadować żądanego pliku. Zwykle spowodowane jest to użyciem "
+"szyfrowanego magazynu ciastek sesji (Encrypted Cookies Session Storage) na "
+"Django 1.4 lub nowszym.<br/>Ustawienie ROSETTA_STORAGE_CLASS = "
+"'rosetta.storage.CacheRosettaStorage' w pliku ustawień (settings.py) powinno"
+" rozwiązać problem."
 
 #: templates/rosetta/languages.html:15
 msgid "Filter"
-msgstr ""
+msgstr "Filtr"
 
 #: templates/rosetta/languages.html:16
 msgid "Project"
-msgstr ""
+msgstr "Projekt"
 
 #: templates/rosetta/languages.html:17
 msgid "Third party"
-msgstr ""
+msgstr "Aplikacje zewnętrzne"
 
 #: templates/rosetta/languages.html:19 templates/rosetta/pofile.html:39
 msgid "All"
-msgstr ""
+msgstr "Wszystko"
 
 #: templates/rosetta/languages.html:32
 msgid "Application"
-msgstr ""
+msgstr "Aplikacja"
 
 #: templates/rosetta/languages.html:33
 msgid "Progress"
@@ -69,7 +73,7 @@ msgstr "Przetłumaczone"
 
 #: templates/rosetta/languages.html:36 templates/rosetta/pofile.html:61
 msgid "Fuzzy"
-msgstr ""
+msgstr "Niejednoznaczne (fuzzy)"
 
 #: templates/rosetta/languages.html:37
 msgid "Obsolete"
@@ -88,15 +92,16 @@ msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
 msgstr ""
-"Nie podałeś żadnych języków w plikach ustawień, lub nie wygenerowałeś "
-"jeszcze katalogów do tłumaczeń."
+"Nie podałeś żadnych języków w plikach ustawień lub nie wygenerowałeś jeszcze"
+" katalogów do tłumaczeń."
 
 # python-format
 #: templates/rosetta/languages.html:63
 #, python-format
 msgid ""
-"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
-"a> for a guide on how to set up internationalization for your project."
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N "
+"documentation</a> for a guide on how to set up internationalization for your"
+" project."
 msgstr ""
 "Sprawdź pomoc dotyczącą <a href=\"%(i18n_doc_link)s\">internacjonalizacji "
 "Django I18N </a>, aby znaleźć dokumentację na temat internacjonalizacji "
@@ -111,19 +116,21 @@ msgid "Download this catalog"
 msgstr "Pobierz ten katalog"
 
 #: templates/rosetta/pofile.html:25
-#, fuzzy, python-format
+#, python-format
 msgid "Progress: %(percent_translated)s%%"
-msgstr "Postęp: %(percent_translated)s %"
+msgstr "Postęp: %(percent_translated)s%%"
 
 #: templates/rosetta/pofile.html:27
 msgid "File is read-only: download the file when done editing!"
-msgstr "Plik jest tylko do odczytu: pobierz go kiedy skończysz edytować"
+msgstr "Plik jest tylko do odczytu: pobierz go, kiedy skończysz edytować"
 
 #: templates/rosetta/pofile.html:28
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
 msgstr ""
+"Niektóre elementy z twojego tłumaczenia nie zostały zapisane. Zwykle oznacza"
+" to, że plik katalogowy zmienił się od ostatniego załadowania."
 
 #: templates/rosetta/pofile.html:32
 #, python-format
@@ -144,7 +151,7 @@ msgstr "Tylko przetłumaczone"
 
 #: templates/rosetta/pofile.html:38
 msgid "Fuzzy only"
-msgstr ""
+msgstr "Tylko niejednoznaczne (fuzzy)"
 
 #: templates/rosetta/pofile.html:46
 msgid "Search"
@@ -156,7 +163,7 @@ msgstr "Idź"
 
 #: templates/rosetta/pofile.html:58
 msgid "Original"
-msgstr ""
+msgstr "Oryginał"
 
 #: templates/rosetta/pofile.html:62
 msgid "Occurrences(s)"
@@ -165,7 +172,7 @@ msgstr "Wystąpienie(a)"
 #: templates/rosetta/pofile.html:76 templates/rosetta/pofile.html.py:79
 #: templates/rosetta/pofile.html:94 templates/rosetta/pofile.html.py:97
 msgid "Context hint"
-msgstr ""
+msgstr "Kontekst"
 
 #: templates/rosetta/pofile.html:104
 msgid "suggest"
@@ -196,7 +203,7 @@ msgstr "Wyświetlanie:"
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
 msgstr[0] "%(hits)s/%(message_number)s komunikat"
-msgstr[1] "%(hits)s/%(message_number)s komunikatów"
+msgstr[1] "%(hits)s/%(message_number)s komunikaty"
 msgstr[2] "%(hits)s/%(message_number)s komunikatów"
 
 #~ msgid "English"
