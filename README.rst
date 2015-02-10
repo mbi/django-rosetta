@@ -44,8 +44,9 @@ Note: you can use whatever you wish as the URL prefix.
 
 To uninstall Rosetta, simply comment out or remove the ``'rosetta'`` line in your ``INSTALLED_APPS``
 
-
-Testing:
+*******
+Testing
+*******
 
 ``pip install tox && tox``
 
