@@ -88,7 +88,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         # module.
         if django.VERSION[0:2] >= (1,7):
             if inspect.isclass(app) and issubclass(app, AppConfig):
-                app = apps.get_app_config(app.name).module
+                app = apps.get_containing_app_config(app.name).module
 
         try:
             if issubclass(app, AppConfig):
