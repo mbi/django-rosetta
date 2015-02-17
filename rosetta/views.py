@@ -105,7 +105,7 @@ def home(request):
                     md5hash = str(rx.match(key).groups()[0])
 
                 if md5hash is not None:
-                    entry = rosetta_i18n_pofile.find(md5hash, 'md5hash')
+                    entry = rosetta_i18n_pofile.find(md5hash, 'md5hash', include_obsolete_entries=True)
                     # If someone did a makemessage, some entries might
                     # have been removed, so we need to check.
                     if entry:
@@ -127,11 +127,7 @@ def home(request):
 
                         is_obsolete = bool(request.POST.get('o_%s' % md5hash, False))
                         old_obsolete = 'obsolete' in entry.flags
-
-                        if old_obsolete and not is_obsolete:
-                            entry.flags.remove('obsolete')
-                        elif not old_obsolete and is_obsolete:
-                            entry.flags.append('obsolete')
+                        entry.obsolete = is_obsolete
 
                         file_change = True
 
@@ -240,7 +236,7 @@ def home(request):
             po = pofile(fl)
 
             for message in rosetta_messages:
-                message.main_lang = po.find(message.msgid).msgstr
+                message.main_lang = po.find(message.msgid, include_obsolete_entries=True).msgstr
 
         needs_pagination = paginator.num_pages > 1
         if needs_pagination:

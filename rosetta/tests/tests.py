@@ -187,13 +187,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
 
-        # not in listing
-        for p in range(1, 5):
-            r = self.client.get(reverse('rosetta-home') + '?page=%d' % p)
-            self.assertTrue('dummy language' in str(r.content))
-            self.assertTrue('Les deux' in str(r.content))
-
-        r = self.client.get(reverse('rosetta-home') + '?query=Les%20Deux')
+        r = self.client.get(reverse('rosetta-home') + '?query=Les%20deux')
         self.assertTrue('dummy language' in str(r.content))
         self.assertTrue('Les deux' in str(r.content))
 

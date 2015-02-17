@@ -67,9 +67,6 @@ def is_fuzzy(message):
     return message and hasattr(message, 'flags') and 'fuzzy' in message.flags
 is_fuzzy = register.filter(is_fuzzy)
 
-def is_obsolete(message):
-    return message and hasattr(message, 'flags') and 'obsolete' in message.flags
-is_obsolete = register.filter(is_obsolete)
 
 class RosettaCsrfTokenPlaceholder(Node):
     def render(self, context):

@@ -107,10 +107,10 @@
                             </td>
                         {% endif %}
                             <td class="c">
-                                <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
+                                <input type="checkbox" id="f_{{message.md5hash}}" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} {% if message.obsolete %}disabled{% endif %}/>
                             </td>
                             <td class="c">
-                                <input type="checkbox" name="o_{{message.md5hash}}" value="1" {% if message|is_obsolete %}checked="checked"{% endif %} />
+                                <input type="checkbox" name="o_{{message.md5hash}}" value="1" {% if message.obsolete %}checked="checked"{% endif %} onchange='document.getElementById("f_{{message.md5hash}}").disabled = this.checked;' />
                             </td>
                             <td class="location">
                                 {% for fn,lineno in message.occurrences %}
