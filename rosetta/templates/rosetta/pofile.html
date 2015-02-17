@@ -36,6 +36,7 @@
         <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
         <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
         <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'obsolete' %}class="active"{% endif %}><a href="?filter=obsolete">{% trans "Obsolete only" %}</a></li>
         <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
@@ -59,6 +60,7 @@
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
                         <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
+                        <th class="c"><span class="checkall">[-]</span> {% trans "Obsolete" %}</th>
                         <th>{% trans "Occurrences(s)" %}</th>
                     </tr>
                 </thead>
@@ -106,6 +108,9 @@
                         {% endif %}
                             <td class="c">
                                 <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
+                            </td>
+                            <td class="c">
+                                <input type="checkbox" name="o_{{message.md5hash}}" value="1" {% if message|is_obsolete %}checked="checked"{% endif %} />
                             </td>
                             <td class="location">
                                 {% for fn,lineno in message.occurrences %}

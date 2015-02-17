@@ -75,7 +75,7 @@ def home(request):
             rosetta_i18n_pofile = storage.get('rosetta_i18n_pofile')
 
         if 'filter' in request.GET:
-            if request.GET.get('filter') in ('untranslated', 'translated', 'fuzzy', 'all'):
+            if request.GET.get('filter') in ('untranslated', 'translated', 'fuzzy', 'obsolete', 'all'):
                 filter_ = request.GET.get('filter')
                 storage.set('rosetta_i18n_filter', filter_)
                 return HttpResponseRedirect(reverse('rosetta-home'))
@@ -125,13 +125,22 @@ def home(request):
                         elif not old_fuzzy and is_fuzzy:
                             entry.flags.append('fuzzy')
 
+                        is_obsolete = bool(request.POST.get('o_%s' % md5hash, False))
+                        old_obsolete = 'obsolete' in entry.flags
+
+                        if old_obsolete and not is_obsolete:
+                            entry.flags.remove('obsolete')
+                        elif not old_obsolete and is_obsolete:
+                            entry.flags.append('obsolete')
+
                         file_change = True
 
-                        if old_msgstr != value or old_fuzzy != is_fuzzy:
+                        if old_msgstr != value or old_fuzzy != is_fuzzy or old_obsolete != is_obsolete:
                             entry_changed.send(sender=entry,
                                                user=request.user,
                                                old_msgstr=old_msgstr,
                                                old_fuzzy=old_fuzzy,
+                                               old_obsolete=old_obsolete,
                                                pofile=rosetta_i18n_fn,
                                                language_code=rosetta_i18n_lang_code,
                                                )
@@ -201,9 +210,11 @@ def home(request):
             elif rosetta_i18n_filter == 'translated':
                 paginator = Paginator(rosetta_i18n_pofile.translated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             elif rosetta_i18n_filter == 'fuzzy':
-                paginator = Paginator([e for e in rosetta_i18n_pofile.fuzzy_entries() if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator(rosetta_i18n_pofile.fuzzy_entries(), rosetta_settings.MESSAGES_PER_PAGE)
+            elif rosetta_i18n_filter == 'obsolete':
+                paginator = Paginator(rosetta_i18n_pofile.obsolete_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             else:
-                paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator(rosetta_i18n_pofile, rosetta_settings.MESSAGES_PER_PAGE)
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
             page = int(request.GET.get('page'))
