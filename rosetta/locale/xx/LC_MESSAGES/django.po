@@ -33,5 +33,7 @@ msgid "String 4"
 msgstr ""
 
 
+#~ msgid "Both"
+#~ msgstr "Les deux"
 
 
