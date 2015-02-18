@@ -80,3 +80,6 @@ STATIC_URL = '/static/'
 #ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
 SECRET_KEY = 'empty'
+
+ROSETTA_GOOGLE_TRANSLATE = True
+ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True

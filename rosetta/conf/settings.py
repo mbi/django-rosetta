@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 # Number of messages to display per page.
 MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
@@ -17,6 +18,12 @@ AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
 # Use Google translator
 GOOGLE_TRANSLATE = getattr(settings, 'ROSETTA_GOOGLE_TRANSLATE', None)
+if GOOGLE_TRANSLATE:
+    try:
+        import goslate  # NOQA
+    except ImportError:
+        raise ImproperlyConfigured('If you set ROSETTA_GOOGLE_TRANSLATE to True, you must install the `goslate` module.')
+
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)

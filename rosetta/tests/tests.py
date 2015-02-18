@@ -13,6 +13,7 @@ import os
 import shutil
 import six
 import django
+import json
 
 
 try:
@@ -58,6 +59,8 @@ class RosettaTestCase(TestCase):
         self.__session_engine = settings.SESSION_ENGINE
         self.__storage_class = rosetta_settings.STORAGE_CLASS
         self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
+        self.__google_translate = rosetta_settings.GOOGLE_TRANSLATE
+        self.__enable_translation = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
@@ -66,6 +69,8 @@ class RosettaTestCase(TestCase):
         settings.SESSION_ENGINE = self.__session_engine
         rosetta_settings.STORAGE_CLASS = self.__storage_class
         rosetta_settings.ROSETTA_REQUIRES_AUTH = self.__require_auth
+        rosetta_settings.GOOGLE_TRANSLATE = self.__google_translate
+        rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = self.__enable_translation
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
@@ -668,6 +673,13 @@ class RosettaTestCase(TestCase):
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
 
         rosetta_settings.ROSETTA_LANGUAGE_GROUPS = ROSETTA_LANGUAGE_GROUPS
+
+    def test_33_pr_116_google_translate(self):
+        rosetta_settings.GOOGLE_TRANSLATE = True
+        rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = True
+
+        r = self.client.get(reverse('translate_text') + '?from=en&to=fr&text=Hello,+world!')
+        self.assertTrue(six.text_type("Bonjour le monde!") in six.text_type(r.content))
 
 
 # Stubbed access control function

@@ -1,3 +1,8 @@
+Version 0.7.6 (unreleased)
+--------------------------
+* Added support for the Free Google Translate API (PR #117, thanks @cuchac)
+
+
 Version 0.7.5
 -------------
 * Fixed external JavaScript import to be url scheme independent (PR #101, thanks @tsouvarev)
