@@ -10,6 +10,8 @@ Version 0.7.5
 * Use content_type instead of mimetype in HttpResponse. (Issue #115, thanks @vesteinn)
 * Don't assume that request.user has settable properties, this was a silly idea anyway (Issue #114, thanks @stevejalim)
 * Preserve HTML code when receiving translations from the Yandex translation service (Issue #116, thanks @marcbelmont)
+* Use TOX for testing
+* Test against Django 1.8a
 
 
 Version 0.7.4

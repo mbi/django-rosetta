@@ -13,4 +13,4 @@ testproject/htmlcov/
 testproject/rosetta.db
 testproject/src/
 testproject/.coverage
-.venv_*
+.tox
