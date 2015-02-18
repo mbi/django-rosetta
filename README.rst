@@ -24,7 +24,8 @@ Features
 Requirements
 ************
 
-Rosetta requires Django 1.4 or newer. When running with Django 1.5, Python 3.x is supported.
+* Rosetta supports Django 1.4 through 1.8a.
+
 
 ************
 Installation
@@ -74,8 +75,8 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_STORAGE_CLASS``: See the note below on Storages. Defaults to ``rosetta.storage.CacheRosettaStorage``
 * ``ROSETTA_ACCESS_CONTROL_FUNCTION``: An alternative function that determines if a given user can access the translation views. This function receives a ``user`` as its argument, and returns a boolean specifying whether the passed user is allowed to use Rosetta or not.
 * ``ROSETTA_LANGUAGE_GROUPS``: Set to ``True`` to enable language-specific groups, which can be used to give different translators access to different languages. Instead of creating a global ``translators`` group, create individual per-language groups, e.g. ``translators-de``, ``translators-fr``, and assign users to these.
-* ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
-* ``ROSETTA_POFILENAMES``: Defines which po filenames are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
+* ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the Rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
+* ``ROSETTA_POFILENAMES``: Defines which po file names are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
 * ``ROSETTA_EXCLUDE_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
 
 ********
@@ -110,7 +111,7 @@ Usage
 Generate a batch of files to translate
 --------------------------------------
 
-See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.5/topics/i18n/translation/>`_ to setup your project to use i18n and create the ``gettext`` catalog files.
+See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.5/topics/i18n/translation/>`_ to set up your project to use i18n and create the ``gettext`` catalog files.
 
 Translate away!
 ---------------
@@ -121,7 +122,7 @@ Start your Django development server and point your browser to the URL prefix yo
 
 Select a file and translate each untranslated message. Whenever a new batch of messages is processed, Rosetta updates the corresponding `django.po` file and regenerates the corresponding ``mo`` file.
 
-This means your project's labels will be translated right away, unfortunately you'll still have to restart the webserver for the changes to take effect. (NEW: if your webserver supports it, you can force auto-reloading of the translated catalog whenever a change was saved. See the note regarding the ``ROSETTA_WSGI_AUTO_RELOAD`` variable in ``conf/settings.py``.
+This means your project's labels will be translated right away, unfortunately you'll still have to restart the web server for the changes to take effect. (NEW: if your web server supports it, you can force auto-reloading of the translated catalog whenever a change was saved. See the note regarding the ``ROSETTA_WSGI_AUTO_RELOAD`` variable in ``conf/settings.py``.
 
 If the webserver doesn't have write access on the catalog files (as shown in the screen shot below) an archive of the catalog files can be downloaded.
 
