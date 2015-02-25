@@ -38,12 +38,17 @@ DATABASE_SUPPORTS_TRANSACTIONS = True
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.admin',
+    # 'django.contrib.admin.apps.SimpleAdminConfig',
+    # 'django.contrib.redirects.apps.RedirectsConfig',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-
     'rosetta',
 ]
+
+if django.VERSION[0:2] >= (1, 7):
+    INSTALLED_APPS.append('rosetta.tests.test_app.apps.TestAppConfig')
+
 LANGUAGE_CODE = "en"
 
 MIDDLEWARE_CLASSES = (

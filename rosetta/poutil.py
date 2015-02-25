@@ -16,7 +16,7 @@ try:
 except NameError:
     from sets import Set as set   # Python 2.3 fallback
 
-if django.VERSION[0:2] >= (1,7):
+if django.VERSION[0:2] >= (1, 7):
     from django.apps import AppConfig
     from django.apps import apps
 
@@ -74,7 +74,9 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         if os.path.isdir(localepath):
             paths.append(localepath)
 
+
     # project/app/locale
+    has_appconfig = False
     for appname in settings.INSTALLED_APPS:
         if rosetta_settings.EXCLUDED_APPLICATIONS and appname in rosetta_settings.EXCLUDED_APPLICATIONS:
             continue
@@ -86,35 +88,53 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         # For django 1.7, an imported INSTALLED_APP can be an AppConfig instead
         # of an app module. This code converts the AppConfig to its application
         # module.
-        if django.VERSION[0:2] >= (1,7):
+        if django.VERSION[0:2] >= (1, 7):
             if inspect.isclass(app) and issubclass(app, AppConfig):
-                app = apps.get_app_config(app.name).module
+                has_appconfig = True
+                continue
 
-        try:
-            if issubclass(app, AppConfig):
-                app = apps.get_app_config(app.name).module
-            else:
-                pass
-        except:
-            pass
-
-        apppath = os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(app.__file__), 'locale')))
+        app_path = os.path.normpath(os.path.abspath(os.path.join(os.path.dirname(app.__file__), 'locale')))
 
         # django apps
-        if 'contrib' in apppath and 'django' in apppath and not django_apps:
+        if 'contrib' in app_path and 'django' in app_path and not django_apps:
             continue
 
         # third party external
-        if not third_party_apps and abs_project_path not in apppath:
+        if not third_party_apps and abs_project_path not in app_path:
             continue
 
         # local apps
-        if not project_apps and abs_project_path in apppath:
+        if not project_apps and abs_project_path in app_path:
             continue
 
 
-        if os.path.isdir(apppath):
-            paths.append(apppath)
+        if os.path.isdir(app_path):
+            paths.append(app_path)
+
+    # Handling with AppConfigs is a wee messy, but we can simply get all the
+    # app paths directly from apps object
+    if has_appconfig:
+        for app_ in apps.get_app_configs():
+            if rosetta_settings.EXCLUDED_APPLICATIONS and app_.name in rosetta_settings.EXCLUDED_APPLICATIONS:
+                continue
+
+            app_path = app_.path
+            # django apps
+            if 'contrib' in app_path and 'django' in app_path and not django_apps:
+                continue
+
+            # third party external
+            if not third_party_apps and abs_project_path not in app_path:
+                continue
+
+            # local apps
+            if not project_apps and abs_project_path in app_path:
+                continue
+
+            if os.path.exists(os.path.abspath(os.path.join(app_path, 'locale'))):
+                paths.append(os.path.abspath(os.path.join(app_path, 'locale')))
+            if os.path.exists(os.path.abspath(os.path.join(app_path, '..', 'locale'))):
+                paths.append(os.path.abspath(os.path.join(app_path, '..', 'locale')))
 
     ret = set()
     langs = [lang, ]
@@ -129,7 +149,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     paths = list(set(paths))
     for path in paths:
         # Exclude paths
-        if not path in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
+        if path not in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
             for lang_ in langs:
                 dirname = os.path.join(path, lang_, 'LC_MESSAGES')
                 for fn in rosetta_settings.POFILENAMES:

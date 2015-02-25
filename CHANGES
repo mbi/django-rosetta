@@ -1,6 +1,7 @@
 Version 0.7.6 (unreleased)
 --------------------------
 * Added support for the Free Google Translate API (PR #117, thanks @cuchac)
+* Probable fix for apps defined by their AppConfig causing havoc in Django 1.7 and later (Issues #113 and #125)
 
 
 Version 0.7.5

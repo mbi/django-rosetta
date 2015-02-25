@@ -34,7 +34,7 @@ class RosettaTestCase(TestCase):
         super(RosettaTestCase, self).__init__(*args, **kwargs)
         self.curdir = os.path.dirname(__file__)
         self.dest_file = os.path.normpath(os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/django.po'))
-        self.django_version_major, self.django_version_minor = django.VERSION[0], django.VERSION[1]
+
 
     def setUp(self):
         user = User.objects.create_user('test_admin', 'test@test.com', 'test_password')
@@ -311,20 +311,20 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content))
 
-        if self.django_version_major >= 1 and self.django_version_minor >= 3:
+        if django.VERSION[0:2] >= (1, 3):
             self.assertTrue(('contrib') in str(r.content))
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=all')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content))
 
-        if self.django_version_major >= 1 and self.django_version_minor >= 3:
+        if django.VERSION[0:2] >= (1, 3):
             self.assertTrue(('contrib') in str(r.content))
 
         self.client.get(reverse('rosetta-pick-file') + '?filter=project')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content))
-        if self.django_version_major >= 1 and self.django_version_minor >= 3:
+        if django.VERSION[0:2] >= (1, 3):
             self.assertTrue(('contrib') not in str(r.content))
 
     def test_14_issue_99_context_and_comments(self):
@@ -442,7 +442,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('msgstr[1] ""\n"\\n"\n"Bar %s\\n"' in pofile_content)
 
     def test_20_Test_Issue_gh38(self):
-        if self.django_version_minor >= 4 and self.django_version_major >= 1:
+        if django.VERSION[0:2] >= (1, 4):
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
 
             settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -470,7 +470,7 @@ class RosettaTestCase(TestCase):
             self.assertTrue('m_9f6c442c6d579707440ba9dada0fb373' in str(r.content))
 
             # Two, the cookie backend
-            if self.django_version_minor < 6:
+            if django.VERSION[0:2] < (1, 6):
                 rosetta_settings.STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'
 
                 shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue38gh.template')), self.dest_file)
@@ -589,7 +589,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('<li class="active"><a href="?filter=third-party">' in str(r.content))
 
     def test_29_unsupported_p3_django_16_storage(self):
-        if self.django_version_minor >= 6 and self.django_version_major >= 1:
+        if django.VERSION[0:2] >= (1, 6):
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
 
             settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -680,6 +680,12 @@ class RosettaTestCase(TestCase):
 
         r = self.client.get(reverse('translate_text') + '?from=en&to=fr&text=Hello,+world!')
         self.assertTrue(six.text_type("Bonjour le monde!") in six.text_type(r.content))
+
+    def test_34_issue_113_app_configs(self):
+        if django.VERSION[0:2] >= (1, 7):
+            r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
+            r = self.client.get(reverse('rosetta-pick-file'))
+            self.assertTrue('rosetta/select/xx/1/">Test_App' in str(r.content))
 
 
 # Stubbed access control function
