@@ -28,7 +28,7 @@ setup(
         'six >=1.2.0',
         'Django >= 1.3',
         'requests >= 2.1.0',
-        'polib >= 1.0.4',
+        'polib >= 1.0.6',
         'microsofttranslator == 0.5'
     ]
 )
