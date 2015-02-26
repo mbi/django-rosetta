@@ -1,7 +1,10 @@
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 
-from django.utils import importlib
+try:
+    import importlib
+except ImportError:
+    from django.utils import importlib
 
 
 def can_translate(user):

@@ -54,6 +54,13 @@ def home(request):
             out_ = out_.rstrip()
         return out_
 
+    def _request_request(key, default=None):
+        if key in request.GET:
+            return request.GET.get(key)
+        elif key in request.POST:
+            return request.POST.get(key)
+        return default
+
     storage = get_storage(request)
     query = ''
     if storage.has('rosetta_i18n_fn'):
@@ -67,8 +74,8 @@ def home(request):
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(
                     (six.text_type(entry.msgid) +
-                    six.text_type(entry.msgstr) +
-                    six.text_type(entry.msgctxt or "")).encode('utf8')
+                        six.text_type(entry.msgstr) +
+                        six.text_type(entry.msgctxt or "")).encode('utf8')
                 ).hexdigest()
 
         else:
@@ -163,7 +170,7 @@ def home(request):
                         'mod_wsgi.process_group' in request.environ and \
                         request.environ.get('mod_wsgi.process_group', None) and \
                         'SCRIPT_FILENAME' in request.environ and \
-                        int(request.environ.get('mod_wsgi.script_reloading', '0')):
+                            int(request.environ.get('mod_wsgi.script_reloading', '0')):
                             try:
                                 os.utime(request.environ.get('SCRIPT_FILENAME'), None)
                             except OSError:
@@ -184,15 +191,15 @@ def home(request):
 
                 # Retain query arguments
                 query_arg = '?_next=1'
-                if 'query' in request.GET or 'query' in request.POST:
-                    query_arg += '&query=%s' % request.REQUEST.get('query')
+                if _request_request('query', False):
+                    query_arg += '&query=%s' % _request_request('query')
                 if 'page' in request.GET:
                     query_arg += '&page=%d&_next=1' % int(request.GET.get('page'))
                 return HttpResponseRedirect(reverse('rosetta-home') + iri_to_uri(query_arg))
         rosetta_i18n_lang_code = storage.get('rosetta_i18n_lang_code')
 
-        if 'query' in request.REQUEST and request.REQUEST.get('query', '').strip():
-            query = request.REQUEST.get('query').strip()
+        if _request_request('query', False) and _request_request('query', '').strip():
+            query = _request_request('query', '').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
             paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
         else:

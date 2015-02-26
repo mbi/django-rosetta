@@ -84,7 +84,7 @@ ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'default'
 ROSETTA_REQUIRES_AUTH = getattr(settings, 'ROSETTA_REQUIRES_AUTH', True)
 
 # Exclude paths defined in this list from being searched (usually ends with "locale")
-ROSETTA_EXCLUDED_PATHS =  getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())
+ROSETTA_EXCLUDED_PATHS = getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())
 
 # Set to True to enable language-specific groups, which can be used to give
 # different translators access to different languages. Instead of creating a
