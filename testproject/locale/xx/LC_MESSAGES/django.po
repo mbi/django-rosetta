@@ -35,6 +35,12 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
+#. This is a contextual comment
+#: templates/test.html:3
+msgid "Some text to translate"
+msgstr ""
+
+
 #~ msgid ""
 #~ "0_81EhfRiLPoxAH5j3f1D2P33S_-"
 #~ "Fe_7Mn_R_t9V8Bysr01xWAgvVEyyA190oYYTnzJCBucLBWKiqaAIjWAvQ3ZfrbCkDRe02iESoGhHEIBmmDI49SY6cQQk0AxGoB-"
