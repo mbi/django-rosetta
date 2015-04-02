@@ -1,6 +1,10 @@
 Version History
 ===============
 
+Version 0.7.7 (unreleased)
+--------------------------
+* Added proper documentation
+
 Version 0.7.6
 -------------
 * Added support for the Free Google Translate API (PR #117, thanks @cuchac)
