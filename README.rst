@@ -24,7 +24,7 @@ Features
 Requirements
 ************
 
-* Rosetta supports Django 1.4 through 1.8a.
+* Rosetta supports Django 1.4 through 1.8.
 
 
 ************
