@@ -4,6 +4,7 @@ Version History
 Version 0.7.7 (unreleased)
 --------------------------
 * Added proper documentation
+* Fixed typo in documentation (PR #130, thanks @dfrdmn)
 
 Version 0.7.6
 -------------
