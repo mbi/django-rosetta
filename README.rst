@@ -24,4 +24,4 @@ Features
 Documentation
 *************
 
-Please see the `online documentation <http://django-rosetta.readthedocs.org/>`_ to install Rosetta and get started.
+Please refer to the `online documentation <http://django-rosetta.readthedocs.org/>`_ to install Rosetta and get started.
