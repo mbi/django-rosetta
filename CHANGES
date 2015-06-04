@@ -5,6 +5,7 @@ Version 0.7.7 (unreleased)
 --------------------------
 * Added proper documentation
 * Fixed typo in documentation (PR #130, thanks @dfrdmn)
+* Fixes the Fuzzy toggle link by adding an actual toggle checkbox (Issue #132, thanks @EmilStenstrom)
 
 Version 0.7.6
 -------------
