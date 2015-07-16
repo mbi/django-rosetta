@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
+from django.contrib import messages
 
 from microsofttranslator import Translator, TranslateApiException
 
@@ -185,7 +186,8 @@ def home(request):
                             # we may not be running under uwsgi :P
                             pass
 
-                except:
+                except Exception as e:
+                    messages.error(request, e)
                     storage.set('rosetta_i18n_write', False)
                 storage.set('rosetta_i18n_pofile', rosetta_i18n_pofile)
 
