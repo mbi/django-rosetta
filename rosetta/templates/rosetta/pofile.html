@@ -26,6 +26,13 @@
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
     {% if rosetta_last_save_error %}<p class="errornote save-conflict">{% trans "Some items in your last translation block couldn't be saved: this usually happens when the catalog file changes on disk after you last loaded it." %}</p>{% endif %}
+    {% if messages %}
+        <div class="messages errornote save-conflict">
+        {% for message in messages %}
+            <p class="{{message.tags}}">{{ message|linebreaks }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
