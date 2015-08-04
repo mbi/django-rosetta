@@ -117,7 +117,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-home'))
 
         # the translated string no longer is up for translation
-        self.assertTrue('String 1'  in str(r.content))
+        self.assertTrue('String 1' in str(r.content))
         self.assertTrue('String 2' not in str(r.content))
 
         # display only translated strings
@@ -125,7 +125,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-home'))
 
         # The tranlsation was persisted
-        self.assertTrue('String 1' not  in str(r.content))
+        self.assertTrue('String 1' not in str(r.content))
         self.assertTrue('String 2' in str(r.content))
         self.assertTrue('Hello, world' in str(r.content))
 
@@ -686,6 +686,28 @@ class RosettaTestCase(TestCase):
             r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
             r = self.client.get(reverse('rosetta-pick-file'))
             self.assertTrue('rosetta/select/xx/1/">Test_App' in str(r.content))
+
+    def test_35_issue_135_display_exception_messages(self):
+        shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
+
+        # Load the template file
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home') + '?filter=untranslated')
+        r = self.client.get(reverse('rosetta-home'))
+        # make sure both strings are untranslated
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+
+        # make the pofile read-only
+        os.chmod(self.dest_file, 292)  # 0400
+
+        # post a translation
+        r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world', _next='_next'))
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertTrue(six.text_type('Permission denied') in six.text_type(r.content))
+
+        # cleanup
+        os.chmod(self.dest_file, 420)  # 0644
 
 
 # Stubbed access control function
