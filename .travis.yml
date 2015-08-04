@@ -1,6 +1,5 @@
 language: python
 services: memcached
-sudo: false
 python: 2.7
 env:
   - TOX_ENV=py26-django15
