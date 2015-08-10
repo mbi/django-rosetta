@@ -351,9 +351,10 @@ def list_languages(request, do_session_warn=False):
         pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
         has_pos = has_pos or len(pos)
         languages.append(
-            (language[0],
-            _(language[1]),
-            sorted([(get_app_name(l), os.path.realpath(l), pofile(l)) for l in pos], key=lambda app: app[0]),
+            (
+                language[0],
+                _(language[1]),
+                sorted([(get_app_name(l), os.path.realpath(l), pofile(l)) for l in pos], key=lambda app: app[0]),
             )
         )
     try:
@@ -400,10 +401,11 @@ def lang_sel(request, langid, idx):
         storage.set('rosetta_i18n_fn', file_)
         po = pofile(file_)
         for entry in po:
-            entry.md5hash = hashlib.new('md5',
+            entry.md5hash = hashlib.new(
+                'md5',
                 (six.text_type(entry.msgid) +
-                six.text_type(entry.msgstr) +
-                six.text_type(entry.msgctxt or "")).encode('utf8')
+                    six.text_type(entry.msgstr) +
+                    six.text_type(entry.msgctxt or "")).encode('utf8')
             ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)
