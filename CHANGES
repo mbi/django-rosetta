@@ -9,6 +9,8 @@ Version 0.7.7 (unreleased)
 * Better handling of Custom User Models while checking wether the current User is authorized to translate (Issue #131, thanks @EmilStenstrom)
 * Include the testproject in the sdist tarball to allow Debian to run tests during installation (Issue #137, thanks @fladi)
 * Display an explicit error message to the enduser when saving the POfile fails for some reason (Issue #135, thanks @pgcd)
+* Added support for PEP 3101 string formatting (PR #140, thanks @adamjforster)
+
 
 Version 0.7.6
 -------------
