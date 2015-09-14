@@ -7,24 +7,13 @@ from django.core.cache import cache
 from django.template.defaultfilters import floatformat
 from django.test import TestCase
 from django.test.client import Client
+from django.dispatch import receiver
 from rosetta.conf import settings as rosetta_settings
 from rosetta.signals import entry_changed, post_save
 import os
 import shutil
 import six
 import django
-import json
-
-
-try:
-    from django.dispatch import receiver
-except ImportError:
-    # We might be in django < 1.3, so backport this function
-    def receiver(signal, **kwargs):
-        def _decorator(func):
-            signal.connect(func, **kwargs)
-            return func
-        return _decorator
 
 
 class RosettaTestCase(TestCase):
@@ -54,7 +43,11 @@ class RosettaTestCase(TestCase):
         self.client2.login(username='test_admin2', password='test_password')
 
         self.__old_settings_languages = settings.LANGUAGES
-        settings.LANGUAGES = (('xx', 'dummy language'), ('fr_FR.utf8', 'French (France), UTF8'))
+        settings.LANGUAGES = (
+            ('xx', 'dummy language'),
+            ('fr_FR.utf8', 'French (France), UTF8'),
+            ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)')
+        )
 
         self.__session_engine = settings.SESSION_ENGINE
         self.__storage_class = rosetta_settings.STORAGE_CLASS
@@ -708,6 +701,11 @@ class RosettaTestCase(TestCase):
 
         # cleanup
         os.chmod(self.dest_file, 420)  # 0644
+
+    def test_36_issue_142_complex_locales(self):
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertTrue(os.path.normpath('locale/bs-Cyrl-BA/LC_MESSAGES/django.po') in str(r.content))
 
 
 # Stubbed access control function

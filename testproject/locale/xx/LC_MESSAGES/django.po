@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-30 14:37+0200\n"
+"POT-Creation-Date: 2015-09-14 02:28-0500\n"
 "PO-Revision-Date: 2012-05-27 14:59\n"
 "Last-Translator:   <admin@admin.com>\n"
 "Language-Team: French <LL@li.org>\n"
@@ -34,12 +34,6 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
-
-#. This is a contextual comment
-#: templates/test.html:3
-msgid "Some text to translate"
-msgstr ""
-
 
 #~ msgid ""
 #~ "0_81EhfRiLPoxAH5j3f1D2P33S_-"

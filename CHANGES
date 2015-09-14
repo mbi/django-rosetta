@@ -10,6 +10,7 @@ Version 0.7.7 (unreleased)
 * Include the testproject in the sdist tarball to allow Debian to run tests during installation (Issue #137, thanks @fladi)
 * Display an explicit error message to the enduser when saving the POfile fails for some reason (Issue #135, thanks @pgcd)
 * Added support for PEP 3101 string formatting (PR #140, thanks @adamjforster)
+* Added support for composite locales, e.g. 'bs-Cyrl-BA' (Issue #142, thanks @felarov)
 
 
 Version 0.7.6

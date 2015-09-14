@@ -60,11 +60,13 @@ MIDDLEWARE_CLASSES = (
 )
 
 LANGUAGES = (
+    ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)'),
     ('ja', u'日本語'),
     ('xx', u'XXXXX'),
     ('fr', u'French'),
     ('fr_FR.utf8', u'French (France), UTF8'),
 )
+
 LOCALE_PATHS = [
     os.path.join(PROJECT_PATH, 'locale'),
 ]

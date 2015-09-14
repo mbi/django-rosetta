@@ -143,10 +143,10 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     ret = set()
     langs = [lang, ]
     if u'-' in lang:
-        _l, _c = map(lambda x: x.lower(), lang.split(u'-'))
+        _l, _c = map(lambda x: x.lower(), lang.split(u'-', 1))
         langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), ]
     elif u'_' in lang:
-        _l, _c = map(lambda x: x.lower(), lang.split(u'_'))
+        _l, _c = map(lambda x: x.lower(), lang.split(u'_', 1))
         langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), ]
 
     paths = map(os.path.normpath, paths)
