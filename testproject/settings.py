@@ -46,8 +46,8 @@ INSTALLED_APPS = [
     'rosetta',
 ]
 
-if django.VERSION[0:2] >= (1, 7):
-    INSTALLED_APPS.append('rosetta.tests.test_app.apps.TestAppConfig')
+# if django.VERSION[0:2] >= (1, 7):
+#     INSTALLED_APPS.append('rosetta.tests.test_app.apps.TestAppConfig')
 
 LANGUAGE_CODE = "en"
 
