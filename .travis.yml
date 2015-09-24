@@ -1,15 +1,23 @@
 language: python
 services: memcached
-python:
-  - 2.7
-  - 3.5
-env:
-  - TOX_ENV=py27-django17
-  - TOX_ENV=py27-django18
-  - TOX_ENV=py35-django18
-  - TOX_ENV=py27-django19
-  - TOX_ENV=py35-django19
+
+matrix:
+  include:
+  - python: "3.5"
+    env: TOX_ENV=py35-django18
+  - python: "3.5"
+    env: TOX_ENV=py35-django19
+  - python: "2.7"
+    env: TOX_ENV=py27-django17
+  - python: "2.7"
+    env: TOX_ENV=py27-django18
+  - python: "2.7"
+    env: TOX_ENV=py27-django19
+  - python: "2.7"
+    env: TOX_ENV=flake8
+
 install:
   - pip install tox
+
 script:
   - tox -e $TOX_ENV
