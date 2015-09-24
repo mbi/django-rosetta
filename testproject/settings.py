@@ -34,6 +34,7 @@ TEST_DATABASE_CHARSET = "utf8"
 TEST_DATABASE_COLLATION = "utf8_general_ci"
 
 DATABASE_SUPPORTS_TRANSACTIONS = True
+SETTINGS_MODULE = 'testproject.settings'
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -46,8 +47,8 @@ INSTALLED_APPS = [
     'rosetta',
 ]
 
-# if django.VERSION[0:2] >= (1, 7):
-#     INSTALLED_APPS.append('rosetta.tests.test_app.apps.TestAppConfig')
+if django.VERSION[0:2] >= (1, 7):
+    INSTALLED_APPS.append('rosetta.tests.test_app.apps.TestAppConfig')
 
 LANGUAGE_CODE = "en"
 
@@ -80,7 +81,25 @@ STATIC_URL = '/static/'
 ROOT_URLCONF = 'testproject.urls'
 
 DEBUG = True
-TEMPLATE_DEBUG = True
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'debug': False,
+            'context_processors': (
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
+                "django.contrib.messages.context_processors.messages"
+            )
+        }
+    },
+]
 
 STATIC_URL = '/static/'
 #SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

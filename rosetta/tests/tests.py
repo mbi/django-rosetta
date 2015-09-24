@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.contrib.auth.models import User, Group
 from django.core.urlresolvers import reverse, resolve
 from django.core.exceptions import ImproperlyConfigured
 from django.core.cache import cache
 from django.template.defaultfilters import floatformat
-from django.test import TestCase
+from django.test import TestCase  # , override_settings
 from django.test.client import Client
 from django.dispatch import receiver
 from rosetta.conf import settings as rosetta_settings
@@ -26,6 +25,8 @@ class RosettaTestCase(TestCase):
 
 
     def setUp(self):
+        from django.contrib.auth.models import User
+
         user = User.objects.create_user('test_admin', 'test@test.com', 'test_password')
         user2 = User.objects.create_user('test_admin2', 'test@test2.com', 'test_password')
         user3 = User.objects.create_user('test_admin3', 'test@test2.com', 'test_password')
@@ -497,11 +498,13 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
         r = self.client.get(reverse('rosetta-home'))
         # We have distinct hashes, even though the msgid and msgstr are identical
-        #print (r.content)
+        # print (r.content)
         self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
 
     def test_23_save_header_data(self):
+        from django.contrib.auth.models import User
+
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.template')), self.dest_file)
 
         unicode_user = User.objects.create_user('test_unicode', 'save_header_data@test.com', 'test_unicode')
@@ -529,7 +532,7 @@ class RosettaTestCase(TestCase):
         f_ = open(self.dest_file, 'rb')
         content = six.text_type(f_.read())
         f_.close()
-        #print (content)
+        # print (content)
         # make sure unicode data was properly converted to ascii
         self.assertTrue('Hello, world' in content)
         self.assertTrue('save_header_data@test.com' in content)
@@ -632,6 +635,8 @@ class RosettaTestCase(TestCase):
         rosetta_settings.ROSETTA_EXCLUDED_PATHS = ROSETTA_EXCLUDED_PATHS
 
     def test_32_pr_103__language_groups(self):
+        from django.contrib.auth.models import User, Group
+
         ROSETTA_LANGUAGE_GROUPS = rosetta_settings.ROSETTA_LANGUAGE_GROUPS
         rosetta_settings.ROSETTA_LANGUAGE_GROUPS = False
 

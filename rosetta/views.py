@@ -119,7 +119,6 @@ def home(request):
                     if entry:
                         old_msgstr = entry.msgstr
                         if plural_id is not None:
-                            #plural_string = fix_nls(entry.msgstr_plural[plural_id], value)
                             plural_string = fix_nls(entry.msgid_plural, value)
                             entry.msgstr_plural[plural_id] = plural_string
                         else:
@@ -203,16 +202,16 @@ def home(request):
         if _request_request('query', False) and _request_request('query', '').strip():
             query = _request_request('query', '').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
-            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
+            paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete and rx.search(six.text_type(e_.msgstr) + six.text_type(e_.msgid) + u''.join([o[0] for o in e_.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
         else:
             if rosetta_i18n_filter == 'untranslated':
                 paginator = Paginator(rosetta_i18n_pofile.untranslated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             elif rosetta_i18n_filter == 'translated':
                 paginator = Paginator(rosetta_i18n_pofile.translated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             elif rosetta_i18n_filter == 'fuzzy':
-                paginator = Paginator([e for e in rosetta_i18n_pofile.fuzzy_entries() if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile.fuzzy_entries() if not e_.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
             else:
-                paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
             page = int(request.GET.get('page'))

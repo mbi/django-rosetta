@@ -70,7 +70,7 @@
                 </thead>
                 <tbody>
                     {% for message in rosetta_messages %}
-                    <tr class="{% cycle row1,row2 %}">
+                    <tr class="{% cycle 'row1' 'row2' %}">
                         {% if message.msgid_plural %}
                             <td class="original plural">
                                 <div class="plural-container">

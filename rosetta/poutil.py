@@ -4,20 +4,10 @@ from rosetta.conf import settings as rosetta_settings
 import django
 import os
 import inspect
+from django.apps import AppConfig
+from django.apps import apps
+from django.utils import timezone
 
-try:
-    from django.utils import timezone
-except:
-    timezone = None
-
-try:
-    set
-except NameError:
-    from sets import Set as set   # Python 2.3 fallback
-
-if django.VERSION[0:2] >= (1, 7):
-    from django.apps import AppConfig
-    from django.apps import apps
 
 try:
     from django.core.cache import caches
