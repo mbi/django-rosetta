@@ -58,10 +58,10 @@
         </div>
 
         <form method="post" action="">
+            {% rosetta_csrf_token %}          
             <table>
                 <thead>
                     <tr>
-                        {% rosetta_csrf_token %}
                         <th><div class="text">{% trans "Original" %}</div></th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
