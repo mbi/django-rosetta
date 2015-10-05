@@ -28,7 +28,7 @@ CACHES = {
 }
 
 
-#CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
+# CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
 TEST_DATABASE_CHARSET = "utf8"
 TEST_DATABASE_COLLATION = "utf8_general_ci"
