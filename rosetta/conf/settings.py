@@ -91,3 +91,7 @@ ROSETTA_EXCLUDED_PATHS = getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())
 # 'translators` group, create individual per-language groups, e.g.
 # 'translators-de', 'translators-fr', ...
 ROSETTA_LANGUAGE_GROUPS = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)
+
+# Custom filter to filter-out some strings
+# Set to function accepting request and list of PO file lines
+TRANSLATIONS_FILTER = getattr(settings, 'ROSETTA_TRANSLATIONS_FILTER', None)

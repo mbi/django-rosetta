@@ -203,16 +203,21 @@ def home(request):
         if _request_request('query', False) and _request_request('query', '').strip():
             query = _request_request('query', '').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
-            paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
+            strings = [e for e in rosetta_i18n_pofile if not e.obsolete and rx.search(six.text_type(e.msgstr) + six.text_type(e.msgid) + u''.join([o[0] for o in e.occurrences]))]
         else:
             if rosetta_i18n_filter == 'untranslated':
-                paginator = Paginator(rosetta_i18n_pofile.untranslated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
+                strings = rosetta_i18n_pofile.untranslated_entries()
             elif rosetta_i18n_filter == 'translated':
-                paginator = Paginator(rosetta_i18n_pofile.translated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
+                strings = rosetta_i18n_pofile.translated_entries()
             elif rosetta_i18n_filter == 'fuzzy':
-                paginator = Paginator([e for e in rosetta_i18n_pofile.fuzzy_entries() if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                strings = [e for e in rosetta_i18n_pofile.fuzzy_entries() if not e.obsolete]
             else:
-                paginator = Paginator([e for e in rosetta_i18n_pofile if not e.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                strings = [e for e in rosetta_i18n_pofile if not e.obsolete]
+
+        if rosetta_settings.TRANSLATIONS_FILTER:
+            strings = rosetta_settings.TRANSLATIONS_FILTER(request, strings)
+
+        paginator = Paginator(strings, rosetta_settings.MESSAGES_PER_PAGE)
 
         if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
             page = int(request.GET.get('page'))
