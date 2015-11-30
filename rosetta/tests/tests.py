@@ -13,6 +13,7 @@ import os
 import shutil
 import six
 import django
+import vcr
 
 
 class RosettaTestCase(TestCase):
@@ -672,6 +673,7 @@ class RosettaTestCase(TestCase):
 
         rosetta_settings.ROSETTA_LANGUAGE_GROUPS = ROSETTA_LANGUAGE_GROUPS
 
+    @vcr.use_cassette('fixtures/vcr_cassettes/test_33_pr_116_google_translate.yaml', match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'], record_mode='new_episodes')
     def test_33_pr_116_google_translate(self):
         rosetta_settings.GOOGLE_TRANSLATE = True
         rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = True
