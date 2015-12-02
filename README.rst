@@ -10,6 +10,8 @@ Rosetta is a `Django <http://www.djangoproject.com/>`_ application that eases th
 
 Because it doesn't export any models, Rosetta doesn't create any tables in your project's database. Rosetta can be installed and uninstalled by simply adding and removing a single entry in your project's `INSTALLED_APPS` and a single line in your main ``urls.py`` file.
 
+Note: as of version 0.7.7 django-rosetta requires Django 1.7 or later. If you need support for earlier versions of Django (1.4+) you should stick to 0.7.6.
+
 ********
 Features
 ********
