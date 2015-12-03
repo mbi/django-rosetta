@@ -15,3 +15,5 @@ testproject/rosetta.db
 testproject/src/
 testproject/.coverage
 .tox
+.eggs
+

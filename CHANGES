@@ -1,6 +1,12 @@
 Version History
 ===============
 
+Version 0.7.8
+-------------
+* Adds missing includes in MANIFEST.in
+* Support for running tests via setuptools
+* Updated microsofttranslator dependency version
+
 Version 0.7.7
 -------------
 * Supported Django versions are now 1.7, 1.8 and 1.9
