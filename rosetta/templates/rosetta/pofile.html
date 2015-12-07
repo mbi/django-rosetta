@@ -114,11 +114,15 @@
                                 <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
                             </td>
                             <td class="location">
-                                {% for fn,lineno in message.occurrences %}
-                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
-                                {% endfor %}
-                                {% if message.occurrences|length|gt:"3" %}
-                                    <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
+                                {% if message.occurrences %}
+                                    {% for fn,lineno in message.occurrences %}
+                                        <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
+                                    {% endfor %}
+                                    {% if message.occurrences|length|gt:"3" %}
+                                        <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
+                                    {% endif %}
+                                {% elif message.tcomment %}
+                                    {{ message.tcomment }}
                                 {% endif %}
                             </td>
                     </tr>
