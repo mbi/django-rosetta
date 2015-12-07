@@ -212,6 +212,7 @@ def home(request):
                             and rx.search(
                                 six.text_type(e_.msgstr)
                                 + six.text_type(e_.msgid)
+                                + six.text_type(e_.tcomment)
                                 + u''.join(
                                     [
                                         o[0]
