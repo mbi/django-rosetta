@@ -395,8 +395,18 @@ def lang_sel(request, langid, idx):
         project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
         file_ = sorted(find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps), key=get_app_name)[int(idx)]
 
-        storage.set('rosetta_i18n_lang_code', langid)
         storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
+        langids = [langid]
+        if u'-' in langid:
+            _l, _c = map(lambda x: x.lower(), langid.split(u'-'))
+            langids += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), ]
+        elif u'_' in langid:
+            _l, _c = map(lambda x: x.lower(), langid.split(u'_'))
+            langids += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), ]
+        for l in langids:
+            if l in file_:
+                langid = l
+        storage.set('rosetta_i18n_lang_code', langid)
         storage.set('rosetta_i18n_fn', file_)
         po = pofile(file_)
         for entry in po:
