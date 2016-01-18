@@ -1,3 +1,4 @@
+import django
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
@@ -277,7 +278,8 @@ def home(request):
             page=page,
             query=query,
             paginator=paginator,
-            rosetta_i18n_pofile=rosetta_i18n_pofile
+            rosetta_i18n_pofile=rosetta_i18n_pofile,
+            use_new_admin_images=django.get_version() in ['1.9.1']
         ), context_instance=RequestContext(request))
     else:
         return list_languages(request, do_session_warn=True)
