@@ -46,13 +46,15 @@ google.setOnLoadCallback(function() {
         var orig = $('.original .message', a.parents('tr')).html();
         var trans=$('textarea',a.parent());
         var apiUrl = "https://translate.yandex.net/api/v1.5/tr.json/translate";
+        var destLangRoot = '{{ rosetta_i18n_lang_code }}'.split('-')[0];
+        var lang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}-' + destLangRoot;
 
         a.attr('class','suggesting').html('...');
 
         var apiData = {
             error: 'onTranslationError',
             success: 'onTranslationComplete',
-            lang: '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}-{{ rosetta_i18n_lang_code }}',
+            lang: lang,
             key: '{{ rosetta_settings.YANDEX_TRANSLATE_KEY }}',
             format: 'html',
             text: orig
