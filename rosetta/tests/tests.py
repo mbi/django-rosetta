@@ -48,7 +48,8 @@ class RosettaTestCase(TestCase):
         settings.LANGUAGES = (
             ('xx', 'dummy language'),
             ('fr_FR.utf8', 'French (France), UTF8'),
-            ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)')
+            ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)'),
+            ('yy-Anot', u'Yet Another dummy language'),
         )
 
         self.__session_engine = settings.SESSION_ENGINE
@@ -713,6 +714,11 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('locale/bs-Cyrl-BA/LC_MESSAGES/django.po') in str(r.content))
+
+    def test_37_issue_133_complex_locales(self):
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
+        r = self.client.get(reverse('rosetta-pick-file'))
+        self.assertTrue(os.path.normpath('locale/yy_Anot/LC_MESSAGES/django.po') in str(r.content))
 
 
 # Stubbed access control function
