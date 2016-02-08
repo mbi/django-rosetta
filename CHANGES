@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.7.9 (work in progress)
+--------------------------------
+* Use language code without country specification for Yandex dest lang (PR #152, thanks @nealtodd)
+
+
 Version 0.7.8
 -------------
 * Adds missing includes in MANIFEST.in
