@@ -48,8 +48,13 @@
         <div id="toolbar">
             <form id="changelist-search" action="" method="post">
                 <div>
+                    {% static "admin/img/icon_searchbox.png" as searchbox %}
+                    {% if use_new_admin_images %}
+                      {% static "admin/img/search.svg" as searchbox %}
+                    {% endif %}
+
                     {% rosetta_csrf_token %}
-                    <label for="searchbar"><img src="{% static "admin/img/icon_searchbox.png" %}" alt="{% trans "Search" %}" /></label>
+                    <label for="searchbar"><img src="{{searchbox}}" alt="{% trans "Search" %}" /></label>
                     <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
                     <input type="submit" name="search" value="{% trans "Go" %}" />
                 </div>
@@ -57,7 +62,7 @@
         </div>
 
         <form method="post" action="">
-            {% rosetta_csrf_token %}          
+            {% rosetta_csrf_token %}
             <table>
                 <thead>
                     <tr>

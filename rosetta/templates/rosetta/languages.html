@@ -13,9 +13,6 @@
     <ul class="object-tools">
         <li class="nobubble">{% trans "Filter" %}:</li>
         <li{% ifequal rosetta_i18n_catalog_filter 'project' %} class="active"{% endifequal %}><a href="?filter=project">{% trans "Project" %}</a></li>
-        <li{% ifequal rosetta_i18n_catalog_filter 'third-party' %} class="active"{% endifequal %}><a href="?filter=third-party">{% trans "Third party" %}</a></li>
-        <li{% ifequal rosetta_i18n_catalog_filter 'django' %} class="active"{% endifequal %}><a href="?filter=django">Django</a></li>
-        <li{% ifequal rosetta_i18n_catalog_filter 'all' %} class="active"{% endifequal %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
 
     {% if has_pos %}
