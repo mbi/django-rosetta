@@ -4,6 +4,7 @@ Version History
 Version 0.7.9 (work in progress)
 --------------------------------
 * Use language code without country specification for Yandex dest lang (PR #152, thanks @nealtodd)
+* Support discovering locale directories like zh_Hans(xx_Xxxx) (Fixes #133 via PR #153 and #133, thanks @glasslion and @dohsimpson)
 
 
 Version 0.7.8
