@@ -60,11 +60,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware'
 )
 
+# Note: languages are overridden in the test runner
 LANGUAGES = (
     ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)'),
     ('ja', u'日本語'),
     ('xx', u'XXXXX'),
     ('fr', u'French'),
+    ('zh_Hans', u'Chinese (Simplified)'),
     ('fr_FR.utf8', u'French (France), UTF8'),
 )
 
