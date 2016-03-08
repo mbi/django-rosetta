@@ -21,6 +21,10 @@ GOOGLE_TRANSLATE = getattr(settings, 'ROSETTA_GOOGLE_TRANSLATE', None)
 if GOOGLE_TRANSLATE:
     try:
         import goslate  # NOQA
+
+        import warnings
+        warnings.warn('Translation via Google Translate (goslate) is no longer supported by Google and will be removed in the next version of Rosetta')
+
     except ImportError:
         raise ImproperlyConfigured('If you set ROSETTA_GOOGLE_TRANSLATE to True, you must install the `goslate` module.')
 

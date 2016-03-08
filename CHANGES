@@ -1,10 +1,12 @@
 Version History
 ===============
 
-Version 0.7.9 (work in progress)
---------------------------------
+Version 0.7.9
+-------------
 * Use language code without country specification for Yandex dest lang (PR #152, thanks @nealtodd)
 * Support discovering locale directories like zh_Hans(xx_Xxxx) (Fixes #133 via PR #153 and #133, thanks @glasslion and @dohsimpson)
+* Ship Django's original search icon as a static asset (Fixes #157, thanks @facconi)
+* Added a warning about translation via the Google Translate service being deprecated in the next version
 
 
 Version 0.7.8
