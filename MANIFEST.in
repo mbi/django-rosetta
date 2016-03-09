@@ -7,6 +7,7 @@ recursive-include rosetta/locale *
 recursive-include rosetta/tests *
 recursive-include rosetta/utils *
 recursive-include rosetta/templates *
+recursive-include rosetta/static *
 recursive-include testproject *
 recursive-include docs *
 prune rosetta/tests/__pycache__
