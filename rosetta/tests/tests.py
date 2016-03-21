@@ -726,6 +726,18 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('locale/zh_Hans/LC_MESSAGES/django.po') in str(r.content))
 
+    def test_39_invalid_get_page(self):
+        r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        r = self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+        r = self.client.get(reverse('rosetta-home') + '?filter=untranslated')
+
+        r = self.client.get(reverse('rosetta-home'))
+        self.assertEqual(r.context['page'], 1)
+        r = self.client.get(reverse('rosetta-home') + '?page=')
+        self.assertEqual(r.context['page'], 1)
+        r = self.client.get(reverse('rosetta-home') + '?page=%s' % 'x')
+        self.assertEqual(r.context['page'], 1)
+
 
 # Stubbed access control function
 def no_access(user):

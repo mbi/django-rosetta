@@ -213,10 +213,15 @@ def home(request):
             else:
                 paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
 
-        if 'page' in request.GET and int(request.GET.get('page')) <= paginator.num_pages and int(request.GET.get('page')) > 0:
-            page = int(request.GET.get('page'))
-        else:
-            page = 1
+        page = 1
+        if 'page' in request.GET:
+            try:
+                get_page = int(request.GET.get('page'))
+            except ValueError:
+                page = 1  # fall back to page 1
+            else:
+                if 0 < get_page <= paginator.num_pages:
+                    page = get_page
 
         if '_next' in request.GET or '_next' in request.POST:
             page += 1
