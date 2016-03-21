@@ -14,6 +14,7 @@ import shutil
 import six
 import django
 import vcr
+import hashlib
 
 
 class RosettaTestCase(TestCase):
@@ -58,6 +59,7 @@ class RosettaTestCase(TestCase):
         self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
         self.__google_translate = rosetta_settings.GOOGLE_TRANSLATE
         self.__enable_translation = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
+        self.__auto_compile = rosetta_settings.AUTO_COMPILE
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
@@ -68,6 +70,7 @@ class RosettaTestCase(TestCase):
         rosetta_settings.ROSETTA_REQUIRES_AUTH = self.__require_auth
         rosetta_settings.GOOGLE_TRANSLATE = self.__google_translate
         rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = self.__enable_translation
+        rosetta_settings.AUTO_COMPILE = self.__auto_compile
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
@@ -725,6 +728,83 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file') + '?filter=all')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue(os.path.normpath('locale/zh_Hans/LC_MESSAGES/django.po') in str(r.content))
+
+    def test_40_issue_155_auto_compile(self):
+
+        def file_hash(file_string):
+            if six.PY3:
+                with open(file_string, encoding="latin-1") as file:
+                    file_content = file.read().encode('utf-8')
+            else:
+                with open(file_string) as file:
+                    file_content = file.read()
+            return hashlib.md5(file_content).hexdigest()
+
+        def message_hashes():
+            r = self.client.get(reverse('rosetta-home'))
+            return dict([(m.msgid, 'm_' + m.md5hash) for m in r.context['rosetta_messages']])
+
+        po_file = self.dest_file
+        mo_file = self.dest_file[:-3] + '.mo'
+
+        # Load the template file
+        self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
+        self.client.get(reverse('rosetta-language-selection', args=('xx', 0), kwargs=dict()))
+
+        # MO file will be compiled by default.
+        # Get PO and MO files into an initial reference state (MO will be created or updated)
+        msg_hashes = message_hashes()
+        self.client.post(reverse('rosetta-home'), {
+            msg_hashes['String 1']: "Translation 1", '_next': '_next'})
+        po_file_hash_before, mo_file_hash_before = file_hash(po_file), file_hash(mo_file)
+
+        # Make a change to the translations
+        msg_hashes = message_hashes()
+        self.client.post(reverse('rosetta-home'), {
+            msg_hashes['String 1']: "Translation 2", '_next': '_next'})
+
+        # Get the new hashes of the PO and MO file contents
+        po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+
+        # Both the PO and MO should have changed
+        self.assertNotEqual(po_file_hash_before, po_file_hash_after)
+        self.assertNotEqual(mo_file_hash_before, mo_file_hash_after)
+
+        # Disable auto-compilation of the MO when the PO is saved
+        rosetta_settings.AUTO_COMPILE = False
+
+        # Make a change to the translations
+        po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+        msg_hashes = message_hashes()
+        self.client.post(reverse('rosetta-home'), {
+            msg_hashes['String 1']: "Translation 3", '_next': '_next'})
+        po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+
+        # Only the PO should have changed, the MO should be unchanged
+        self.assertNotEqual(po_file_hash_before, po_file_hash_after)
+        self.assertEqual(mo_file_hash_before, mo_file_hash_after)
+
+        # Verify that translating another string also leaves the MO unchanged
+        po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+        msg_hashes = message_hashes()
+        self.client.post(reverse('rosetta-home'), {
+            msg_hashes['String 2']: "Translation 4", '_next': '_next'})
+        po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+
+        self.assertNotEqual(po_file_hash_before, po_file_hash_after)
+        self.assertEqual(mo_file_hash_before, mo_file_hash_after)
+
+        # Double check that switching back to auto compilation updates the MO
+        rosetta_settings.AUTO_COMPILE = True
+
+        po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+        msg_hashes = message_hashes()
+        self.client.post(reverse('rosetta-home'), {
+            msg_hashes['String 2']: "Translation 5", '_next': '_next'})
+        po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+
+        self.assertNotEqual(po_file_hash_before, po_file_hash_after)
+        self.assertNotEqual(mo_file_hash_before, mo_file_hash_after)
 
 
 # Stubbed access control function
