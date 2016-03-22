@@ -2,11 +2,14 @@ include MANIFEST.in
 include LICENSE
 exclude *.pyc
 exclude *.sh
+include tox.ini
 recursive-include rosetta/locale *
 recursive-include rosetta/tests *
 recursive-include rosetta/utils *
 recursive-include rosetta/templates *
-prune testproject
+recursive-include rosetta/static *
+recursive-include testproject *
+recursive-include docs *
 prune rosetta/tests/__pycache__
 prune rosetta/utils/__pycache__
 prune rosetta/utils/microsofttranslator/__pycache__

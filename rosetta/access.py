@@ -1,7 +1,11 @@
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
+from django.core.exceptions import ImproperlyConfigured
 
-from django.utils import importlib
+try:
+    import importlib
+except ImportError:
+    from django.utils import importlib
 
 
 def can_translate(user):
@@ -25,20 +29,31 @@ def get_access_control_function():
 def is_superuser_staff_or_in_translators_group(user):
     if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
         return True
-    if not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        return user.groups.filter(name='translators').exists()
+    try:
+        if not user.is_authenticated():
+            return False
+        elif user.is_superuser and user.is_staff:
+            return True
+        else:
+            return user.groups.filter(name='translators').exists()
+    except AttributeError:
+        if not hasattr(user, 'is_authenticated') or not hasattr(user, 'is_superuser') or not hasattr(user, 'groups'):
+            raise ImproperlyConfigured('If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html')
+        raise
 
 
 def can_translate_language(user, langid):
-    if not rosetta_settings.ROSETTA_LANGUAGE_GROUPS:
-        return can_translate(user)
-    elif not user.is_authenticated():
-        return False
-    elif user.is_superuser and user.is_staff:
-        return True
-    else:
-        return user.groups.filter(name='translators-%s' % langid).exists()
+    try:
+        if not rosetta_settings.ROSETTA_LANGUAGE_GROUPS:
+            return can_translate(user)
+        elif not user.is_authenticated():
+            return False
+        elif user.is_superuser and user.is_staff:
+            return True
+        else:
+            return user.groups.filter(name='translators-%s' % langid).exists()
+
+    except AttributeError:
+        if not hasattr(user, 'is_authenticated') or not hasattr(user, 'is_superuser') or not hasattr(user, 'groups'):
+            raise ImproperlyConfigured('If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html')
+        raise

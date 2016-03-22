@@ -99,16 +99,16 @@ msgid ""
 "a> for a guide on how to set up internationalization for your project."
 msgstr ""
 "Unter <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</a> finden "
-"Sie eine Anleitung, wie sie Internationalisierung in Ihrem Projekt "
+"Sie eine Anleitung, wie Sie Internationalisierung in Ihrem Projekt "
 "einrichten."
 
 #: templates/rosetta/pofile.html:9
 msgid "Pick another file"
-msgstr "Wähle eine andere Datei"
+msgstr "Wählen Sie eine andere Datei"
 
 #: templates/rosetta/pofile.html:10
 msgid "Download this catalog"
-msgstr "Laden sie diesen Katalog herunter"
+msgstr "Laden Sie diesen Katalog herunter"
 
 #: templates/rosetta/pofile.html:25
 #, fuzzy, python-format
@@ -118,7 +118,7 @@ msgstr "Fortschritt: %(percent_translated)s%"
 #: templates/rosetta/pofile.html:27
 msgid "File is read-only: download the file when done editing!"
 msgstr ""
-"Datei ist schreibgeschützt: Laden Sie die Datei herunter wenn sie mit dem "
+"Datei ist schreibgeschützt: Laden Sie die Datei herunter wenn Sie mit dem "
 "Editieren fertig sind!"
 
 #: templates/rosetta/pofile.html:28

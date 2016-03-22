@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 
 # Number of messages to display per page.
 MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
@@ -14,6 +15,19 @@ YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
 # Can be obtained for free here: https://ssl.bing.com/webmaster/Developers/AppIds/
 AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
 AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+
+# Use Google translator
+GOOGLE_TRANSLATE = getattr(settings, 'ROSETTA_GOOGLE_TRANSLATE', None)
+if GOOGLE_TRANSLATE:
+    try:
+        import goslate  # NOQA
+
+        import warnings
+        warnings.warn('Translation via Google Translate (goslate) is no longer supported by Google and will be removed in the next version of Rosetta')
+
+    except ImportError:
+        raise ImproperlyConfigured('If you set ROSETTA_GOOGLE_TRANSLATE to True, you must install the `goslate` module.')
+
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
@@ -82,3 +96,6 @@ ROSETTA_EXCLUDED_PATHS = getattr(settings, 'ROSETTA_EXCLUDED_PATHS', ())
 # 'translators` group, create individual per-language groups, e.g.
 # 'translators-de', 'translators-fr', ...
 ROSETTA_LANGUAGE_GROUPS = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)
+
+# Determines whether the MO file is automatically compiled when the PO file is saved.
+AUTO_COMPILE = getattr(settings, 'ROSETTA_AUTO_COMPILE', True)

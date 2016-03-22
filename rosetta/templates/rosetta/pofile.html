@@ -1,6 +1,5 @@
 {% extends "rosetta/base.html" %}{% load admin_static %}
 {% load rosetta i18n %}
-{% load url from future %}
 
 {% block header %}
     {{block.super}}
@@ -26,6 +25,13 @@
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
     {% if rosetta_last_save_error %}<p class="errornote save-conflict">{% trans "Some items in your last translation block couldn't be saved: this usually happens when the catalog file changes on disk after you last loaded it." %}</p>{% endif %}
+    {% if messages %}
+        <div class="messages errornote save-conflict">
+        {% for message in messages %}
+            <p class="{{message.tags}}">{{ message|linebreaks }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block main %}
@@ -52,7 +58,7 @@
             <form id="changelist-search" action="" method="post">
                 <div>
                     {% rosetta_csrf_token %}
-                    <label for="searchbar"><img src="{% static "admin/img/icon_searchbox.png" %}" alt="{% trans "Search" %}" /></label>
+                    <label for="searchbar"><img src="{% static "admin/img/icon_searchbox_rosetta.png" %}" alt="{% trans "Search" %}" /></label>
                     <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
                     <input type="submit" name="search" value="{% trans "Go" %}" />
                 </div>
@@ -60,20 +66,20 @@
         </div>
 
         <form method="post" action="">
+            {% rosetta_csrf_token %}
             <table>
                 <thead>
                     <tr>
-                        {% rosetta_csrf_token %}
                         <th><div class="text">{% trans "Original" %}</div></th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
-                        <th class="c"><span class="checkall">[-]</span> {% trans "Fuzzy" %}</th>
+                        <th class="c"><input style="display: inline;" id="action-toggle" type="checkbox"> {% trans "Fuzzy" %}</th>
                         <th>{% trans "Occurrences(s)" %}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for message in rosetta_messages %}
-                    <tr class="{% cycle row1,row2 %}">
+                    <tr class="{% cycle 'row1' 'row2' %}">
                         {% if message.msgid_plural %}
                             <td class="original plural">
                                 <div class="plural-container">

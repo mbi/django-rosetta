@@ -10,7 +10,7 @@ msgstr ""
 "POT-Creation-Date: 2014-02-28 13:36+0100\n"
 "PO-Revision-Date: 2010-07-04 13:42+0200\n"
 "Last-Translator: Nazar Leush <nazar@pleso.net>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language-Team: uk <nazar@pleso.net>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -33,26 +33,30 @@ msgid ""
 ">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
 "your settings file should fix this."
 msgstr ""
+"Не вдалося завантажити вказаний мовний файл. Це часом стається при використанні "
+"бекенду Encrypted Cookies Session Storage на Django 1.4 чи вище.<br/"
+">Вказання ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' у "
+"налаштуваннях має виправити це."
 
 #: templates/rosetta/languages.html:15
 msgid "Filter"
-msgstr ""
+msgstr "Фільтр"
 
 #: templates/rosetta/languages.html:16
 msgid "Project"
-msgstr ""
+msgstr "Проект"
 
 #: templates/rosetta/languages.html:17
 msgid "Third party"
-msgstr ""
+msgstr "Третя сторона"
 
 #: templates/rosetta/languages.html:19 templates/rosetta/pofile.html:39
 msgid "All"
-msgstr ""
+msgstr "Усі"
 
 #: templates/rosetta/languages.html:32
 msgid "Application"
-msgstr ""
+msgstr "Програма"
 
 #: templates/rosetta/languages.html:33
 msgid "Progress"
@@ -68,7 +72,7 @@ msgstr "Перекладено"
 
 #: templates/rosetta/languages.html:36 templates/rosetta/pofile.html:61
 msgid "Fuzzy"
-msgstr ""
+msgstr "Змінені"
 
 #: templates/rosetta/languages.html:37
 msgid "Obsolete"
@@ -80,13 +84,15 @@ msgstr "Файл"
 
 #: templates/rosetta/languages.html:61
 msgid "Nothing to translate!"
-msgstr ""
+msgstr "Немає чого перекладати"
 
 #: templates/rosetta/languages.html:62
 msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
 msgstr ""
+"Ви не вказали мов у своєму файлі налаштувань або ще не "
+"згенерували набір каталогів перекладу."
 
 #: templates/rosetta/languages.html:63
 #, python-format
@@ -94,6 +100,8 @@ msgid ""
 "Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
 "a> for a guide on how to set up internationalization for your project."
 msgstr ""
+"Будь ласка, дивіться у <a href=\"%(i18n_doc_link)s\">I18N-документації Django</"
+"a> посібник з налаштування інтернаціоналізації Вашого проекту."
 
 #: templates/rosetta/pofile.html:9
 msgid "Pick another file"
@@ -117,6 +125,8 @@ msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
 msgstr ""
+"Деякі елементи у Вашому останньому блоці не перекладу не вдалося зберегти: це часом "
+"трапляється, якщо файл каталогу змінився на диску з тих пір, як Ви востаннє його завантажували."
 
 #: templates/rosetta/pofile.html:32
 #, python-format
@@ -137,7 +147,7 @@ msgstr "Тільки перекладені"
 
 #: templates/rosetta/pofile.html:38
 msgid "Fuzzy only"
-msgstr ""
+msgstr "Тільки змінені"
 
 #: templates/rosetta/pofile.html:46
 msgid "Search"
@@ -149,32 +159,32 @@ msgstr "Вперед"
 
 #: templates/rosetta/pofile.html:58
 msgid "Original"
-msgstr ""
+msgstr "Оригінал"
 
 #: templates/rosetta/pofile.html:62
 msgid "Occurrences(s)"
-msgstr "Зустрічається в"
+msgstr "Трапляється у"
 
 #: templates/rosetta/pofile.html:76 templates/rosetta/pofile.html.py:79
 #: templates/rosetta/pofile.html:94 templates/rosetta/pofile.html.py:97
 msgid "Context hint"
-msgstr ""
+msgstr "Підказка контексту"
 
 #: templates/rosetta/pofile.html:104
 msgid "suggest"
-msgstr ""
+msgstr "підказка"
 
 #: templates/rosetta/pofile.html:115
 #, python-format
 msgid "%(more_count)s more"
 msgid_plural "%(more_count)s more"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "ще %(more_count)s"
+msgstr[1] "ще %(more_count)s"
+msgstr[2] "ще %(more_count)s"
 
 #: templates/rosetta/pofile.html:127
 msgid "Save and translate next block"
-msgstr "Записати і перекласти наступний блок"
+msgstr "Зберегти і перекласти наступний блок"
 
 #: templates/rosetta/pofile.html:131
 msgid "Skip to page:"
@@ -196,4 +206,4 @@ msgstr[2] "%(hits)s/%(message_number)s повідомлень"
 #~ msgstr "Англійська"
 
 #~ msgid "Both"
-#~ msgstr "Всі"
+#~ msgstr "Усі"

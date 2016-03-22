@@ -8,9 +8,12 @@ build
 rosetta/locale/xx/LC_MESSAGES/*.mo
 /.settings
 /.project
+docs/_build
 testproject/coverage.xml
 testproject/htmlcov/
 testproject/rosetta.db
 testproject/src/
 testproject/.coverage
-.venv_*
+.tox
+.eggs
+

@@ -1,3 +1,52 @@
+Version History
+===============
+
+Version 0.7.11 (unreleased)
+---------------------------
+* Make MO file compilation optional (PR #166, Issue #155, thanks @nealtodd)
+* Fix an invalid page get parameter by falling back to page 1 (PR #165, thanks @nealtodd)
+
+Version 0.7.10
+--------------
+* Re-released 0.7.9 to include a missing image (Issue #162, thanks @legios89)
+
+Version 0.7.9
+-------------
+* Use language code without country specification for Yandex dest lang (PR #152, thanks @nealtodd)
+* Support discovering locale directories like zh_Hans(xx_Xxxx) (Fixes #133 via PR #153 and #133, thanks @glasslion and @dohsimpson)
+* Ship Django's original search icon as a static asset (Fixes #157, thanks @facconi)
+* Added a warning about translation via the Google Translate service being deprecated in the next version
+
+
+Version 0.7.8
+-------------
+* Adds missing includes in MANIFEST.in
+* Support for running tests via setuptools
+* Updated microsofttranslator dependency version
+
+Version 0.7.7
+-------------
+* Supported Django versions are now 1.7, 1.8 and 1.9
+* Added proper documentation
+* Fixed typo in documentation (PR #130, thanks @dfrdmn)
+* Fixes the Fuzzy toggle link by adding an actual toggle checkbox (Issue #132, thanks @EmilStenstrom)
+* Better handling of Custom User Models while checking wether the current User is authorized to translate (Issue #131, thanks @EmilStenstrom)
+* Include the testproject in the sdist tarball to allow Debian to run tests during installation (Issue #137, thanks @fladi)
+* Display an explicit error message to the enduser when saving the POfile fails for some reason (Issue #135, thanks @pgcd)
+* Added support for PEP 3101 string formatting (PR #140, thanks @adamjforster)
+* Added support for composite locales, e.g. 'bs-Cyrl-BA' (Issue #142, thanks @felarov)
+* Fixed a misplaced CSRF token (PR #145, thanks @pajod)
+
+
+Version 0.7.6
+-------------
+* Added support for the Free Google Translate API (PR #117, thanks @cuchac)
+* Probable fix for apps defined by their AppConfig causing havoc in Django 1.7 and later (Issues #113 and #125)
+* Test configuration improved to test against Django 1.8 beta 1 and Django 1.7.5
+* Require polib >= 1.0.6 (PR #127, thanks @NotSqrt)
+* Test against Django 1.8 final
+
+
 Version 0.7.5
 -------------
 * Fixed external JavaScript import to be url scheme independent (PR #101, thanks @tsouvarev)
@@ -6,6 +55,12 @@ Version 0.7.5
 * Added support for translator groups (PR #103, thanks @barklund)
 * Removed Microsoft Translator as a shipped lib, relying on an external version instead
 * Improved the app loading mechanism to cope with Django 1.7's new AppConfig (thanks @artscoop)
+* Fixed a couple inconsistencies in the German translation. (thanks @benebun)
+* Use content_type instead of mimetype in HttpResponse. (Issue #115, thanks @vesteinn)
+* Don't assume that request.user has settable properties, this was a silly idea anyway (Issue #114, thanks @stevejalim)
+* Preserve HTML code when receiving translations from the Yandex translation service (Issue #116, thanks @marcbelmont)
+* Use TOX for testing
+* Test against Django 1.8a
 
 
 Version 0.7.4

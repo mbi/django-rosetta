@@ -7,7 +7,7 @@ import six
 
 
 register = template.Library()
-rx = re.compile(r'(%(\([^\s\)]*\))?[sd])')
+rx = re.compile(r'(%(\([^\s\)]*\))?[sd]|\{[\w\d_]+?\})')
 
 
 def format_message(message):
