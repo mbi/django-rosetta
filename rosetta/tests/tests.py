@@ -582,10 +582,10 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-language-selection', args=('fr_FR.utf8', 0), kwargs=dict()))
         r = self.client.get(reverse('rosetta-home'))
         self.assertTrue('French (France), UTF8' in str(r.content))
-        self.assertTrue('m_71a6479faf8712e37dd5755cd1d11804' in str(r.content))
+        self.assertTrue('m_03a603523bd75b00414a413657acdeb2' in str(r.content))
 
     def test_28_issue_gh87(self):
-        "make sure that rosetta_i18n_catalog_filter is passed into the context"
+        """Make sure that rosetta_i18n_catalog_filter is passed into the context."""
         r = self.client.get(reverse('rosetta-pick-file') + '?filter=third-party')
         r = self.client.get(reverse('rosetta-pick-file'))
         self.assertTrue('<li class="active"><a href="?filter=third-party">' in str(r.content))
