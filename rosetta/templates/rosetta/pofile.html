@@ -44,16 +44,9 @@
         <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
         <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?filter=all">{% trans "All" %}</a></li>
     </ul>
-
-    {% if ENABLE_REFLANG %}
-        REF : <select onchange="javascript:window.location.href = this.value;">
-            {% for langid, langname in LANGUAGES %}
-                <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
-            {% endfor %}
-        </select>
-    {% endif %}
-
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
+
+
         <div id="toolbar">
             <form id="changelist-search" action="" method="post">
                 <div>
@@ -65,9 +58,20 @@
             </form>
         </div>
 
-        <form method="post" action="">
+        {% if ENABLE_REFLANG %}
+        <div class="actions">
+            <label for="ref-language-selector">{% trans "Reference language" %}:</label>
+            <select class="select-across" id="ref-language-selector" onchange="javascript:window.location.href = this.value;">
+                {% for langid, langname in LANGUAGES %}
+                    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <form method="post" action="" class="results">
             {% rosetta_csrf_token %}
-            <table>
+            <table id="result_list">
                 <thead>
                     <tr>
                         <th><div class="text">{% trans "Original" %}</div></th>
