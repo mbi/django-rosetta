@@ -8,6 +8,7 @@ from django.template import RequestContext
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
+from django.utils.encoding import force_text
 from django.contrib import messages
 
 from microsofttranslator import Translator, TranslateApiException
@@ -290,6 +291,11 @@ def home(request):
         else:
             rosetta_last_save_error = False
 
+        try:
+            rosetta_i18n_lang_name = force_text(_(storage.get('rosetta_i18n_lang_name')))
+        except:
+            rosetta_i18n_lang_name = force_text(storage.get('rosetta_i18n_lang_name'))
+
         return render_to_response('rosetta/pofile.html', dict(
             version=rosetta.get_version(True),
             ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
@@ -297,7 +303,7 @@ def home(request):
             ENABLE_REFLANG=rosetta_settings.ENABLE_REFLANG,
             LANGUAGES=LANGUAGES,
             rosetta_settings=rosetta_settings,
-            rosetta_i18n_lang_name=_(storage.get('rosetta_i18n_lang_name')),
+            rosetta_i18n_lang_name=rosetta_i18n_lang_name,
             rosetta_i18n_lang_code=rosetta_i18n_lang_code,
             rosetta_i18n_lang_bidi=rosetta_i18n_lang_bidi,
             rosetta_last_save_error=rosetta_last_save_error,
