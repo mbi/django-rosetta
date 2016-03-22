@@ -1,6 +1,10 @@
 Version History
 ===============
 
+Version 0.7.11 (unreleased)
+---------------------------
+* Make MO file compilation optional (Thanks @nealtodd)
+
 Version 0.7.10
 --------------
 * Re-released 0.7.9 to include a missing image (Issue #162, thanks @legios89)
