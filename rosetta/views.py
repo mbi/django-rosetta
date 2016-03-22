@@ -161,8 +161,10 @@ def home(request):
                 try:
                     rosetta_i18n_pofile.save()
                     po_filepath, ext = os.path.splitext(rosetta_i18n_fn)
-                    save_as_mo_filepath = po_filepath + '.mo'
-                    rosetta_i18n_pofile.save_as_mofile(save_as_mo_filepath)
+
+                    if rosetta_settings.AUTO_COMPILE:
+                        save_as_mo_filepath = po_filepath + '.mo'
+                        rosetta_i18n_pofile.save_as_mofile(save_as_mo_filepath)
 
                     post_save.send(sender=None, language_code=rosetta_i18n_lang_code, request=request)
                     # Try auto-reloading via the WSGI daemon mode reload mechanism

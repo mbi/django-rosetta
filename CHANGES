@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.7.11 (unreleased)
+---------------------------
+* Make MO file compilation optional (PR #166, Issue #155, thanks @nealtodd)
+* Fix an invalid page get parameter by falling back to page 1 (PR #165, thanks @nealtodd)
+
 Version 0.7.10
 --------------
 * Re-released 0.7.9 to include a missing image (Issue #162, thanks @legios89)

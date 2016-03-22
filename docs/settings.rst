@@ -18,7 +18,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the Rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
 * ``ROSETTA_POFILENAMES``: Defines which po file names are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
 * ``ROSETTA_EXCLUDED_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
-
+* ``ROSETTA_AUTO_COMPILE``: Determines whether the MO file is automatically compiled when the PO file is saved. Defaults to ``True``.
 
 Storages
 --------
