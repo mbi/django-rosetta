@@ -1,8 +1,8 @@
 Version History
 ===============
 
-Version 0.7.11 (unreleased)
----------------------------
+Version 0.7.11
+--------------
 * Make MO file compilation optional (PR #166, Issue #155, thanks @nealtodd)
 * Fix an invalid page get parameter by falling back to page 1 (PR #165, thanks @nealtodd)
 * Adds reference language selector (PR #60, thanks @hsoft)
