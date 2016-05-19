@@ -14,14 +14,14 @@
 
 {% endblock %}
 
-{% block pagetitle %}{{block.super}} - {{rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated|floatformat:0 }}%){% endblock %}
+{% block pagetitle %}{{block.super}} - {{rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME}} - {{rosetta_i18n_lang_name}} ({{ rosetta_i18n_pofile.percent_translated }}%){% endblock %}
 
 {% block breadcumbs %}
     <div>
         <a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo;
         {{ rosetta_i18n_lang_name }} &rsaquo;
         {{ rosetta_i18n_app|title }} &rsaquo;
-        {% blocktrans with rosetta_i18n_pofile.percent_translated|floatformat:2 as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
+        {% blocktrans with rosetta_i18n_pofile.percent_translated as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
     {% if rosetta_last_save_error %}<p class="errornote save-conflict">{% trans "Some items in your last translation block couldn't be saved: this usually happens when the catalog file changes on disk after you last loaded it." %}</p>{% endif %}
