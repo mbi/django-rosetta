@@ -80,9 +80,8 @@ ENABLE_REFLANG = getattr(settings, 'ROSETTA_ENABLE_REFLANG', False)
 # Allow overriding of the default filenames, you mostly won't need to change this
 POFILENAMES = getattr(settings, 'ROSETTA_POFILENAMES', ('django.po', 'djangojs.po'))
 
-ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'default'
-                             if settings.CACHES.get('rosetta', None) is None
-                             else 'rosetta')
+ROSETTA_CACHE_NAME = getattr(settings, 'ROSETTA_CACHE_NAME', 'rosetta'
+                             if 'rosetta' in settings.CACHES else 'default')
 
 # Require users to be authenticated (and Superusers or in group "translators").
 # Set this to False at your own risk
