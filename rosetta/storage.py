@@ -92,7 +92,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
         if 'dummycache' in settings.CACHES[rosetta_settings.ROSETTA_CACHE_NAME]['BACKEND'].lower():
             raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are using the DummyCache cache backend).")
 
-        # Make sure the actually actually works
+        # Make sure the cache actually works
         try:
             self.set('rosetta_cache_test', 'rosetta')
             if not self.get('rosetta_cache_test') == 'rosetta':
