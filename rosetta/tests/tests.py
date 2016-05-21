@@ -3,7 +3,6 @@ from django.conf import settings
 from django.core.urlresolvers import reverse, resolve
 from django.core.exceptions import ImproperlyConfigured
 from django.core.cache import cache
-from django.template.defaultfilters import floatformat
 from django.test import TestCase  # , override_settings
 from django.test.client import Client
 from django.dispatch import receiver
@@ -272,7 +271,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-pick-file'))
 
         self.assertTrue('<td class="ch-messages r">1</td>' in str(r.content))
-        self.assertTrue('<td class="ch-progress r">%s%%</td>' % str(floatformat(0.0, 2)) in str(r.content))
+        self.assertTrue('<td class="ch-progress r">0%</td>' in str(r.content))
         self.assertTrue('<td class="ch-obsolete r">1</td>' in str(r.content))
 
     def test_11_issue_80_tab_indexes(self):
@@ -553,10 +552,10 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta-home') + '?filter=untranslated')
         r = self.client.get(reverse('rosetta-home'))
 
-        self.assertTrue('Progress: 0.00%' in str(r.content))
+        self.assertTrue('Progress: 0%' in str(r.content))
         r = self.client.post(reverse('rosetta-home'), dict(m_e48f149a8b2e8baa81b816c0edf93890='Hello, world', _next='_next'))
         r = self.client.get(reverse('rosetta-home'))
-        self.assertTrue('Progress: 25.00%' in str(r.content))
+        self.assertTrue('Progress: 25%' in str(r.content))
 
     def test_25_replace_access_control(self):
         # Test default access control allows access
