@@ -1,6 +1,13 @@
 Version History
 ===============
 
+Version 0.7.12 (unreleased)
+---------------------------
+* Fix IndexError in fix_nls when translation is just a carriage return (PR #168, thanks @nealtodd)
+* Remove float formatting of integer percent translated (PR #171, thanks @nealtodd)
+* Fixed a comment (PR #170, thanks @dnaranjo89)
+
+
 Version 0.7.11
 --------------
 * Make MO file compilation optional (PR #166, Issue #155, thanks @nealtodd)
