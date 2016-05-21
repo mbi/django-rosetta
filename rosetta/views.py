@@ -50,7 +50,9 @@ def home(request):
             out_ = "\n" + out_
         elif "\n" != in_[0] and "\n" == out_[0]:
             out_ = out_.lstrip()
-        if "\n" == in_[-1] and "\n" != out_[-1]:
+        if 0 == len(out_):
+            pass
+        elif "\n" == in_[-1] and "\n" != out_[-1]:
             out_ = out_ + "\n"
         elif "\n" != in_[-1] and "\n" == out_[-1]:
             out_ = out_.rstrip()
