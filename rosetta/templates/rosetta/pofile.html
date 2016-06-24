@@ -101,7 +101,7 @@
 
                             </td>
                             <td class="translation">
-                                {% for k, msgstr in message.msgstr_plural.items|dictsort:"0"  %}
+                                {% for k, msgstr in message.msgstr_plural.items %}
                                     <label for="m_{{message.md5hash}}_{{k}}">{{k}}:</label>
                                     <textarea rows="{{message.msgid|format_message|lines_count}}" cols="40" id="m_{{message.md5hash}}_{{k}}" name="m_{{message.md5hash}}_{{k}}" tabindex="{% increment tab_idx %}">{{msgstr}}</textarea>
                                 {% endfor %}

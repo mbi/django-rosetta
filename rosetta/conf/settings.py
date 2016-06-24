@@ -16,18 +16,6 @@ YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
 AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
 AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-# Use Google translator
-GOOGLE_TRANSLATE = getattr(settings, 'ROSETTA_GOOGLE_TRANSLATE', None)
-if GOOGLE_TRANSLATE:
-    try:
-        import goslate  # NOQA
-
-        import warnings
-        warnings.warn('Translation via Google Translate (goslate) is no longer supported by Google and will be removed in the next version of Rosetta')
-
-    except ImportError:
-        raise ImproperlyConfigured('If you set ROSETTA_GOOGLE_TRANSLATE to True, you must install the `goslate` module.')
-
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)

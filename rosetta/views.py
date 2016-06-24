@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.utils.encoding import iri_to_uri
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.cache import never_cache
@@ -298,7 +297,7 @@ def home(request):
         except:
             rosetta_i18n_lang_name = force_text(storage.get('rosetta_i18n_lang_name'))
 
-        return render_to_response('rosetta/pofile.html', dict(
+        return render(request, 'rosetta/pofile.html', dict(
             version=rosetta.get_version(True),
             ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
             ADMIN_IMAGE_DIR=ADMIN_IMAGE_DIR,
@@ -321,7 +320,7 @@ def home(request):
             paginator=paginator,
             rosetta_i18n_pofile=rosetta_i18n_pofile,
             ref_lang=ref_lang,
-        ), context_instance=RequestContext(request))
+        ))
     else:
         return list_languages(request, do_session_warn=True)
 
@@ -405,14 +404,14 @@ def list_languages(request, do_session_warn=False):
         ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
     do_session_warn = do_session_warn and 'SessionRosettaStorage' in rosetta_settings.STORAGE_CLASS and 'signed_cookies' in settings.SESSION_ENGINE
 
-    return render_to_response('rosetta/languages.html', dict(
+    return render(request, 'rosetta/languages.html', dict(
         version=rosetta.get_version(True),
         ADMIN_MEDIA_PREFIX=ADMIN_MEDIA_PREFIX,
         do_session_warn=do_session_warn,
         languages=languages,
         has_pos=has_pos,
         rosetta_i18n_catalog_filter=rosetta_i18n_catalog_filter
-    ), context_instance=RequestContext(request))
+    ))
 
 
 def get_app_name(path):
@@ -485,14 +484,10 @@ def translate_text(request):
     else:
         # run the translation:
 
-        if getattr(rosetta_settings, 'GOOGLE_TRANSLATE', False):
-            import goslate
-            translator = goslate.Goslate()
-        else:
-            AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
-            AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+        AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+        AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-            translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
+        translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
 
         try:
             translated_text = translator.translate(text, language_to, language_from)

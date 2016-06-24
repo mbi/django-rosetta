@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse, resolve
 from django.core.exceptions import ImproperlyConfigured
 from django.core.cache import cache
-from django.test import TestCase  # , override_settings
+from django.test import TestCase
 from django.test.client import Client
 from django.dispatch import receiver
 from rosetta.conf import settings as rosetta_settings
@@ -17,7 +17,6 @@ import hashlib
 
 
 class RosettaTestCase(TestCase):
-    urls = 'rosetta.tests.urls'
 
     def __init__(self, *args, **kwargs):
         super(RosettaTestCase, self).__init__(*args, **kwargs)
@@ -56,7 +55,6 @@ class RosettaTestCase(TestCase):
         self.__session_engine = settings.SESSION_ENGINE
         self.__storage_class = rosetta_settings.STORAGE_CLASS
         self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
-        self.__google_translate = rosetta_settings.GOOGLE_TRANSLATE
         self.__enable_translation = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
         self.__auto_compile = rosetta_settings.AUTO_COMPILE
 
@@ -67,7 +65,6 @@ class RosettaTestCase(TestCase):
         settings.SESSION_ENGINE = self.__session_engine
         rosetta_settings.STORAGE_CLASS = self.__storage_class
         rosetta_settings.ROSETTA_REQUIRES_AUTH = self.__require_auth
-        rosetta_settings.GOOGLE_TRANSLATE = self.__google_translate
         rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = self.__enable_translation
         rosetta_settings.AUTO_COMPILE = self.__auto_compile
         shutil.move(self.dest_file + '.orig', self.dest_file)
@@ -693,14 +690,6 @@ class RosettaTestCase(TestCase):
         # The translated string in the test PO file ends up in the "Reference" column
         self.assertTrue('<span class="message">translated-string1</span>' in str(r.content))
         rosetta_settings.ENABLE_REFLANG = ENABLE_REFLANG
-
-    @vcr.use_cassette('fixtures/vcr_cassettes/test_33_pr_116_google_translate.yaml', match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'], record_mode='new_episodes')
-    def test_33_pr_116_google_translate(self):
-        rosetta_settings.GOOGLE_TRANSLATE = True
-        rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = True
-
-        r = self.client.get(reverse('translate_text') + '?from=en&to=fr&text=Hello,+world!')
-        self.assertTrue(six.text_type("Bonjour le monde!") in six.text_type(r.content))
 
     def test_34_issue_113_app_configs(self):
         if django.VERSION[0:2] >= (1, 7):
