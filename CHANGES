@@ -1,12 +1,12 @@
 Version History
 ===============
 
-Version 0.7.12 (unreleased)
----------------------------
+Version 0.7.12
+--------------
 * Fix IndexError in fix_nls when translation is just a carriage return (PR #168, thanks @nealtodd)
 * Remove float formatting of integer percent translated (PR #171, thanks @nealtodd)
 * Fixed a comment (PR #170, thanks @dnaranjo89)
-* Test against Django 1.10b1
+* Test against Django 1.10
 * Dropped support for goslate and the Google translate API
 
 
