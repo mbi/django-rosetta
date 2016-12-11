@@ -1,5 +1,9 @@
 Version History
 ===============
+Version 0.7.13 (unreleased)
+---------------------------
+* Search in comments, too (PR #174, thanks @torchingloom)
+
 
 Version 0.7.12
 --------------
