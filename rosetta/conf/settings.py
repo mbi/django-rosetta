@@ -86,3 +86,5 @@ ROSETTA_LANGUAGE_GROUPS = getattr(settings, 'ROSETTA_LANGUAGE_GROUPS', False)
 
 # Determines whether the MO file is automatically compiled when the PO file is saved.
 AUTO_COMPILE = getattr(settings, 'ROSETTA_AUTO_COMPILE', True)
+
+SHOW_AT_ADMIN_PANEL = getattr(settings, 'SHOW_AT_ADMIN_PANEL', False)

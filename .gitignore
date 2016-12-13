@@ -16,4 +16,4 @@ testproject/src/
 testproject/.coverage
 .tox
 .eggs
-
+.idea
