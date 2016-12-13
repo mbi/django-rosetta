@@ -28,7 +28,7 @@ class RosettaAppConfig(AppConfig):
                         },
                     ],
                     'has_module_perms': True,
-                    'name': _('Transplations'),
+                    'name': _('Translations'),
                     'app_label': 'rosetta'
                 }
                 resp.context_data['app_list'].append(app_dict)

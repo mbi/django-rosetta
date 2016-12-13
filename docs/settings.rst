@@ -20,6 +20,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_EXCLUDED_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
 * ``ROSETTA_AUTO_COMPILE``: Determines whether the MO file is automatically compiled when the PO file is saved. Defaults to ``True``.
 * ``ROSETTA_ENABLE_REFLANG``: Enables a selector for picking a reference language other than English. Defaults to ``False``.
+* ``ROSETTA_SHOW_AT_ADMIN_PANEL``: Enable rosetta at administration panel (NOTE: rosetta need to be first at INSTALLED_APPS). Defaults to ``False``.
 
 Storages
 --------
