@@ -12,7 +12,7 @@ import os
 import shutil
 import six
 import django
-import vcr
+# import vcr
 import hashlib
 
 
@@ -57,6 +57,7 @@ class RosettaTestCase(TestCase):
         self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
         self.__enable_translation = rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS
         self.__auto_compile = rosetta_settings.AUTO_COMPILE
+        self.__admin_panel_embed = rosetta_settings.SHOW_AT_ADMIN_PANEL
 
         shutil.copy(self.dest_file, self.dest_file + '.orig')
 
@@ -67,6 +68,8 @@ class RosettaTestCase(TestCase):
         rosetta_settings.ROSETTA_REQUIRES_AUTH = self.__require_auth
         rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS = self.__enable_translation
         rosetta_settings.AUTO_COMPILE = self.__auto_compile
+        rosetta_settings.SHOW_AT_ADMIN_PANEL = self.__admin_panel_embed
+
         shutil.move(self.dest_file + '.orig', self.dest_file)
 
     def test_1_ListLoading(self):
@@ -822,6 +825,10 @@ class RosettaTestCase(TestCase):
 
         self.assertNotEqual(po_file_hash_before, po_file_hash_after)
         self.assertNotEqual(mo_file_hash_before, mo_file_hash_after)
+
+    def test_41_pr_176_embed_in_admin(self):
+        resp = self.client.get(reverse('admin:index'))
+        self.assertTrue('app-rosetta module' in str(resp.content))
 
 
 # Stubbed access control function

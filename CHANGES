@@ -3,6 +3,7 @@ Version History
 Version 0.7.13 (unreleased)
 ---------------------------
 * Search in comments, too (PR #174, thanks @torchingloom)
+* Added `ROSETTA_SHOW_AT_ADMIN_PANEL` setting to display add a link to Rosetta from the admin app index page. (PR #176, thanks @scream4ik)
 
 
 Version 0.7.12

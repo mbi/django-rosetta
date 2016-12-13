@@ -1,0 +1,20 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block sidebar %}
+{{block.super}}
+<div id="rosetta-content-main">
+    <div class="app-rosetta module">
+        <table>
+        <caption>
+            <a class="section" href="{% url 'rosetta-home' %}">Rosetta</a>
+        </caption>
+            <tbody><tr>
+                <th scope="row"><a href="{% url 'rosetta-home' %}">{% trans "Translations" %}</a></th>
+                <td colspan="2"><a href="{% url 'rosetta-home' %}" class="changelink">{% trans "Change" %}</a></td>
+            </tr>
+        </tbody></table>
+    </div>
+</div>
+
+{% endblock %}
