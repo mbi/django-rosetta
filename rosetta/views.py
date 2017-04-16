@@ -281,7 +281,7 @@ def home(request):
                 page_range = range(1, 1 + paginator.num_pages)
         try:
             ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
-            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/admin/'
+            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
         except AttributeError:
             ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
             ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
