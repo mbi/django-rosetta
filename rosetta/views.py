@@ -361,6 +361,16 @@ def download_file(request):
     except Exception:
         return HttpResponseRedirect(reverse('rosetta-home'))
 
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+def commit_changes(request):
+    return HttpResponseRedirect(reverse('rosetta-home'))
+
+@never_cache
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+def set_readonly(request):
+    return HttpResponseRedirect(reverse('rosetta-home'))
+
 
 @never_cache
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
