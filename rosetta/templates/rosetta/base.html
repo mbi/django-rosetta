@@ -1,3 +1,4 @@
+{% load rosetta i18n %}
 <!DOCTYPE html>{% load admin_static %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -26,6 +27,12 @@
             <div id="branding">
                 <h1 id="site-name"><a href="{% url 'rosetta-pick-file' %}">Rosetta</a> </h1>
             </div>
+            <div id="user-tools">
+            <p>
+                <a href="{% url 'rosetta-commit-changes'%}">{% trans "Commit Changes" %}</a>
+            </p>
+            </div>
+
             {% endblock %}
         </div>
         <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
