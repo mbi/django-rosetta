@@ -14,6 +14,9 @@ from microsofttranslator import Translator, TranslateApiException
 
 from rosetta.conf import settings as rosetta_settings
 from polib import pofile
+
+from rosetta.conf.settings import ENABLE_COMMIT
+from rosetta.models import RosettaSettings
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
@@ -63,7 +66,6 @@ def home(request):
         elif key in request.POST:
             return request.POST.get(key)
         return default
-
     storage = get_storage(request)
     query = ''
     if storage.has('rosetta_i18n_fn'):
@@ -78,8 +80,8 @@ def home(request):
             for entry in rosetta_i18n_pofile:
                 entry.md5hash = hashlib.md5(
                     (six.text_type(entry.msgid) +
-                        six.text_type(entry.msgstr) +
-                        six.text_type(entry.msgctxt or "")).encode('utf8')
+                     six.text_type(entry.msgstr) +
+                     six.text_type(entry.msgctxt or "")).encode('utf8')
                 ).hexdigest()
 
         else:
@@ -119,7 +121,7 @@ def home(request):
                     entry = rosetta_i18n_pofile.find(md5hash, 'md5hash')
                     # If someone did a makemessage, some entries might
                     # have been removed, so we need to check.
-                    if entry:
+                    if entry and not RosettaSettings.instance().readonly:
                         old_msgstr = entry.msgstr
                         if plural_id is not None:
                             plural_string = fix_nls(entry.msgid_plural, value)
@@ -156,7 +158,8 @@ def home(request):
                         getattr(request.user, 'last_name', 'User'),
                         getattr(request.user, 'email', 'anonymous@user.tld')
                     )).encode('ascii', 'ignore')
-                    rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(False)
+                    rosetta_i18n_pofile.metadata['X-Translated-Using'] = u"django-rosetta %s" % rosetta.get_version(
+                        False)
                     rosetta_i18n_pofile.metadata['PO-Revision-Date'] = timestamp_with_timezone()
                 except UnicodeDecodeError:
                     pass
@@ -172,14 +175,14 @@ def home(request):
                     post_save.send(sender=None, language_code=rosetta_i18n_lang_code, request=request)
                     # Try auto-reloading via the WSGI daemon mode reload mechanism
                     if rosetta_settings.WSGI_AUTO_RELOAD and \
-                        'mod_wsgi.process_group' in request.environ and \
-                        request.environ.get('mod_wsgi.process_group', None) and \
-                        'SCRIPT_FILENAME' in request.environ and \
+                                    'mod_wsgi.process_group' in request.environ and \
+                            request.environ.get('mod_wsgi.process_group', None) and \
+                                    'SCRIPT_FILENAME' in request.environ and \
                             int(request.environ.get('mod_wsgi.script_reloading', '0')):
-                            try:
-                                os.utime(request.environ.get('SCRIPT_FILENAME'), None)
-                            except OSError:
-                                pass
+                        try:
+                            os.utime(request.environ.get('SCRIPT_FILENAME'), None)
+                        except OSError:
+                            pass
                     # Try auto-reloading via uwsgi daemon reload mechanism
                     if rosetta_settings.UWSGI_AUTO_RELOAD:
                         try:
@@ -207,16 +210,20 @@ def home(request):
         if _request_request('query', False) and _request_request('query', '').strip():
             query = _request_request('query', '').strip()
             rx = re.compile(re.escape(query), re.IGNORECASE)
-            paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete and rx.search(six.text_type(e_.msgstr) + six.text_type(e_.msgid) + six.text_type(e_.comment) + u''.join([o[0] for o in e_.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
+            paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete and rx.search(
+                six.text_type(e_.msgstr) + six.text_type(e_.msgid) + six.text_type(e_.comment) + u''.join(
+                    [o[0] for o in e_.occurrences]))], rosetta_settings.MESSAGES_PER_PAGE)
         else:
             if rosetta_i18n_filter == 'untranslated':
                 paginator = Paginator(rosetta_i18n_pofile.untranslated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             elif rosetta_i18n_filter == 'translated':
                 paginator = Paginator(rosetta_i18n_pofile.translated_entries(), rosetta_settings.MESSAGES_PER_PAGE)
             elif rosetta_i18n_filter == 'fuzzy':
-                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile.fuzzy_entries() if not e_.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile.fuzzy_entries() if not e_.obsolete],
+                                      rosetta_settings.MESSAGES_PER_PAGE)
             else:
-                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete], rosetta_settings.MESSAGES_PER_PAGE)
+                paginator = Paginator([e_ for e_ in rosetta_i18n_pofile if not e_.obsolete],
+                                      rosetta_settings.MESSAGES_PER_PAGE)
 
         if rosetta_settings.ENABLE_REFLANG:
             ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
@@ -252,7 +259,7 @@ def home(request):
                 if 0 < get_page <= paginator.num_pages:
                     page = get_page
 
-        if '_next' in request.GET or '_next' in request.POST:
+        if '_next' in request.GET or ('_next' in request.POST and not RosettaSettings.instance().readonly):
             page += 1
             if page > paginator.num_pages:
                 page = 1
@@ -320,6 +327,8 @@ def home(request):
             paginator=paginator,
             rosetta_i18n_pofile=rosetta_i18n_pofile,
             ref_lang=ref_lang,
+            enable_commit=ENABLE_COMMIT,
+            readonly=RosettaSettings.instance().readonly
         ))
     else:
         return list_languages(request, do_session_warn=True)
@@ -361,15 +370,18 @@ def download_file(request):
     except Exception:
         return HttpResponseRedirect(reverse('rosetta-home'))
 
+
 @never_cache
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def commit_changes(request):
     return HttpResponseRedirect(reverse('rosetta-home'))
 
+
+# TODO: check auth
 @never_cache
-@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
-def set_readonly(request):
-    return HttpResponseRedirect(reverse('rosetta-home'))
+def set_readonly(request, value='0'):
+    RosettaSettings.instance().set_readonly(value == '1')
+    return HttpResponse("Readonly is %s " % RosettaSettings.instance().readonly, content_type="text/plain")
 
 
 @never_cache
@@ -399,7 +411,8 @@ def list_languages(request, do_session_warn=False):
         if not can_translate_language(request.user, language[0]):
             continue
 
-        pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps)
+        pos = find_pos(language[0], project_apps=project_apps, django_apps=django_apps,
+                       third_party_apps=third_party_apps)
         has_pos = has_pos or len(pos)
         languages.append(
             (
@@ -420,6 +433,8 @@ def list_languages(request, do_session_warn=False):
         do_session_warn=do_session_warn,
         languages=languages,
         has_pos=has_pos,
+        enable_commit=ENABLE_COMMIT,
+        readonly=RosettaSettings.instance().readonly,
         rosetta_i18n_catalog_filter=rosetta_i18n_catalog_filter
     ))
 
@@ -445,7 +460,9 @@ def lang_sel(request, langid, idx):
         third_party_apps = rosetta_i18n_catalog_filter in ('all', 'third-party')
         django_apps = rosetta_i18n_catalog_filter in ('all', 'django')
         project_apps = rosetta_i18n_catalog_filter in ('all', 'project')
-        file_ = sorted(find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps), key=get_app_name)[int(idx)]
+        file_ = \
+        sorted(find_pos(langid, project_apps=project_apps, django_apps=django_apps, third_party_apps=third_party_apps),
+               key=get_app_name)[int(idx)]
 
         storage.set('rosetta_i18n_lang_code', langid)
         storage.set('rosetta_i18n_lang_name', six.text_type([l[1] for l in settings.LANGUAGES if l[0] == langid][0]))
@@ -455,8 +472,8 @@ def lang_sel(request, langid, idx):
             entry.md5hash = hashlib.new(
                 'md5',
                 (six.text_type(entry.msgid) +
-                    six.text_type(entry.msgstr) +
-                    six.text_type(entry.msgctxt or "")).encode('utf8')
+                 six.text_type(entry.msgstr) +
+                 six.text_type(entry.msgctxt or "")).encode('utf8')
             ).hexdigest()
 
         storage.set('rosetta_i18n_pofile', po)
@@ -479,30 +496,35 @@ def ref_sel(request, langid):
     storage.set('rosetta_i18n_ref_lang_code', langid)
 
     return HttpResponseRedirect(reverse('rosetta-home'))
+
+
 ref_sel = never_cache(ref_sel)
 ref_sel = user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)(ref_sel)
 
 
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def translate_text(request):
-    language_from = request.GET.get('from', None)
-    language_to = request.GET.get('to', None)
-    text = request.GET.get('text', None)
-
-    if language_from == language_to:
-        data = {'success': True, 'translation': text}
+    if RosettaSettings.instance().readonly:
+        data = {'success': False, 'error': 'System in readonly mode. Please try later.'}
     else:
-        # run the translation:
+        language_from = request.GET.get('from', None)
+        language_to = request.GET.get('to', None)
+        text = request.GET.get('text', None)
 
-        AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
-        AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+        if language_from == language_to:
+            data = {'success': True, 'translation': text}
+        else:
+            # run the translation:
 
-        translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
+            AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
+            AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-        try:
-            translated_text = translator.translate(text, language_to, language_from)
-            data = {'success': True, 'translation': translated_text}
-        except TranslateApiException as e:
-            data = {'success': False, 'error': "Translation API Exception: {0}".format(e.message)}
+            translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
+
+            try:
+                translated_text = translator.translate(text, language_to, language_from)
+                data = {'success': True, 'translation': translated_text}
+            except TranslateApiException as e:
+                data = {'success': False, 'error': "Translation API Exception: {0}".format(e.message)}
 
     return HttpResponse(json.dumps(data), content_type='application/json')

@@ -27,11 +27,18 @@
             <div id="branding">
                 <h1 id="site-name"><a href="{% url 'rosetta-pick-file' %}">Rosetta</a> </h1>
             </div>
+            {% if readonly %}
+            <div id="user-tools">
+                <p>Readonly</p>
+            </div>
+            {% endif %}
+            {% if enable_commit %}
             <div id="user-tools">
             <p>
                 <a href="{% url 'rosetta-commit-changes'%}">{% trans "Commit Changes" %}</a>
             </p>
             </div>
+            {%endif%}
 
             {% endblock %}
         </div>
