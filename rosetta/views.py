@@ -15,12 +15,13 @@ from microsofttranslator import Translator, TranslateApiException
 from rosetta.conf import settings as rosetta_settings
 from polib import pofile
 
-from rosetta.conf.settings import ENABLE_COMMIT
+from rosetta.conf.settings import ENABLE_COMMIT, COMMIT_SCRIPT_EXECUTABLE
 from rosetta.models import RosettaSettings
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 from rosetta.access import can_translate, can_translate_language
+from subprocess import Popen
 
 import json
 import re
@@ -374,6 +375,12 @@ def download_file(request):
 @never_cache
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def commit_changes(request):
+    try:
+        Popen([COMMIT_SCRIPT_EXECUTABLE])
+    #TODO: Handle right exceptions
+    except:
+        pass
+
     return HttpResponseRedirect(reverse('rosetta-home'))
 
 
