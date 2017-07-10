@@ -383,14 +383,6 @@ def commit_changes(request):
 
     return HttpResponseRedirect(reverse('rosetta-home'))
 
-
-# TODO: check auth
-@never_cache
-def set_readonly(request, value='0'):
-    RosettaSettings.instance().set_readonly(value == '1')
-    return HttpResponse("Readonly is %s " % RosettaSettings.instance().readonly, content_type="text/plain")
-
-
 @never_cache
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def list_languages(request, do_session_warn=False):
