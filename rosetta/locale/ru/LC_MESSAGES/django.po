@@ -198,3 +198,6 @@ msgstr[2] "%(hits)s/%(message_number)s сообщений"
 
 #~ msgid "Both"
 #~ msgstr "Все"
+
+msgid "Commit Changes"
+msgstr "Зафиксировать изменения"

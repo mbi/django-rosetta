@@ -1,3 +1,4 @@
+{% load rosetta i18n %}
 <!DOCTYPE html>{% load admin_static %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -21,11 +22,24 @@
 </head>
 <body>
     <div id="container">
-        <div id="header">
+        <div id="header" {% if readonly %} style="background-color: red" {% endif %}>
             {% block header %}
             <div id="branding">
                 <h1 id="site-name"><a href="{% url 'rosetta-pick-file' %}">Rosetta</a> </h1>
             </div>
+            {% if readonly %}
+            <div id="user-tools">
+                <p>Readonly</p>
+            </div>
+            {% endif %}
+            {% if enable_commit %}
+            <div id="user-tools">
+            <p>
+                <a href="{% url 'rosetta-commit-changes'%}">{% trans "Commit Changes" %}</a>
+            </p>
+            </div>
+            {%endif%}
+
             {% endblock %}
         </div>
         <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
