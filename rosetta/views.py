@@ -222,7 +222,9 @@ def home(request):
             ref_lang = storage.get('rosetta_i18n_ref_lang_code', 'msgid')
             ref_pofile = None
             if ref_lang != 'msgid':
-                ref_fn = re.sub('/locale/[a-z]{2}/', '/locale/%s/' % ref_lang, rosetta_i18n_fn)
+                replacement = '{separator}locale{separator}{ref_lang}'.format(separator=os.sep, ref_lang=ref_lang)
+                pattern = '\{separator}locale\{separator}[a-z]{{2}}'.format(separator=os.sep)
+                ref_fn = re.sub(pattern, replacement, rosetta_i18n_fn)
                 try:
                     ref_pofile = pofile(ref_fn)
                 except IOError:
