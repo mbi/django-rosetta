@@ -19,6 +19,12 @@ Install Rosetta
         urlpatterns += patterns('',
             url(r'^rosetta/', include('rosetta.urls')),
         )
+        
+        # or in Django 1.10 and greater
+        urlpatterns += [
+            url(r'^rosetta/', include('rosetta.urls'))
+        ]
+        
 
 Note: you can use whatever you wish as the URL prefix.
 
