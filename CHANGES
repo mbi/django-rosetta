@@ -1,5 +1,11 @@
 Version History
 ===============
+
+Version 0.7.14 (unreleased)
+---------------------------
+* Updated installation docs (PR #190, thanks @AuHau)
+
+
 Version 0.7.13
 --------------
 * Search in comments, too (PR #174, thanks @torchingloom)
