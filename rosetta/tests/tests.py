@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+import django
 from django.conf import settings
-from django.core.urlresolvers import reverse, resolve
+if django.VERSION < (1, 10):  # NOQA
+    from django.core.urlresolvers import reverse, resolve  # NOQA
+else:  # NOQA
+    from django.urls import reverse, resolve  # NOQA
 from django.core.exceptions import ImproperlyConfigured
 from django.core.cache import cache
 from django.test import TestCase
@@ -11,8 +15,6 @@ from rosetta.signals import entry_changed, post_save
 import os
 import shutil
 import six
-import django
-# import vcr
 import hashlib
 
 
@@ -246,7 +248,8 @@ class RosettaTestCase(TestCase):
         self.assertTrue('save-conflict' in str(r.content))
 
         # client 2 won
-        pofile_content = open(self.dest_file, 'r').read()
+        with open(self.dest_file, 'r') as po_file:
+            pofile_content = po_file.read()
         self.assertTrue('Hello, world, from client two!' in pofile_content)
 
         # Both clients show all strings, error messages are gone
@@ -264,6 +267,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('Hello, world, from client two!' in str(r2.content))
         self.assertTrue('save-conflict' not in str(r2.content))
         self.assertTrue('save-conflict' not in str(r.content))
+
 
     def test_10_issue_79_num_entries(self):
         shutil.copy(os.path.normpath(os.path.join(self.curdir, './django.po.issue79.template')), self.dest_file)
@@ -406,7 +410,9 @@ class RosettaTestCase(TestCase):
 
         # post a translation, it should have properly wrapped lines
         r = self.client.post(reverse('rosetta-home'), dict(m_bb9d8fe6159187b9ea494c1b313d23d4='Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.', _next='_next'))
-        pofile_content = open(self.dest_file, 'r').read()
+        with open(self.dest_file, 'r') as po_file:
+            pofile_content = po_file.read()
+
         self.assertTrue('"pede mollis pretium."' in pofile_content)
 
         # Again, with unwrapped lines
@@ -417,7 +423,8 @@ class RosettaTestCase(TestCase):
         self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in str(r.content))
         rosetta_settings.POFILE_WRAP_WIDTH = 0
         r = self.client.post(reverse('rosetta-home'), dict(m_bb9d8fe6159187b9ea494c1b313d23d4='Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.', _next='_next'))
-        pofile_content = open(self.dest_file, 'r').read()
+        with open(self.dest_file, 'r') as po_file:
+            pofile_content = po_file.read()
         self.assertTrue('felis eu pede mollis pretium."' in pofile_content)
 
     def test_19_Test_Issue_gh34(self):
@@ -435,7 +442,8 @@ class RosettaTestCase(TestCase):
             m_ff7060c1a9aae9c42af4d54ac8551f67_0='Foo %s',
             m_ff7060c1a9aae9c42af4d54ac8551f67_1='Bar %s',
             m_09f7e02f1290be211da707a266f153b3='Salut', _next='_next'))
-        pofile_content = open(self.dest_file, 'r').read()
+        with open(self.dest_file, 'r') as po_file:
+            pofile_content = po_file.read()
         self.assertTrue('msgstr "Salut\\n"' in pofile_content)
         self.assertTrue('msgstr[0] ""\n"\\n"\n"Foo %s\\n"' in pofile_content)
         self.assertTrue('msgstr[1] ""\n"\\n"\n"Bar %s\\n"' in pofile_content)
@@ -460,7 +468,8 @@ class RosettaTestCase(TestCase):
                 m_9efd113f7919952523f06e0d88da9c54='Testing cookie length',
                 _next='_next'
             ))
-            pofile_content = open(self.dest_file, 'r').read()
+            with open(self.dest_file, 'r') as po_file:
+                pofile_content = po_file.read()
             self.assertTrue('Testing cookie length' in pofile_content)
 
             self.client.get(reverse('rosetta-home') + '?filter=translated')
@@ -590,7 +599,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('<li class="active"><a href="?filter=third-party">' in str(r.content))
 
     def test_29_unsupported_p3_django_16_storage(self):
-        if django.VERSION[0:2] >= (1, 6):
+        if django.VERSION[0:2] >= (1, 6) and django.VERSION[0:2] < (2, 0):
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE_CLASSES)
 
             settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"

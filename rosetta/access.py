@@ -30,7 +30,7 @@ def is_superuser_staff_or_in_translators_group(user):
     if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
         return True
     try:
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             return False
         elif user.is_superuser and user.is_staff:
             return True
@@ -46,7 +46,7 @@ def can_translate_language(user, langid):
     try:
         if not rosetta_settings.ROSETTA_LANGUAGE_GROUPS:
             return can_translate(user)
-        elif not user.is_authenticated():
+        elif not user.is_authenticated:
             return False
         elif user.is_superuser and user.is_staff:
             return True

@@ -59,6 +59,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware'
 )
+MIDDLEWARE = MIDDLEWARE_CLASSES
 
 # Note: languages are overridden in the test runner
 LANGUAGES = (
