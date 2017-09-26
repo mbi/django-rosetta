@@ -20,7 +20,7 @@ from microsofttranslator import Translator, TranslateApiException
 from rosetta.conf import settings as rosetta_settings
 from polib import pofile
 from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
-from rosetta.signals import entry_changed, post_save
+from rosetta.signals import entry_changed, post_save, pre_save
 from rosetta.storage import get_storage
 from rosetta.access import can_translate, can_translate_language
 
@@ -155,6 +155,8 @@ def home(request):
                         storage.set('rosetta_last_save_error', True)
 
             if file_change and rosetta_i18n_write:
+                pre_save.send(sender=None, language_code=rosetta_i18n_lang_code, request=request)
+
                 try:
                     rosetta_i18n_pofile.metadata['Last-Translator'] = unicodedata.normalize('NFKD', u"%s %s <%s>" % (
                         getattr(request.user, 'first_name', 'Anonymous'),
