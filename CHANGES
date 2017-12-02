@@ -1,10 +1,10 @@
 Version History
 ===============
 
-Version 0.7.14 (unreleased)
----------------------------
+Version 0.7.14
+--------------
 * Updated installation docs (PR #190, thanks @AuHau)
-* Test against Django 2.0b1
+* Test against Django 2.0
 
 
 Version 0.7.13
