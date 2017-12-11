@@ -194,6 +194,14 @@ def home(request):
                         except:
                             # we may not be running under uwsgi :P
                             pass
+                        
+                    if rosetta_settings.ROSETTA_EXTERNAL_COMMANDS:
+                        try:
+                            from subprocess import call
+                            for command in rosetta_settings.ROSETTA_EXTERNAL_COMMANDS:
+                                call(command)
+                        except:
+                            pass
 
                 except Exception as e:
                     messages.error(request, e)
