@@ -7,11 +7,11 @@
     <div class="app-rosetta module">
         <table>
         <caption>
-            <a class="section" href="{% url 'rosetta-home' %}">Rosetta</a>
+            <a class="section" href="{% url 'rosetta-file-list' po_filter='project' %}">Rosetta</a>
         </caption>
             <tbody><tr>
-                <th scope="row"><a href="{% url 'rosetta-home' %}">{% trans "Translations" %}</a></th>
-                <td colspan="2"><a href="{% url 'rosetta-home' %}" class="changelink">{% trans "Change" %}</a></td>
+                <th scope="row"><a href="{% url 'rosetta-file-list' po_filter='project' %}">{% trans "Translations" %}</a></th>
+                <td colspan="2"><a href="{% url 'rosetta-file-list' po_filter='project' %}" class="changelink">{% trans "Change" %}</a></td>
             </tr>
         </tbody></table>
     </div>

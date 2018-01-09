@@ -5,8 +5,8 @@
     {{block.super}}
     <div id="user-tools">
         <p>
-            <span><a href="{% url 'rosetta-pick-file' %}">{% trans "Pick another file" %}</a> /
-            <a href="{% url 'rosetta-download-file' %}">{% trans "Download this catalog" %}</a></span>
+            <span><a href="{% url 'rosetta-file-list' po_filter=po_filter %}">{% trans "Pick another file" %}</a> /
+            <a href="{% url 'rosetta-download-file' po_filter=po_filter lang_id=lang_id idx=idx %}">{% trans "Download this catalog" %}</a></span>
         </p>
     </div>
     <script type="text/javascript">
@@ -18,13 +18,12 @@
 
 {% block breadcumbs %}
     <div>
-        <a href="{% url 'rosetta-pick-file' %}">{% trans "Home" %}</a> &rsaquo;
+        <a href="{% url 'rosetta-file-list' po_filter=po_filter %}">{% trans "Home" %}</a> &rsaquo;
         {{ rosetta_i18n_lang_name }} &rsaquo;
         {{ rosetta_i18n_app|title }} &rsaquo;
         {% blocktrans with rosetta_i18n_pofile.percent_translated as percent_translated  %}Progress: {{ percent_translated }}%{% endblocktrans %}
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
-    {% if rosetta_last_save_error %}<p class="errornote save-conflict">{% trans "Some items in your last translation block couldn't be saved: this usually happens when the catalog file changes on disk after you last loaded it." %}</p>{% endif %}
     {% if messages %}
         <div class="messages errornote save-conflict">
         {% for message in messages %}
@@ -39,31 +38,30 @@
 
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
-        <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?filter=untranslated">{% trans "Untranslated only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?filter=translated">{% trans "Translated only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?filter=all">{% trans "All" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=untranslated">{% trans "Untranslated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=translated">{% trans "Translated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=all">{% trans "All" %}</a></li>
     </ul>
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
 
 
         <div id="toolbar">
-            <form id="changelist-search" action="" method="post">
+            <form id="changelist-search" action="" method="get">
                 <div>
-                    {% rosetta_csrf_token %}
                     <label for="searchbar"><img src="{% static "admin/img/icon_searchbox_rosetta.png" %}" alt="{% trans "Search" %}" /></label>
-                    <input type="text" size="40" name="query" value="{% if query %}{{query}}{% endif %}" id="searchbar" tabindex="0" />
-                    <input type="submit" name="search" value="{% trans "Go" %}" />
+                    <input type="text" size="40" name="query" value="{{query}}" id="searchbar" tabindex="0" />
+                    <input type="submit" name="s" value="{% trans "Go" %}" />
                 </div>
             </form>
         </div>
 
-        {% if ENABLE_REFLANG %}
+        {% if rosetta_settings.ENABLE_REFLANG %}
         <div class="actions">
             <label for="ref-language-selector">{% trans "Reference language" %}:</label>
             <select class="select-across" id="ref-language-selector" onchange="javascript:window.location.href = this.value;">
                 {% for langid, langname in LANGUAGES %}
-                    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="{% url 'rosetta-reference-selection' langid=langid %}">{{langname}}</option>
+                    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="?ref_lang={{ langid }}">{{langname}}</option>
                 {% endfor %}
             </select>
         </div>
@@ -108,7 +106,7 @@
                             </td>
                         {% else %}
                             <td class="original">
-                                {% if ENABLE_REFLANG %}
+                                {% if rosetta_settings.ENABLE_REFLANG %}
                                 <span class="message">{{ message.ref_txt|format_message|linebreaksbr }}</span>
                                 {% else %}
                                 <span class="message">{{ message.msgid|format_message|linebreaksbr }}</span>
@@ -159,7 +157,7 @@
                         {% if i == page %}
                             <span class="this-page">{{i}}</span>
                         {% else %}
-                            <a href="?page={{i}}{% if query %}&amp;query={{query}}{% endif %}">{{i}}</a>
+                            <a href="?{{ pagination_query_string_base }}&page={{i}}">{{i}}</a>
                         {% endif %}
                         {% endif %}
                     {% endfor %}

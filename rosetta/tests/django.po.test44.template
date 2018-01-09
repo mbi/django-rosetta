@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Rosetta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-10-21 12:21+0200\n"
+"PO-Revision-Date: 2008-09-22 11:02\n"
+"Last-Translator: Admin Admin <admin@admin.com>\n"
+"Language-Team: French <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Translated-Using: django-rosetta 0.4.RC2\n"
+
+
+msgid "String 1"
+msgstr ""
+
+msgid "String 2"
+msgstr ""
+
+msgid "String 3"
+msgstr ""
+
+msgid "String 4"
+msgstr ""
+
+msgid "String 5"
+msgstr ""
+
+msgid "String 6"
+msgstr ""
+
+msgid "String 7"
+msgstr ""
+
+msgid "String 8"
+msgstr ""
+
+msgid "String 9"
+msgstr ""
+
+msgid "String 10"
+msgstr ""
+
+msgid "String 11"
+msgstr ""
+
+msgid "String 12"
+msgstr ""
+
+msgid "String 13"
+msgstr ""
+
+msgid "String 14"
+msgstr ""
+
+msgid "String 15"
+msgstr ""
+
+msgid "String 16"
+msgstr ""
+
+msgid "String 17"
+msgstr ""
+
+msgid "String 18"
+msgstr ""
+
+msgid "String 19"
+msgstr ""
+
+msgid "String 20"
+msgstr ""
+
+msgid "String 21"
+msgstr ""
+
+msgid "String 22"
+msgstr ""
+
+msgid "String 23"
+msgstr ""
+
+msgid "String 24"
+msgstr ""
+
+msgid "String 25"
+msgstr ""
+
+msgid "String 26"
+msgstr ""
+
+msgid "String 27"
+msgstr ""
+
+msgid "String 28"
+msgstr ""
+
+msgid "String 29"
+msgstr ""
+
+msgid "String 30"
+msgstr ""
+
+msgid "String 31"
+msgstr ""
+
+msgid "String 32"
+msgstr ""
+
+msgid "String 33"
+msgstr ""
+
+msgid "String 34"
+msgstr ""
+
+msgid "String 35"
+msgstr ""
+
+msgid "String 36"
+msgstr ""
+
+msgid "String 37"
+msgstr ""
+
+msgid "String 38"
+msgstr ""
+
+msgid "String 39"
+msgstr ""
+
+msgid "String 40"
+msgstr ""
+
+msgid "String 41"
+msgstr ""
+
+msgid "String 42"
+msgstr ""
+
+msgid "String 43"
+msgstr ""
+
+msgid "String 44"
+msgstr ""
+
+msgid "String 45"
+msgstr ""
+
+msgid "String 46"
+msgstr ""
+
+msgid "String 47"
+msgstr ""
+
+msgid "String 48"
+msgstr ""
+
+msgid "String 49"
+msgstr ""
+
+#. Translators: consectetur adipisicing
+#: templates/eiusmod/tempor.html:43
+msgid "Lorem ipsum"
+msgstr "dolor sit amet"
