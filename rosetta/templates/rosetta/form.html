@@ -38,10 +38,10 @@
 
     <ul class="object-tools">
         <li class="nobubble">{% trans "Display:" %}</li>
-        <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=untranslated">{% trans "Untranslated only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=translated">{% trans "Translated only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
-        <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&msg_filter=all">{% trans "All" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'untranslated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&amp;msg_filter=untranslated">{% trans "Untranslated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'translated' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&amp;msg_filter=translated">{% trans "Translated only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'fuzzy' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&amp;msg_filter=fuzzy">{% trans "Fuzzy only" %}</a></li>
+        <li {% if rosetta_i18n_filter == 'all' %}class="active"{% endif %}><a href="?{{ filter_query_string_base }}&amp;msg_filter=all">{% trans "All" %}</a></li>
     </ul>
     <div id="changelist" class="module{% if rosetta_i18n_lang_bidi %} rtl{% endif %}">
 
@@ -157,7 +157,7 @@
                         {% if i == page %}
                             <span class="this-page">{{i}}</span>
                         {% else %}
-                            <a href="?{{ pagination_query_string_base }}&page={{i}}">{{i}}</a>
+                            <a href="?{{ pagination_query_string_base }}&amp;page={{i}}">{{i}}</a>
                         {% endif %}
                         {% endif %}
                     {% endfor %}
