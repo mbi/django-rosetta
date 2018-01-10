@@ -3,6 +3,7 @@ include LICENSE
 exclude *.pyc
 exclude *.sh
 include tox.ini
+include .pep8
 recursive-include rosetta/locale *
 recursive-include rosetta/tests *
 recursive-include rosetta/utils *
