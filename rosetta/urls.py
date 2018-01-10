@@ -11,14 +11,18 @@ from . import views
 urlpatterns = [
 
     url(r'^$',
-        RedirectView.as_view(url=reverse_lazy('rosetta-file-list',
-                                              kwargs={'po_filter': 'project'})),
+        RedirectView.as_view(
+            url=reverse_lazy('rosetta-file-list', kwargs={'po_filter': 'project'}),
+            permanent=False
+        ),
         name='rosetta-old-home-redirect',
         ),
 
     url(r'^files/$',
-        RedirectView.as_view(url=reverse_lazy('rosetta-file-list',
-                                              kwargs={'po_filter': 'project'})),
+        RedirectView.as_view(
+            url=reverse_lazy('rosetta-file-list', kwargs={'po_filter': 'project'}),
+            permanent=False
+        ),
         name='rosetta-file-list-redirect',
         ),
 
@@ -41,5 +45,4 @@ urlpatterns = [
         views.translate_text,
         name='translate_text',
         ),
-
 ]

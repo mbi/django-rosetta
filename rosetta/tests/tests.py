@@ -30,7 +30,7 @@ class RosettaTestCase(TestCase):
         self.curdir = os.path.dirname(__file__)
         self.dest_file = os.path.normpath(
             os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/django.po')
-            )
+        )
 
     def setUp(self):
         from django.contrib.auth.models import User
@@ -101,7 +101,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
-            )
+        )
 
     def test_2_PickFile(self):
         r = self.client.get(self.xx_form_url)
@@ -304,28 +304,28 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
-            )
+        )
         self.assertTrue(('contrib') not in str(r.content))
 
         url = reverse('rosetta-file-list', kwargs={'po_filter': 'django'})
         r = self.client.get(url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content)
-            )
+        )
         self.assertTrue(('contrib') in str(r.content))
 
         url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
         r = self.client.get(url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
-            )
+        )
         self.assertTrue(('contrib') in str(r.content))
 
         url = reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
         r = self.client.get(url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content)
-            )
+        )
         self.assertTrue(('contrib') not in str(r.content))
 
     def test_14_issue_99_context_and_comments(self):
@@ -432,7 +432,7 @@ class RosettaTestCase(TestCase):
             'm_ff7060c1a9aae9c42af4d54ac8551f67_0': 'Foo %s',
             'm_ff7060c1a9aae9c42af4d54ac8551f67_1': 'Bar %s',
             'm_09f7e02f1290be211da707a266f153b3': 'Salut',
-            }
+        }
         r = self.client.post(self.xx_form_url, data)
         with open(self.dest_file, 'r') as po_file:
             pofile_content = po_file.read()
@@ -478,7 +478,7 @@ class RosettaTestCase(TestCase):
         self.assertNotEqual(
             self.client.session.get('rosetta_cache_storage_key_prefix'),
             self.client2.session.get('rosetta_cache_storage_key_prefix')
-            )
+        )
 
         # Clean up (restore perms)
         os.chmod(self.dest_file, 420)  # 0644
@@ -498,7 +498,7 @@ class RosettaTestCase(TestCase):
 
         unicode_user = User.objects.create_user(
             'test_unicode', 'save_header_data@test.com', 'test_unicode'
-            )
+        )
         unicode_user.first_name = "aéaéaé aàaàaàa"
         unicode_user.last_name = "aâââ üüüü"
         unicode_user.is_superuser, unicode_user.is_staff = True, True
@@ -561,7 +561,7 @@ class RosettaTestCase(TestCase):
         url = reverse(
             'rosetta-form',
             kwargs={'po_filter': 'all', 'lang_id': 'fr_FR.utf8', 'idx': 0}
-            )
+        )
         r = self.client.get(url)
         self.assertTrue('French (France), UTF8' in str(r.content))
         self.assertTrue('m_03a603523bd75b00414a413657acdeb2' in str(r.content))
@@ -598,11 +598,11 @@ class RosettaTestCase(TestCase):
         os.unlink(self.dest_file)
         destfile = os.path.normpath(
             os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/pr44.po')
-            )
+        )
         shutil.copy(
             os.path.normpath(os.path.join(self.curdir, './pr44.po.template')),
             destfile
-            )
+        )
 
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue('xx/LC_MESSAGES/pr44.po' in str(r.content))
@@ -847,7 +847,7 @@ class RosettaTestCase(TestCase):
             view=views.TranslationFormView(),
             request=request,
             **kwargs
-            )
+        )
         self.assertTrue(view.po_file_is_writable)
 
         # Now try again with the file not writable. (Regenerate the view, since
@@ -858,7 +858,7 @@ class RosettaTestCase(TestCase):
             view=views.TranslationFormView(),
             request=request,
             **kwargs
-            )
+        )
         self.assertFalse(view.po_file_is_writable)
 
         # Cleanup
@@ -878,7 +878,7 @@ class RosettaTestCase(TestCase):
             view=views.TranslationFormView(),
             request=request,
             **kwargs
-            )
+        )
         self.assertEqual(view.po_file_path, self.dest_file)
 
         # But if the language isn't an option, we get a 404
@@ -888,7 +888,7 @@ class RosettaTestCase(TestCase):
             view=views.TranslationFormView(),
             request=request,
             **kwargs
-            )
+        )
         with self.assertRaises(Http404):
             view.po_file_path
 
@@ -901,7 +901,7 @@ class RosettaTestCase(TestCase):
             # Recycle request, even though url kwargs conflict with ones below.
             request=request,
             **new_kwargs
-            )
+        )
         with self.assertRaises(Http404):
             view.po_file_path
 

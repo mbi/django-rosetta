@@ -101,19 +101,19 @@ class CacheRosettaStorage(BaseRosettaStorage):
             self.delete('rosetta_cache_test')
 
     def get(self, key, default=None):
-        #print ('get', self._key_prefix + key)
+        # print ('get', self._key_prefix + key)
         return cache.get(self._key_prefix + key, default)
 
     def set(self, key, val):
-        #print ('set', self._key_prefix + key)
+        # print ('set', self._key_prefix + key)
         cache.set(self._key_prefix + key, val, 86400)
 
     def has(self, key):
-        #print ('has', self._key_prefix + key)
+        # print ('has', self._key_prefix + key)
         return (self._key_prefix + key) in cache
 
     def delete(self, key):
-        #print ('del', self._key_prefix + key)
+        # print ('del', self._key_prefix + key)
         cache.delete(self._key_prefix + key)
 
 

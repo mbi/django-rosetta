@@ -1,6 +1,16 @@
 Version History
 ===============
 
+Version 0.8.0
+--------------
+* PR #194, huge thanks to @jbaldivieso:
+
+  * Better, cleaner RESTful URLs
+  * Massive rewrite of Rosetta's view functions as CBVs
+  * Better management of cached content
+
+* Check for PEP8 validity during tests
+
 Version 0.7.14
 --------------
 * Updated installation docs (PR #190, thanks @AuHau)

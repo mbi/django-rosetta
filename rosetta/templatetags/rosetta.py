@@ -48,7 +48,7 @@ def do_incr(parser, token):
     name = args[1]
     if not hasattr(parser, '_namedIncrNodes'):
         parser._namedIncrNodes = {}
-    if not name in parser._namedIncrNodes:
+    if name not in parser._namedIncrNodes:
         parser._namedIncrNodes[name] = IncrNode(0)
     return parser._namedIncrNodes[name]
 do_incr = register.tag('increment', do_incr)

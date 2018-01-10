@@ -1,5 +1,4 @@
 import hashlib
-import json
 import os
 import os.path
 import re
@@ -15,7 +14,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
 try:
@@ -66,7 +65,7 @@ class RosettaBaseMixin(object):
 
         If the filter isn't in this list, throw a 404.
         """
-        po_filter = self.kwargs['po_filter']
+        po_filter = self.kwargs.get('po_filter')
         if po_filter not in {'all', 'django', 'third-party', 'project'}:
             raise Http404
         return po_filter
@@ -155,7 +154,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                     six.text_type(entry.msgid) +
                     six.text_type(entry.msgstr) +
                     six.text_type(entry.msgctxt or '')
-                    ).encode('utf8')
+                ).encode('utf8')
                 entry.md5hash = hashlib.md5(str_to_hash).hexdigest()
         else:
             storage = get_storage(self.request)
@@ -171,7 +170,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                         six.text_type(entry.msgid) +
                         six.text_type(entry.msgstr) +
                         six.text_type(entry.msgctxt or '')
-                        ).encode('utf8')
+                    ).encode('utf8')
                     entry.md5hash = hashlib.new('md5', str_to_hash).hexdigest()
                 storage.set(self.po_file_cache_key, po_file)
         return po_file
@@ -326,13 +325,11 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                     if plural_id is not None:  # 0 is ok!
                         entry.msgstr_plural[plural_id] = self.fix_nls(
                             entry.msgid_plural, new_msgstr
-                            )
+                        )
                     else:
                         entry.msgstr = self.fix_nls(entry.msgid, new_msgstr)
 
-                    is_fuzzy = bool(
-                        self.request.POST.get('f_%s' % md5hash, False)
-                        )
+                    is_fuzzy = bool(self.request.POST.get('f_%s' % md5hash, False))
                     old_fuzzy = 'fuzzy' in entry.flags
 
                     if old_fuzzy and not is_fuzzy:
@@ -356,7 +353,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                         _("Some items in your last translation block couldn't "
                           "be saved: this usually happens when the catalog file "
                           "changes on disk after you last loaded it."),
-                        )
+                    )
 
         if file_change and self.po_file_is_writable:
             try:
@@ -365,14 +362,14 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                         getattr(self.request.user, 'first_name', 'Anonymous'),
                         getattr(self.request.user, 'last_name', 'User'),
                         getattr(self.request.user, 'email', 'anonymous@user.tld')
-                        )
-                    ).encode('ascii', 'ignore')
-                self.po_file.metadata['X-Translated-Using'] = u"django-rosetta %s" % (
-                    get_rosetta_version(False)
                     )
+                ).encode('ascii', 'ignore')
+                self.po_file.metadata['X-Translated-Using'] = u"django-rosetta %s" % (
+                    get_rosetta_version(False))
                 self.po_file.metadata['PO-Revision-Date'] = timestamp_with_timezone()
             except UnicodeDecodeError:
                 pass
+
             try:
                 self.po_file.save()
                 po_filepath, ext = os.path.splitext(self.po_file_path)
@@ -390,7 +387,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                     self.request.environ.get('mod_wsgi.process_group', None) and
                     'SCRIPT_FILENAME' in self.request.environ and
                     int(self.request.environ.get('mod_wsgi.script_reloading', 0))
-                    )
+                )
                 if should_try_wsgi_reload:
                     try:
                         os.utime(self.request.environ.get('SCRIPT_FILENAME'), None)
@@ -428,13 +425,13 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             'query': self.query,
             'ref_lang': self.ref_lang,
             'page': page,
-            }
+        }
         # Winnow down the query string args to non-blank ones
         query_string_args = {k: v for k, v in query_string_args.items() if v}
         return HttpResponseRedirect("{url}?{qs}".format(
             url=reverse('rosetta-form', kwargs=self.kwargs),
             qs=urlencode(query_string_args),
-            ))
+        ))
 
     def get_context_data(self, **kwargs):
         context = super(TranslationFormView, self).get_context_data(**kwargs)
@@ -491,7 +488,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             main_lang_po_path = self.po_file_path.replace(
                 '/%s/' % self.language_id,
                 '/%s/' % main_language_id,
-                )
+            )
             # XXX: brittle; what if this path doesn't exist? Isn't a .po file?
             main_lang_po = pofile(main_lang_po_path)
 
@@ -507,7 +504,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
         rosetta_i18n_lang_name = six.text_type(
             dict(settings.LANGUAGES).get(self.language_id)
-            )
+        )
         # "bidi" as in "bi-directional"
         rosetta_i18n_lang_bidi = self.language_id.split('-')[0] in settings.LANGUAGES_BIDI
         query_string_args = {}
@@ -523,7 +520,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         # numbers in these links. We just pass in ref_lang, if it's set.
         filter_query_string_base = urlencode(
             {k: v for k, v in query_string_args.items() if k == 'ref_lang'}
-            )
+        )
 
         context.update({
             'version': get_rosetta_version(True),
@@ -548,7 +545,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             'paginator': paginator,
             'rosetta_i18n_pofile': self.po_file,
             'ref_lang': self.ref_lang,
-            })
+        })
 
         return context
 
@@ -577,7 +574,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 '/locale/[a-z]{2}/',
                 '/locale/%s/' % (self.ref_lang),
                 self.po_file_path,
-                )
+            )
             try:
                 ref_pofile = pofile(ref_fn)
             except IOError:
@@ -673,7 +670,7 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
             # XXX: should add a message!
             return HttpResponseRedirect(
                 reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
-                )
+            )
 
 
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
@@ -699,6 +696,6 @@ def translate_text(request):
             data = {
                 'success': False,
                 'error': "Translation API Exception: {0}".format(e.message),
-                }
+            }
 
-    return HttpResponse(json.dumps(data), content_type='application/json')
+    return JsonResponse(data)

@@ -61,7 +61,6 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         if os.path.isdir(localepath):
             paths.append(localepath)
 
-
     # project/app/locale
     has_appconfig = False
     for appname in settings.INSTALLED_APPS:
@@ -93,7 +92,6 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         # local apps
         if not project_apps and abs_project_path in app_path:
             continue
-
 
         if os.path.isdir(app_path):
             paths.append(app_path)
@@ -127,10 +125,10 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     langs = [lang, ]
     if u'-' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'-', 1))
-        langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize()),]
+        langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize())]
     elif u'_' in lang:
         _l, _c = map(lambda x: x.lower(), lang.split(u'_', 1))
-        langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize()),]
+        langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize())]
 
     paths = map(os.path.normpath, paths)
     paths = list(set(paths))
