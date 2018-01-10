@@ -1,6 +1,14 @@
 Version History
 ===============
 
+Version 0.8.1
+-------------
+* PR #194, thanks again @jbaldivieso!
+
+  * Allow searching for plural strings, both in the original and translation. (Fixes #186)
+  * HTML-encoding ampersands in the template (minor regression introduced with 0.8.0)
+  * Stop showing "None" in the search input if there was no search query submitted
+
 Version 0.8.0
 --------------
 * PR #194, huge thanks to @jbaldivieso:
