@@ -938,6 +938,35 @@ class RosettaTestCase(TestCase):
         r = self.client.get(url % 'adipisicing')
         self.assertContains(r, 'Lorem')
 
+    def test_45_issue186_plural_msg_search(self):
+        """Confirm that search of the .po file works for plurals.
+        """
+        self.copy_po_file_from_template('./django.po.issue186.template')
+        url = self.xx_form_url + '?query=%s'
+
+        # Here's the message entry we're considering:
+        # msgstr "%d Child"
+        # msgid_plural "%d Childrenen"
+        # msgstr[0] "%d Tchilt"
+        # msgstr[1] "%d Tchildren"
+
+        # First, confirm that we don't ALWAYS see this particular message on the
+        # page.
+        r = self.client.get(url % 'kids')
+        self.assertNotContains(r, 'Child')
+
+        # Search msgid_plural
+        r = self.client.get(url % 'childrenen')
+        self.assertContains(r, 'Child')
+
+        # Search msgstr[0]
+        r = self.client.get(url % 'tchilt')
+        self.assertContains(r, 'Child')
+
+        # Search msgstr[1]
+        r = self.client.get(url % 'tchildren')
+        self.assertContains(r, 'Child')
+
 
 # Stubbed access control function
 def no_access(user):

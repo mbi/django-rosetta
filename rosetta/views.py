@@ -620,7 +620,9 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 return (six.text_type(e.msgstr) +
                         six.text_type(e.msgid) +
                         six.text_type(e.comment) +
-                        u''.join([o[0] for o in e.occurrences])
+                        u''.join([o[0] for o in e.occurrences]) +
+                        six.text_type(e.msgid_plural) +
+                        u''.join(e.msgstr_plural.values())
                         )
 
             entries = [e_ for e_ in self.po_file
