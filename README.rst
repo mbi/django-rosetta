@@ -2,7 +2,7 @@
 Rosetta
 =======
 
-.. image:: https://travis-ci.org/mbi/django-rosetta.png?branch=develop
+.. image:: https://travis-ci.org/mbi/django-rosetta.svg?branch=develop
   :target: http://travis-ci.org/mbi/django-rosetta
 
 
