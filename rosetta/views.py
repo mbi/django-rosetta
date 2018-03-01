@@ -24,6 +24,7 @@ except ImportError:
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_bytes
 from microsofttranslator import Translator, TranslateApiException
 from polib import pofile
 import six
@@ -430,7 +431,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         query_string_args = {k: v for k, v in query_string_args.items() if v}
         return HttpResponseRedirect("{url}?{qs}".format(
             url=reverse('rosetta-form', kwargs=self.kwargs),
-            qs=urlencode(query_string_args),
+            qs=urlencode_safe(query_string_args)
         ))
 
     def get_context_data(self, **kwargs):
@@ -515,10 +516,10 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         if self.ref_lang:
             query_string_args['ref_lang'] = self.ref_lang
         # Base for pagination links; the page num itself is added in template
-        pagination_query_string_base = urlencode(query_string_args)
+        pagination_query_string_base = urlencode_safe(query_string_args)
         # Base for msg filter links; it doesn't make sense to persist page
         # numbers in these links. We just pass in ref_lang, if it's set.
-        filter_query_string_base = urlencode(
+        filter_query_string_base = urlencode_safe(
             {k: v for k, v in query_string_args.items() if k == 'ref_lang'}
         )
 
@@ -701,3 +702,7 @@ def translate_text(request):
             }
 
     return JsonResponse(data)
+
+
+def urlencode_safe(query):
+    return urlencode({k: force_bytes(v) for k, v in query.items()})

@@ -3,6 +3,12 @@ import filecmp
 import hashlib
 import os
 import shutil
+try:
+    # Python 3
+    from urllib.parse import urlencode
+except ImportError:
+    # Python 2
+    from urllib import urlencode
 
 from django.conf import settings
 from django.dispatch import receiver
@@ -15,6 +21,7 @@ from django.http import Http404
 from django.test import TestCase, RequestFactory
 from django.test.client import Client
 from django import VERSION
+from django.utils.encoding import force_bytes
 import six
 
 from rosetta.conf import settings as rosetta_settings
@@ -966,6 +973,15 @@ class RosettaTestCase(TestCase):
         # Search msgstr[1]
         r = self.client.get(url % 'tchildren')
         self.assertContains(r, 'Child')
+
+    def test_46_search_string_with_unicode_symbols(self):
+        """Confirm that search works with unicode symbols
+        """
+        url = self.xx_form_url + '?' + urlencode({'query': force_bytes(u'Лорем')})
+
+        # It shouldn't raise
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)
 
 
 # Stubbed access control function
