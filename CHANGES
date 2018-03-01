@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.8.2 (unreleased)
+--------------------------
+* Avoid UnicodeEncodeError when quering strings (#197, thanks @YAtOff)
+
+
 Version 0.8.1
 -------------
 * PR #194, thanks again @jbaldivieso!
