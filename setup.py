@@ -25,10 +25,14 @@ class Tox(test_command):
         errno = tox.cmdline(args=args)
         sys.exit(errno)
 
+with open('README.rst') as readme:
+    long_description = readme.read()
+
 setup(
     name='django-rosetta',
     version=__import__('rosetta').get_version(limit=3),
     description='A Django application that eases the translation of Django projects',
+    long_description=long_description,
     author='Marco Bonetti',
     author_email='mbonetti@gmail.com',
     url='https://github.com/mbi/django-rosetta',
