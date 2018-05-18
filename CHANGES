@@ -4,6 +4,7 @@ Version History
 Version 0.8.2 (unreleased)
 --------------------------
 * Avoid UnicodeEncodeError when quering strings (#197, thanks @YAtOff)
+* Test against Django 2.1a
 
 
 Version 0.8.1
