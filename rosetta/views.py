@@ -25,10 +25,12 @@ from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes
-from microsofttranslator import Translator, TranslateApiException
 from polib import pofile
 import six
 import unicodedata
+import uuid
+import requests
+import json
 
 from rosetta import get_version as get_rosetta_version
 from rosetta.access import can_translate, can_translate_language
@@ -678,6 +680,41 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
 
 @user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
 def translate_text(request):
+
+    def translate(text, from_language, to_language, subscription_key):
+        """
+        This method does the heavy lifting of connecting to the translator API and fetching a response
+        :param text: The source text to be translated
+        :param from_language: The language of the source text
+        :param to_language: The target language to translate the text into
+        :param subscription_key: An API key that grants you access to the Azure translation service
+        :return: Returns the response from the AZURE service as a python object. For more information about the
+        response, please visit
+        https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate?tabs=curl
+        """
+
+        AZURE_TRANSLATOR_HOST = 'https://api.cognitive.microsofttranslator.com'
+        AZURE_TRANSLATOR_PATH = '/translate?api-version=3.0'
+
+        headers = {
+            'Ocp-Apim-Subscription-Key': subscription_key,
+            'Content-type': 'application/json',
+            'X-ClientTraceId': str(uuid.uuid4())
+        }
+
+        url_parameters = {
+            "from": from_language,
+            "to": to_language
+        }
+
+        request_data = [
+            {"text": text}
+        ]
+
+        api_hostname = AZURE_TRANSLATOR_HOST + AZURE_TRANSLATOR_PATH
+        r = requests.post(api_hostname, headers=headers, params=url_parameters, data=json.dumps(request_data))
+        return json.loads(r.text)
+
     language_from = request.GET.get('from', None)
     language_to = request.GET.get('to', None)
     text = request.GET.get('text', None)
@@ -686,19 +723,48 @@ def translate_text(request):
         data = {'success': True, 'translation': text}
     else:
         # run the translation:
-
-        AZURE_CLIENT_ID = getattr(settings, 'AZURE_CLIENT_ID', None)
         AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
 
-        translator = Translator(AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
-
         try:
-            translated_text = translator.translate(text, language_to, language_from)
-            data = {'success': True, 'translation': translated_text}
-        except TranslateApiException as e:
+            api_response = translate(text, language_from, language_to, AZURE_CLIENT_SECRET)
+
+            # result will be a dict if there is an error, e.g.
+            # {
+            #   "success": false,
+            #    "error": "Microsoft Translation API error: Error code 401000,
+            #             The request is not authorized because credentials are missing or invalid."
+            # }
+            if isinstance(api_response, dict):
+                api_error = api_response.get("error")
+                error_code = api_error.get("code")
+                error_message = api_error.get("message")
+                data = {
+                    'success': False,
+                    'error': "Microsoft Translation API error: Error code {}, {}".format(error_code, error_message),
+                }
+            else:
+                # response body will be of the form:
+                # [
+                #     {
+                #         "translations":[
+                #             {"text": "你好, 你叫什么名字？", "to": "zh-Hans"}
+                #         ]
+                #     }
+                # ]
+                # for more information, please visit
+                # https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate?tabs=curl
+
+                translations = api_response[0].get("translations")
+                translated_text = translations[0].get("text")
+                data = {
+                    'success': True,
+                    'translation': translated_text
+                }
+        # catch general connection exception in the requests framework
+        except requests.exceptions.RequestException as err:
             data = {
                 'success': False,
-                'error': "Translation API Exception: {0}".format(e.message),
+                'error': "Error connecting to Microsoft Translation Service: {0}".format(err),
             }
 
     return JsonResponse(data)

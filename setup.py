@@ -59,8 +59,7 @@ setup(
         'six >=1.2.0',
         'Django >= 1.8',
         'requests >= 2.1.0',
-        'polib >= 1.1.0',
-        'microsofttranslator >= 0.7'
+        'polib >= 1.1.0'
     ],
     tests_require=['tox'],
     cmdclass={'test': Tox},
