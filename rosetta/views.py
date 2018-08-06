@@ -747,7 +747,7 @@ def translate_text(request):
                 # [
                 #     {
                 #         "translations":[
-                #             {"text": "你好, 你叫什么名字？", "to": "zh-Hans"}
+                #             {"text": "some chinese text that gave a build error on travis ci", "to": "zh-Hans"}
                 #         ]
                 #     }
                 # ]
