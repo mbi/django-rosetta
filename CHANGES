@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.8.3 (Not yet released)
+--------------------------------
+* Replace the (no longer working) Microsoft translation API with the new Azure Translator API (Fixes #200 and #201, thank you @svdvonde)
+
+
 Version 0.8.2
 -------------
 * Avoid UnicodeEncodeError when quering strings (#197, thanks @YAtOff)

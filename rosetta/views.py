@@ -533,6 +533,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             'rosetta_settings': rosetta_settings,
             'rosetta_i18n_lang_name': rosetta_i18n_lang_name,
             'rosetta_i18n_lang_code': self.language_id,
+            'rosetta_i18n_lang_code_normalized': self.language_id.replace('_', '-'),
             'rosetta_i18n_lang_bidi': rosetta_i18n_lang_bidi,
             'rosetta_i18n_filter': self.msg_filter,
             'rosetta_i18n_write': self.po_file_is_writable,

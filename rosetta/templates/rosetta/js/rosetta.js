@@ -8,7 +8,7 @@ google.setOnLoadCallback(function() {
     });
 
 {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}
-   {% if rosetta_settings.AZURE_CLIENT_ID and rosetta_settings.AZURE_CLIENT_SECRET or rosetta_settings.GOOGLE_TRANSLATE %}
+   {% if rosetta_settings.AZURE_CLIENT_SECRET %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
@@ -16,7 +16,7 @@ google.setOnLoadCallback(function() {
         var orig = $('.original .message', a.parents('tr')).html();
         var trans=$('textarea',a.parent());
         var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
-        var destLang = '{{ rosetta_i18n_lang_code }}';
+        var destLang = '{{ rosetta_i18n_lang_code_normalized }}';
 
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
@@ -36,9 +36,7 @@ google.setOnLoadCallback(function() {
             }
         );
     });
-   {% endif %}
-
-   {% if rosetta_settings.YANDEX_TRANSLATE_KEY %}
+   {% elif rosetta_settings.YANDEX_TRANSLATE_KEY %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
