@@ -13,4 +13,7 @@ recursive-include testproject *
 recursive-include docs *
 prune rosetta/tests/__pycache__
 prune rosetta/utils/__pycache__
-
+prune testproject/__pycache__
+prune testproject/htmlcov
+prune rosetta/tests/test_app/__pycache__
+prune docs/_build
