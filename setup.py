@@ -61,6 +61,6 @@ setup(
         'requests >= 2.1.0',
         'polib >= 1.1.0'
     ],
-    tests_require=['tox'],
+    tests_require=['tox', 'vcrpy'],
     cmdclass={'test': Tox},
 )

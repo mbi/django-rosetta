@@ -3,6 +3,7 @@ import filecmp
 import hashlib
 import os
 import shutil
+import vcr
 try:
     # Python 3
     from urllib.parse import urlencode
@@ -982,6 +983,11 @@ class RosettaTestCase(TestCase):
         # It shouldn't raise
         r = self.client.get(url)
         self.assertEqual(r.status_code, 200)
+
+    @vcr.use_cassette('fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml', match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'], record_mode='new_episodes')
+    def test_47_azure_ajax_translation(self):
+        r = self.client.get(reverse('rosetta.translate_text') + '?from=en&to=fr&text=hello%20world')
+        self.assertContains(r, '"Salut tout le monde"')
 
 
 # Stubbed access control function
