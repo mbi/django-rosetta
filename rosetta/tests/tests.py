@@ -989,6 +989,19 @@ class RosettaTestCase(TestCase):
         r = self.client.get(reverse('rosetta.translate_text') + '?from=en&to=fr&text=hello%20world')
         self.assertContains(r, '"Salut tout le monde"')
 
+    def test_48_requires_auth_not_respected_issue_203(self):
+        settings.ROSETTA_REQUIRES_AUTH = True
+        self.client.logout()
+        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
+        r = self.client.get(url)
+        self.assertRedirects(r, '{}?next=/rosetta/files/all/'.format(settings.LOGIN_URL), fetch_redirect_response=False)
+        self.assertEqual(302, r.status_code)
+
+        settings.ROSETTA_REQUIRES_AUTH = False
+        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
+        r = self.client.get(url)
+        self.assertEqual(200, r.status_code)
+
 
 # Stubbed access control function
 def no_access(user):

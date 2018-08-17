@@ -12,7 +12,7 @@ import zipfile
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
@@ -55,7 +55,6 @@ class RosettaBaseMixin(object):
     # more cleanly on the class itself, rather than the dispatch() method. (See
     # the Django docs: https://docs.djangoproject.com/en/dev/topics/class-based-views/intro/#decorating-the-class)
     @method_decorator(never_cache)
-    @method_decorator(login_required)
     @method_decorator(user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL))
     def dispatch(self, *args, **kwargs):
         return super(RosettaBaseMixin, self).dispatch(*args, **kwargs)

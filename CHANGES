@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.8.4 (unreleased)
+--------------------------
+* Fix `ROSETTA_REQUIRES_AUTH = False` wasn't respected (#203, BarnabasSzabolcs)
+
+
 Version 0.8.3
 -------------
 * Replace the (no longer working) Microsoft translation API with the new Azure Translator API (Fixes #200 and #201, thank you @svdvonde)
