@@ -69,6 +69,10 @@ class RosettaTestCase(TestCase):
             ('zh_Hans', u'Chinese (simplified)'),
         )
 
+        # This stinks. We'd rather use `override_settings`, but because of
+        # this bug, it can't be done: https://code.djangoproject.com/ticket/25911
+        # We're relying on settings.SETTINGS_MODULE to be there
+        # to get the projetct's base dir
         self.__session_engine = settings.SESSION_ENGINE
         self.__storage_class = rosetta_settings.STORAGE_CLASS
         self.__require_auth = rosetta_settings.ROSETTA_REQUIRES_AUTH
