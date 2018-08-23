@@ -1,11 +1,7 @@
+import importlib
 from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 from django.core.exceptions import ImproperlyConfigured
-
-try:
-    import importlib
-except ImportError:
-    from django.utils import importlib
 
 
 def can_translate(user):

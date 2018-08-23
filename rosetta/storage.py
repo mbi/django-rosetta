@@ -1,23 +1,14 @@
 from django.conf import settings
+from django.core.cache import caches
 from django.core.exceptions import ImproperlyConfigured
 from rosetta.conf import settings as rosetta_settings
 import hashlib
+import importlib
 import time
 import six
 import django
 
-
-try:
-    from django.core.cache import caches
-    cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
-except ImportError:
-    from django.core.cache import get_cache
-    cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
-
-try:
-    import importlib
-except ImportError:
-    from django.utils import importlib
+cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
 
 class BaseRosettaStorage(object):
