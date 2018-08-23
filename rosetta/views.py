@@ -223,13 +223,7 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
             languages.append((language[0], _(language[1]), po_files))
             has_pos = has_pos or bool(po_paths)
 
-        try:
-            ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
-        except AttributeError:
-            ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
-
         context['version'] = get_rosetta_version(True)
-        context['ADMIN_MEDIA_PREFIX'] = ADMIN_MEDIA_PREFIX
         context['languages'] = languages
         context['has_pos'] = has_pos
         context['po_filter'] = self.po_filter
@@ -498,12 +492,6 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 message.main_lang = main_lang_po.find(message.msgid).msgstr
 
         # Collect some constants for the template
-        try:
-            ADMIN_MEDIA_PREFIX = settings.ADMIN_MEDIA_PREFIX
-            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/admin/'
-        except AttributeError:
-            ADMIN_MEDIA_PREFIX = settings.STATIC_URL + 'admin/'
-            ADMIN_IMAGE_DIR = ADMIN_MEDIA_PREFIX + 'img/'
         rosetta_i18n_lang_name = six.text_type(
             dict(settings.LANGUAGES).get(self.language_id)
         )
@@ -526,8 +514,6 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
 
         context.update({
             'version': get_rosetta_version(True),
-            'ADMIN_MEDIA_PREFIX': ADMIN_MEDIA_PREFIX,
-            'ADMIN_IMAGE_DIR': ADMIN_IMAGE_DIR,
             'LANGUAGES': LANGUAGES,
             'rosetta_settings': rosetta_settings,
             'rosetta_i18n_lang_name': rosetta_i18n_lang_name,
