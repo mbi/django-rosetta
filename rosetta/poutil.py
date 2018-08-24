@@ -3,8 +3,7 @@ from django.conf import settings
 from rosetta.conf import settings as rosetta_settings
 import django
 import os
-import inspect
-from django.apps import AppConfig, apps
+from django.apps import apps
 from django.utils import timezone
 from django.core.cache import caches
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
