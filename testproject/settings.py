@@ -52,14 +52,13 @@ if django.VERSION[0:2] >= (1, 7):
 
 LANGUAGE_CODE = "en"
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware'
 )
-MIDDLEWARE = MIDDLEWARE_CLASSES
 
 # Note: languages are overridden in the test runner
 LANGUAGES = (

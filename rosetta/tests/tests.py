@@ -458,7 +458,7 @@ class RosettaTestCase(TestCase):
         # (Have to log in again, since our session engine changed)
         self.client.login(username='test_admin', password='test_password')
         self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware'
-                        in settings.MIDDLEWARE_CLASSES)
+                        in settings.MIDDLEWARE)
 
         # Only one backend to test: cache backend
         rosetta_settings.STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage'
@@ -586,7 +586,7 @@ class RosettaTestCase(TestCase):
     def test_29_unsupported_p3_django_16_storage(self):
         if VERSION[0:2] < (2, 0):
             self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware'
-                            in settings.MIDDLEWARE_CLASSES)
+                            in settings.MIDDLEWARE)
 
             settings.SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
             rosetta_settings.STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'

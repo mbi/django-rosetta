@@ -1,9 +1,10 @@
 Version History
 ===============
 
-Version 0.8.4 (unreleased)
---------------------------
-* Fix `ROSETTA_REQUIRES_AUTH = False` wasn't respected (#203, BarnabasSzabolcs)
+Version 0.9.0
+-------------
+* Fix `ROSETTA_REQUIRES_AUTH = False` wasn't respected (#203, @BarnabasSzabolcs)
+* Django-rosetta now requires Django 1.11 or newer. Rosetta 0.8.3 is the last version to support Django 1.8 through 1.10. (#204, thanks @claudep)
 
 
 Version 0.8.3
