@@ -50,8 +50,8 @@ class RosettaTestCase(TestCase):
         self.user = user
         self.client2 = Client()
 
-        self.client.login(username='test_admin', password='test_password')
-        self.client2.login(username='test_admin2', password='test_password')
+        self.client.login(username=user.username, password='test_password')
+        self.client2.login(username=user2.username, password='test_password')
 
         self.__old_settings_languages = settings.LANGUAGES
         settings.LANGUAGES = (
