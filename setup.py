@@ -57,7 +57,7 @@ setup(
     zip_safe=False,
     install_requires=[
         'six >=1.2.0',
-        'Django >= 1.8',
+        'Django >= 1.11',
         'requests >= 2.1.0',
         'polib >= 1.1.0'
     ],

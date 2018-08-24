@@ -13,15 +13,12 @@ except ImportError:
 
 from django.conf import settings
 from django.dispatch import receiver
-try:
-    from django.urls import reverse, resolve
-except ImportError:
-    from django.core.urlresolvers import reverse, resolve
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404
 from django.test import TestCase, RequestFactory
 from django.test.client import Client
 from django import VERSION
+from django.urls import reverse, resolve
 from django.utils.encoding import force_bytes
 import six
 
@@ -43,15 +40,11 @@ class RosettaTestCase(TestCase):
     def setUp(self):
         from django.contrib.auth.models import User
 
-        user = User.objects.create_user('test_admin', 'test@test.com', 'test_password')
-        user2 = User.objects.create_user('test_admin2', 'test@test2.com', 'test_password')
-        user3 = User.objects.create_user('test_admin3', 'test@test2.com', 'test_password')
+        user = User.objects.create_superuser('test_admin', 'test@test.com', 'test_password')
+        user2 = User.objects.create_superuser('test_admin2', 'test@test2.com', 'test_password')
+        user3 = User.objects.create_superuser('test_admin3', 'test@test2.com', 'test_password')
 
-        user.is_superuser, user2.is_superuser, user3.is_superuser = True, True, True
-        user.is_staff, user2.is_staff, user3.is_staff = True, True, False
-
-        user.save()
-        user2.save()
+        user3.is_staff = False
         user3.save()
 
         self.user = user

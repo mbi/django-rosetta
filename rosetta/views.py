@@ -17,10 +17,7 @@ from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
@@ -44,18 +41,14 @@ def get_app_name(path):
     return path.split('/locale')[0].split('/')[-1]
 
 
+@method_decorator(never_cache, 'dispatch')
+@method_decorator(user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL), 'dispatch')
 class RosettaBaseMixin(object):
     """A mixin class for Rosetta's class-based views. It provides:
-    * security (see decorated dispatch() method)
+    * security (see class decorators)
     * a property for the 'po_filter' url argument
     """
 
-    # Handle security in our mixin
-    # NOTE: after we drop support for Django 1.8, we can employ these decorators
-    # more cleanly on the class itself, rather than the dispatch() method. (See
-    # the Django docs: https://docs.djangoproject.com/en/dev/topics/class-based-views/intro/#decorating-the-class)
-    @method_decorator(never_cache)
-    @method_decorator(user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL))
     def dispatch(self, *args, **kwargs):
         return super(RosettaBaseMixin, self).dispatch(*args, **kwargs)
 
