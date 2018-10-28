@@ -2,6 +2,7 @@ import hashlib
 import os
 import os.path
 import re
+import random
 try:
     # Python 3
     from urllib.parse import urlencode
@@ -658,7 +659,7 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
 
 
 @user_passes_test(lambda user: can_translate(user), rosetta_settings.LOGIN_URL)
-def translate_text(request):
+def translate_text_azure(request):
 
     def translate(text, from_language, to_language, subscription_key):
         """
@@ -747,6 +748,80 @@ def translate_text(request):
             }
 
     return JsonResponse(data)
+
+
+BAIDU_LANGUAGE_MAP = {
+    'zh-hans': 'zh',
+    'zh-hant': 'cht',
+    'en': 'en',
+    'ja': 'jp',
+    'ko': 'kor',
+    'fr': 'fra',
+    'es': 'spa',
+    'ar': 'ara',
+    'bg': 'bul',
+    'et': 'est',
+    'da': 'dan',
+    'fi': 'fin',
+    'ro': 'rom',
+    'sl': 'slo',
+    'sv': 'swe',
+    'vi': 'vie',
+}
+
+
+def baidu_translate(appid, secretkey, q, fromlang, tolang):
+    baseurl = 'http://api.fanyi.baidu.com/api/trans/vip/translate'
+    salt = random.randint(32768, 65536)
+    sign = appid+q+str(salt)+secretkey
+    sign = hashlib.md5(sign.encode('utf-8')).hexdigest()
+    url = baseurl + '?' + urlencode({
+        'appid': appid,
+        'q': q,
+        'from': BAIDU_LANGUAGE_MAP.get(fromlang, fromlang),
+        'to': BAIDU_LANGUAGE_MAP.get(tolang, tolang),
+        'salt': str(salt),
+        'sign': sign
+    })
+    try:
+        print('url', url)
+        response = requests.get(url).text
+    except requests.exceptions.RequestException as err:
+        data = {
+            'success': False,
+            'error': "Error connecting to Baidu Translation Service: {0}".format(err)
+        }
+    else:
+        rsp = json.loads(response)
+        if 'error_code' in rsp:
+            data = {
+                'success': False,
+                'error': 'Baidu translation service error: {0} {1}'.format(
+                    rsp['error_code'], rsp['error_msg']
+                )
+            }
+        elif not rsp.get('trans_result'):
+            data = {
+                'success': False,
+                'error': 'Baidu translation service don\'t return translation result'
+            }
+        else:
+            data = {
+                'success': True,
+                'translation': rsp['trans_result'][0]['dst']
+            }
+
+    return data
+
+
+@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+def translate_text_baidu(request):
+    appid = getattr(settings, 'BAIDU_FANYI_APPID', None)
+    secretkey = getattr(settings, 'BAIDU_FANYI_SECRETKEY', None)
+    if not appid or not secretkey:
+        return JsonResponse(data={'success': False, 'error': 'Baidu fanyi service is not configed'})
+    return JsonResponse(baidu_translate(
+        appid, secretkey, request.GET['text'], request.GET['from'], request.GET['to']))
 
 
 def urlencode_safe(query):
