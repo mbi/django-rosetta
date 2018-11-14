@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.conf import settings
+from django.conf import settings, ENVIRONMENT_VARIABLE
 from rosetta.conf import settings as rosetta_settings
 import django
 import os
@@ -35,7 +35,13 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
     paths = []
 
     # project/locale
-    parts = settings.SETTINGS_MODULE.split('.')
+    if settings.SETTINGS_MODULE:
+        parts = settings.SETTINGS_MODULE.split('.')
+    else:
+        # if settings.SETTINGS_MODULE is None, we are probably in "test" mode
+        # and override_settings() was used
+        # see: https://code.djangoproject.com/ticket/25911
+        parts = os.environ.get(ENVIRONMENT_VARIABLE).split('.')
     project = __import__(parts[0], {}, {}, [])
     abs_project_path = os.path.normpath(os.path.abspath(os.path.dirname(project.__file__)))
     if project_apps:
