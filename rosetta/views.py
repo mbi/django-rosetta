@@ -42,7 +42,7 @@ def get_app_name(path):
 
 
 @method_decorator(never_cache, 'dispatch')
-@method_decorator(user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL), 'dispatch')
+@method_decorator(user_passes_test(lambda user: can_translate(user), rosetta_settings.LOGIN_URL), 'dispatch')
 class RosettaBaseMixin(object):
     """A mixin class for Rosetta's class-based views. It provides:
     * security (see class decorators)
@@ -657,7 +657,7 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
             )
 
 
-@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+@user_passes_test(lambda user: can_translate(user), rosetta_settings.LOGIN_URL)
 def translate_text(request):
 
     def translate(text, from_language, to_language, subscription_key):
