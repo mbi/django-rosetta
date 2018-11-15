@@ -70,6 +70,14 @@ class RosettaTestCase(TestCase):
         return reverse('rosetta-form', kwargs=kwargs)
 
     @property
+    def all_file_list_url(self):
+        return reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
+
+    @property
+    def project_file_list_url(self):
+        return reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
+
+    @property
     def third_party_file_list_url(self):
         return reverse('rosetta-file-list', kwargs={'po_filter': 'third-party'})
 
@@ -179,8 +187,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.third_party_file_list_url)
         self.assertContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
-        r = self.client.get(url)
+        r = self.client.get(self.project_file_list_url)
         self.assertNotContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
     @override_settings(LANGUAGES=(
@@ -305,15 +312,13 @@ class RosettaTestCase(TestCase):
         )
         self.assertTrue(('contrib') in str(r.content))
 
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
-        r = self.client.get(url)
+        r = self.client.get(self.all_file_list_url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
         )
         self.assertTrue(('contrib') in str(r.content))
 
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
-        r = self.client.get(url)
+        r = self.client.get(self.project_file_list_url)
         self.assertTrue(
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content)
         )
@@ -535,13 +540,12 @@ class RosettaTestCase(TestCase):
 
     def test_25_replace_access_control(self):
         # Test default access control allows access
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'project'})
-        response = self.client.get(url)
+        response = self.client.get(self.project_file_list_url)
         self.assertEqual(200, response.status_code)
 
         # Now replace access control, and check we get redirected
         with self.settings(ROSETTA_ACCESS_CONTROL_FUNCTION='rosetta.tests.no_access'):
-            response = self.client.get(url)
+            response = self.client.get(self.project_file_list_url)
             self.assertEqual(302, response.status_code)
 
     def test_26_urlconf_accept_dots_and_underscores(self):
@@ -658,7 +662,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('<span class="message">translated-string1</span>' in str(r.content))
 
     def test_34_issue_113_app_configs(self):
-        r = self.client.get(reverse('rosetta-file-list', kwargs={'po_filter': 'all'}))
+        r = self.client.get(self.all_file_list_url)
         self.assertTrue('rosetta/files/all/xx/1/">Test_App' in str(r.content))
 
     @override_settings(ROSETTA_STORAGE_CLASS='rosetta.storage.CacheRosettaStorage')
@@ -698,16 +702,16 @@ class RosettaTestCase(TestCase):
         os.chmod(self.dest_file, 420)  # 0644
 
     def test_36_issue_142_complex_locales(self):
-        r = self.client.get(reverse('rosetta-file-list', kwargs={'po_filter': 'all'}))
+        r = self.client.get(self.all_file_list_url)
         self.assertContains(r, 'locale/bs-Cyrl-BA/LC_MESSAGES/django.po')
 
     @override_settings(LANGUAGES=(('yy-Anot', u'Yet Another dummy language'),))
     def test_37_issue_133_complex_locales(self):
-        r = self.client.get(reverse('rosetta-file-list', kwargs={'po_filter': 'all'}))
+        r = self.client.get(self.all_file_list_url)
         self.assertContains(r, 'locale/yy_Anot/LC_MESSAGES/django.po')
 
     def test_38_issue_161_more_weird_locales(self):
-        r = self.client.get(reverse('rosetta-file-list', kwargs={'po_filter': 'all'}))
+        r = self.client.get(self.all_file_list_url)
         self.assertTrue(r, 'locale/zh_Hans/LC_MESSAGES/django.po')
 
     def test_39_invalid_get_page(self):
@@ -959,22 +963,19 @@ class RosettaTestCase(TestCase):
     @override_settings(ROSETTA_REQUIRES_AUTH=True)
     def test_48_requires_auth_not_respected_issue_203(self):
         self.client.logout()
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
-        r = self.client.get(url)
+        r = self.client.get(self.all_file_list_url)
         self.assertRedirects(r, '{}?next=/rosetta/files/all/'.format(settings.LOGIN_URL), fetch_redirect_response=False)
         self.assertEqual(302, r.status_code)
 
     @override_settings(ROSETTA_REQUIRES_AUTH=False)
     def test_49_requires_auth_not_respected_issue_203(self):
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
-        r = self.client.get(url)
+        r = self.client.get(self.all_file_list_url)
         self.assertEqual(200, r.status_code)
 
     @override_settings(ROSETTA_REQUIRES_AUTH=True, ROSETTA_LOGIN_URL='/custom-url/')
     def test_50_custom_login_url(self):
         self.client.logout()
-        url = reverse('rosetta-file-list', kwargs={'po_filter': 'all'})
-        r = self.client.get(url)
+        r = self.client.get(self.all_file_list_url)
         self.assertRedirects(r, '/custom-url/?next=/rosetta/files/all/', fetch_redirect_response=False)
         self.assertEqual(302, r.status_code)
 
