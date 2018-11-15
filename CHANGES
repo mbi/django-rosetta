@@ -4,6 +4,7 @@ Version History
 Version 0.9.1 (unreleased)
 --------------------------
 *  Removed old compatibility code for Django < 1.11 (#205, thanks @claudep)
+*  Allow overriding rosetta login url (#210, thanks @izimobil)
 
 
 Version 0.9.0
