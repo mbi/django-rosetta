@@ -21,7 +21,35 @@ google.setOnLoadCallback(function() {
         orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
         a.attr('class','suggesting').html('...');
 
-        $.getJSON("{% url 'rosetta.translate_text' %}", {
+        $.getJSON("{% url 'rosetta.translate_text_azure' %}", {
+                from: sourceLang,
+                to: destLang,
+                text: orig
+            },
+            function(data) {
+                if (data.success){
+                    trans.val(unescape(data.translation).replace(/&#39;/g,'\'').replace(/&quot;/g,'"').replace(/%\s+(\([^\)]+\))\s*s/g,' %$1s '));
+                    a.hide();
+                } else {
+                    a.text(data.error);
+                }
+            }
+        );
+    });
+   {% elif rosetta_settings.BAIDU_FANYI_APPID %}
+    $('a.suggest').click(function(e){
+        e.preventDefault();
+        var a = $(this);
+        var str = a.html();
+        var orig = $('.original .message', a.parents('tr')).html();
+        var trans=$('textarea',a.parent());
+        var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}';
+        var destLang = '{{ rosetta_i18n_lang_code }}';
+
+        orig = unescape(orig).replace(/<br\s?\/?>/g,'\n').replace(/<code>/,'').replace(/<\/code>/g,'').replace(/&gt;/g,'>').replace(/&lt;/g,'<');
+        a.attr('class','suggesting').html('...');
+
+        $.getJSON("{% url 'rosetta.translate_text_baidu' %}", {
                 from: sourceLang,
                 to: destLang,
                 text: orig

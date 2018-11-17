@@ -38,8 +38,14 @@ urlpatterns = [
         name='rosetta-download-file',
         ),
 
-    url(r'^translate/$',
-        views.translate_text,
-        name='rosetta.translate_text',
+    url(r'^translate/azure/$',
+        views.translate_text_azure,
+        name='rosetta.translate_text_azure',
         ),
+
+    url(r'^translate/baidu/$',
+        views.translate_text_baidu,
+        name='rosetta.translate_text_baidu',
+        ),
+
 ]

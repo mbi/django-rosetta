@@ -4,7 +4,7 @@ from django.conf import settings
 MESSAGES_PER_PAGE = getattr(settings, 'ROSETTA_MESSAGES_PER_PAGE', 10)
 
 
-# Enable Google translation suggestions
+# Enable translation suggestions by different translation services.
 ENABLE_TRANSLATION_SUGGESTIONS = getattr(settings, 'ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS', False)
 
 
@@ -14,6 +14,10 @@ YANDEX_TRANSLATE_KEY = getattr(settings, 'YANDEX_TRANSLATE_KEY', None)
 # See here to obtain a free Azure key and enable the Translator Text service:
 # https://docs.microsoft.com/en-us/azure/cognitive-services/Translator/translator-text-how-to-signup
 AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+
+# Can be obtained for free here: https://fanyi-api.baidu.com
+BAIDU_FANYI_APPID = getattr(settings, 'BAIDU_FANYI_APPID', None)
+BAIDU_FANYI_SECRETKEY = getattr(settings, 'BAIDU_FANYI_SECRETKEY', None)
 
 # Displays this language beside the original MSGID in the admin
 MAIN_LANGUAGE = getattr(settings, 'ROSETTA_MAIN_LANGUAGE', None)
