@@ -703,10 +703,8 @@ def translate_text_azure(request):
         data = {'success': True, 'translation': text}
     else:
         # run the translation:
-        AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
-
         try:
-            api_response = translate(text, language_from, language_to, AZURE_CLIENT_SECRET)
+            api_response = translate(text, language_from, language_to, rosetta_settings.AZURE_CLIENT_SECRET)
 
             # result will be a dict if there is an error, e.g.
             # {
@@ -814,10 +812,10 @@ def baidu_translate(appid, secretkey, q, fromlang, tolang):
     return data
 
 
-@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+@user_passes_test(lambda user: can_translate(user), rosetta_settings.LOGIN_URL)
 def translate_text_baidu(request):
-    appid = getattr(settings, 'BAIDU_FANYI_APPID', None)
-    secretkey = getattr(settings, 'BAIDU_FANYI_SECRETKEY', None)
+    appid = rosetta_settings.BAIDU_FANYI_APPID
+    secretkey = rosetta_settings.BAIDU_FANYI_SECRETKEY
     if not appid or not secretkey:
         return JsonResponse(data={'success': False, 'error': 'Baidu fanyi service is not configed'})
     return JsonResponse(baidu_translate(
