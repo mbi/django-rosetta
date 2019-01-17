@@ -5,6 +5,7 @@ Version 0.9.1 (unreleased)
 --------------------------
 *  Removed old compatibility code for Django < 1.11 (#205, thanks @claudep)
 *  Allow overriding rosetta login url (#210, thanks @izimobil)
+*  Test against Django 2.2
 
 
 Version 0.9.0
