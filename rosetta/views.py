@@ -19,7 +19,7 @@ from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.functional import cached_property
+from django.utils.functional import cached_property, Promise
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes
 from polib import pofile
@@ -41,8 +41,16 @@ def get_app_name(path):
     return path.split('/locale')[0].split('/')[-1]
 
 
+class LoginURL(Promise):
+    """
+    Tests friendly login URL, url is resolved at runtime.
+    """
+    def __str__(self):
+        return rosetta_settings.LOGIN_URL
+
+
 @method_decorator(never_cache, 'dispatch')
-@method_decorator(user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL), 'dispatch')
+@method_decorator(user_passes_test(lambda user: can_translate(user), LoginURL()), 'dispatch')
 class RosettaBaseMixin(object):
     """A mixin class for Rosetta's class-based views. It provides:
     * security (see class decorators)
@@ -601,6 +609,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             def concat_entry(e):
                 return (six.text_type(e.msgstr) +
                         six.text_type(e.msgid) +
+                        six.text_type(e.msgctxt) +
                         six.text_type(e.comment) +
                         u''.join([o[0] for o in e.occurrences]) +
                         six.text_type(e.msgid_plural) +
@@ -657,7 +666,7 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
             )
 
 
-@user_passes_test(lambda user: can_translate(user), settings.LOGIN_URL)
+@user_passes_test(lambda user: can_translate(user), LoginURL())
 def translate_text(request):
 
     def translate(text, from_language, to_language, subscription_key):
