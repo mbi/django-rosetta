@@ -1,0 +1,25 @@
+interactions:
+- request:
+    body: '[{"text": "hello world"}]'
+    headers:
+      Accept: ['*/*']
+      Accept-Encoding: ['gzip, deflate']
+      Connection: [keep-alive]
+      Content-Length: ['25']
+      Content-type: [application/json]
+      Ocp-Apim-Subscription-Key: [FAKE]
+      User-Agent: [python-requests/2.19.1]
+      X-ClientTraceId: [8d466015-2825-495a-8f12-9f88c6e227a9]
+    method: POST
+    uri: https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&from=en&to=fr
+  response:
+    body: {string: '[{"translations":[{"text":"Salut tout le monde","to":"fr"}]}]'}
+    headers:
+      Access-Control-Expose-Headers: [X-RequestId]
+      Content-Length: ['61']
+      Content-Type: [application/json; charset=utf-8]
+      Date: ['Tue, 07 Aug 2018 06:18:08 GMT']
+      X-Content-Type-Options: [nosniff]
+      X-RequestId: [TRAN.F3F4.8A3126A3]
+    status: {code: 200, message: OK}
+version: 1

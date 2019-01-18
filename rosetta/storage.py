@@ -1,23 +1,13 @@
 from django.conf import settings
+from django.core.cache import caches
 from django.core.exceptions import ImproperlyConfigured
 from rosetta.conf import settings as rosetta_settings
 import hashlib
+import importlib
 import time
 import six
-import django
 
-
-try:
-    from django.core.cache import caches
-    cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
-except ImportError:
-    from django.core.cache import get_cache
-    cache = get_cache(rosetta_settings.ROSETTA_CACHE_NAME)
-
-try:
-    import importlib
-except ImportError:
-    from django.utils import importlib
+cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
 
 class BaseRosettaStorage(object):
@@ -55,8 +45,8 @@ class SessionRosettaStorage(BaseRosettaStorage):
     def __init__(self, request):
         super(SessionRosettaStorage, self).__init__(request)
 
-        if 'signed_cookies' in settings.SESSION_ENGINE and django.VERSION[1] >= 6 and 'pickle' not in settings.SESSION_SERIALIZER.lower():
-            raise ImproperlyConfigured("Sorry, but django-rosetta doesn't support the `signed_cookies` SESSION_ENGINE in Django >= 1.6, because rosetta specific session files cannot be serialized.")
+        if 'signed_cookies' in settings.SESSION_ENGINE and 'pickle' not in settings.SESSION_SERIALIZER.lower():
+            raise ImproperlyConfigured("Sorry, but django-rosetta doesn't support the `signed_cookies` SESSION_ENGINE, because rosetta specific session files cannot be serialized.")
 
     def get(self, key, default=None):
         if key in self.request.session:
@@ -101,19 +91,19 @@ class CacheRosettaStorage(BaseRosettaStorage):
             self.delete('rosetta_cache_test')
 
     def get(self, key, default=None):
-        #print ('get', self._key_prefix + key)
+        # print ('get', self._key_prefix + key)
         return cache.get(self._key_prefix + key, default)
 
     def set(self, key, val):
-        #print ('set', self._key_prefix + key)
+        # print ('set', self._key_prefix + key)
         cache.set(self._key_prefix + key, val, 86400)
 
     def has(self, key):
-        #print ('has', self._key_prefix + key)
+        # print ('has', self._key_prefix + key)
         return (self._key_prefix + key) in cache
 
     def delete(self, key):
-        #print ('del', self._key_prefix + key)
+        # print ('del', self._key_prefix + key)
         cache.delete(self._key_prefix + key)
 
 

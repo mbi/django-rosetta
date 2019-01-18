@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.messages',
     'rosetta',
 ]
 
@@ -52,7 +53,7 @@ if django.VERSION[0:2] >= (1, 7):
 
 LANGUAGE_CODE = "en"
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -114,3 +115,7 @@ SECRET_KEY = 'empty'
 ROSETTA_ENABLE_REFLANG = True
 ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
+
+# fake azure key that matches the one in
+# fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml
+AZURE_CLIENT_SECRET = 'FAKE'

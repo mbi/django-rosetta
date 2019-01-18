@@ -3,6 +3,7 @@ include LICENSE
 exclude *.pyc
 exclude *.sh
 include tox.ini
+include .pep8
 recursive-include rosetta/locale *
 recursive-include rosetta/tests *
 recursive-include rosetta/utils *
@@ -12,4 +13,7 @@ recursive-include testproject *
 recursive-include docs *
 prune rosetta/tests/__pycache__
 prune rosetta/utils/__pycache__
-prune rosetta/utils/microsofttranslator/__pycache__
+prune testproject/__pycache__
+prune testproject/htmlcov
+prune rosetta/tests/test_app/__pycache__
+prune docs/_build

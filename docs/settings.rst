@@ -6,7 +6,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_MESSAGES_PER_PAGE``: Number of messages to display per page. Defaults to ``10``.
 * ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
 * ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <http://api.yandex.com/key/form.xml?service=trnsl>`_, then specify the key here. Defaults to ``None``.
-* ``AZURE_CLIENT_ID`` and ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure API. To use this service, you must first `register for the service <https://datamarket.azure.com/dataset/5BA839F1-12CE-4CCE-BF57-A49D98D29A44>`_, then specify the 'Customer ID' and 'Primary Account Key' respectively, which you can find on your `account information page on Azure Marketplace <https://datamarket.azure.com/account?lang=en>`_.
+* ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure Translator API. To use this service, you must first `register for the service <https://docs.microsoft.com/en-us/azure/cognitive-services/Translator/translator-text-how-to-signup>`_, and set ``AZURE_CLIENT_SECRET`` to either of the keys listed for your subscription. Defaults to ``None``.
 * ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English. Default to ``'en'`` and ``'English'`` respectively.
 * ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
 * ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated. Defaults to ``()``.
@@ -21,6 +21,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_AUTO_COMPILE``: Determines whether the MO file is automatically compiled when the PO file is saved. Defaults to ``True``.
 * ``ROSETTA_ENABLE_REFLANG``: Enables a selector for picking a reference language other than English. Defaults to ``False``.
 * ``ROSETTA_SHOW_AT_ADMIN_PANEL``: Adds a handy link to Rosetta at the bottom of the Django admin apps index. Defaults to ``False``.
+* ``ROSETTA_LOGIN_URL``: Use this if you want to override the login URL for rosetta. Defaults to ``settings.LOGIN_URL``.
 
 Storages
 --------

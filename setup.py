@@ -25,10 +25,14 @@ class Tox(test_command):
         errno = tox.cmdline(args=args)
         sys.exit(errno)
 
+with open('README.rst') as readme:
+    long_description = readme.read()
+
 setup(
     name='django-rosetta',
     version=__import__('rosetta').get_version(limit=3),
     description='A Django application that eases the translation of Django projects',
+    long_description=long_description,
     author='Marco Bonetti',
     author_email='mbonetti@gmail.com',
     url='https://github.com/mbi/django-rosetta',
@@ -45,18 +49,18 @@ setup(
         'Topic :: Software Development :: Internationalization',
         'Framework :: Django',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     include_package_data=True,
     zip_safe=False,
     install_requires=[
         'six >=1.2.0',
-        'Django >= 1.7',
+        'Django >= 1.11',
         'requests >= 2.1.0',
-        'polib >= 1.0.6',
-        'microsofttranslator >= 0.7'
+        'polib >= 1.1.0'
     ],
-    tests_require=['tox'],
+    tests_require=['tox', 'vcrpy'],
     cmdclass={'test': Tox},
 )

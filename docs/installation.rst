@@ -3,7 +3,7 @@ Installation
 
 Requirements
 ------------
-* As of version 0.7.13, Rosetta supports Django 1.8 through 1.11.
+* As of version 0.9.0, Rosetta supports Django 1.11 and up.
 
 
 Install Rosetta
@@ -16,9 +16,10 @@ Install Rosetta
     from django.conf import settings
 
     if 'rosetta' in settings.INSTALLED_APPS:
-        urlpatterns += patterns('',
-            url(r'^rosetta/', include('rosetta.urls')),
-        )
+        urlpatterns += [
+            url(r'^rosetta/', include('rosetta.urls'))
+        ]
+
 
 Note: you can use whatever you wish as the URL prefix.
 

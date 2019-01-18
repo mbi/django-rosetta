@@ -4,7 +4,7 @@ Usage
 Generate a batch of files to translate
 --------------------------------------
 
-See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/1.8/topics/i18n/translation/>`_ to set up your project to use i18n and create the ``gettext`` catalog files.
+See `Django's documentation on Internationalization <https://docs.djangoproject.com/en/stable/topics/i18n/translation/>`_ to set up your project to use i18n and create the ``gettext`` catalog files.
 
 Translate away!
 ---------------
