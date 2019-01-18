@@ -130,7 +130,7 @@
                             </td>
                             <td class="location">
                                 {% for fn,lineno in message.occurrences %}
-                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}:{{lineno}}</code>
+                                    <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}{% if lineno %}:{{lineno}}{% endif %}</code>
                                 {% endfor %}
                                 {% if message.occurrences|length|gt:"3" %}
                                     <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>

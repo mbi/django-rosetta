@@ -917,6 +917,10 @@ class RosettaTestCase(TestCase):
         r = self.client.get(url % 'adipisicing')
         self.assertContains(r, 'Lorem')
 
+        # Search context
+        r = self.client.get(url % 'pellentesque')
+        self.assertContains(r, 'Lorem')
+
     def test_45_issue186_plural_msg_search(self):
         """Confirm that search of the .po file works for plurals.
         """

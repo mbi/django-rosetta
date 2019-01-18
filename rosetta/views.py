@@ -609,6 +609,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             def concat_entry(e):
                 return (six.text_type(e.msgstr) +
                         six.text_type(e.msgid) +
+                        six.text_type(e.msgctxt) +
                         six.text_type(e.comment) +
                         u''.join([o[0] for o in e.occurrences]) +
                         six.text_type(e.msgid_plural) +
