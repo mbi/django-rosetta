@@ -3,12 +3,12 @@ Version History
 
 Version 0.9.1 (unreleased)
 --------------------------
-*  Removed old compatibility code for Django < 1.11 (#205, thanks @claudep)
-*  Allow overriding rosetta login url (#210, thanks @izimobil)
-*  Test against Django 2.2
-*  Optional line number in the occurrences column (#215, thanks @pauloxnet)
-*  Add search in msgctxt (#213, thanks @yakky)
-*  Strip code tag from Yandex response. (#212, thanks @izimobil)
+* Removed old compatibility code for Django < 1.11 (#205, thanks @claudep)
+* Allow overriding rosetta login url (#210, thanks @izimobil)
+* Test against Django 2.2
+* Optional line number in the occurrences column (#215, thanks @pauloxnet)
+* Add search in msgctxt (#213, thanks @yakky)
+* Strip code tag from Yandex response. (#212, thanks @izimobil)
 * Test friendly settings and better tests (#211, thanks @izimobil)
 
 
