@@ -10,6 +10,7 @@ Version 0.9.1 (unreleased)
 * Add search in msgctxt (#213, thanks @yakky)
 * Strip code tag from Yandex response. (#212, thanks @izimobil)
 * Test friendly settings and better tests (#211, thanks @izimobil)
+* Fix the icon-alert.svg file name (#207, thanks @matthiask)
 
 
 Version 0.9.0
