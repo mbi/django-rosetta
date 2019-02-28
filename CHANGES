@@ -1,9 +1,10 @@
 Version History
 ===============
 
-Version 0.9.2 (unreleased)
---------------------------
-* Cleanup of imports
+Version 0.9.2
+-------------
+* Cleanup of imports, and use relative imports. Hopefully fixes #209.
+* Travis: cleanup and test with Python 3.7
 
 
 Version 0.9.1
