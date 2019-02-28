@@ -1,5 +1,6 @@
 from django.apps import AppConfig
-from rosetta.conf import settings as rosetta_settings
+
+from .conf import settings as rosetta_settings
 
 
 class RosettaAppConfig(AppConfig):

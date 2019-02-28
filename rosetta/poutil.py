@@ -1,11 +1,15 @@
-from datetime import datetime
-from django.conf import settings, ENVIRONMENT_VARIABLE
-from rosetta.conf import settings as rosetta_settings
-import django
 import os
+from datetime import datetime
+
+import django
 from django.apps import apps
-from django.utils import timezone
+from django.conf import ENVIRONMENT_VARIABLE, settings
 from django.core.cache import caches
+from django.utils import timezone
+
+from rosetta.conf import settings as rosetta_settings
+
+
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
 

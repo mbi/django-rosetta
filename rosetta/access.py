@@ -1,7 +1,9 @@
 import importlib
+
 from django.conf import settings
-from rosetta.conf import settings as rosetta_settings
 from django.core.exceptions import ImproperlyConfigured
+
+from .conf import settings as rosetta_settings
 
 
 def can_translate(user):
@@ -10,7 +12,8 @@ def can_translate(user):
 
 def get_access_control_function():
     """
-    Return a predicate for determining if a user can access the Rosetta views
+    Return a predicate for determining if a user can
+    access the Rosetta views
     """
     fn_path = getattr(settings, 'ROSETTA_ACCESS_CONTROL_FUNCTION', None)
     if fn_path is None:

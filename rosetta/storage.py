@@ -1,11 +1,15 @@
-from django.conf import settings
-from django.core.cache import caches
-from django.core.exceptions import ImproperlyConfigured
-from rosetta.conf import settings as rosetta_settings
 import hashlib
 import importlib
 import time
+
+from django.conf import settings
+from django.core.cache import caches
+from django.core.exceptions import ImproperlyConfigured
+
 import six
+
+from .conf import settings as rosetta_settings
+
 
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 

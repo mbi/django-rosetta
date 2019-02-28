@@ -1,40 +1,50 @@
 import hashlib
+import json
 import os
 import os.path
 import re
-try:
-    # Python 3
-    from urllib.parse import urlencode
-except ImportError:
-    # Python 2
-    from urllib import urlencode
+import unicodedata
+import uuid
 import zipfile
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
-from django.http import Http404, HttpResponseRedirect, HttpResponse, JsonResponse
-from django.views.decorators.cache import never_cache
-from django.views.generic import TemplateView, View
+from django.http import (
+    Http404,
+    HttpResponse,
+    HttpResponseRedirect,
+    JsonResponse
+)
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.utils.functional import cached_property, Promise
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes
-from polib import pofile
-import six
-import unicodedata
-import uuid
-import requests
-import json
+from django.utils.functional import Promise, cached_property
+from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.cache import never_cache
+from django.views.generic import TemplateView, View
 
-from rosetta import get_version as get_rosetta_version
-from rosetta.access import can_translate, can_translate_language
-from rosetta.conf import settings as rosetta_settings
-from rosetta.poutil import find_pos, pagination_range, timestamp_with_timezone
-from rosetta.signals import entry_changed, post_save
-from rosetta.storage import get_storage
+import requests
+import six
+from polib import pofile
+
+from . import get_version as get_rosetta_version
+from .access import can_translate, can_translate_language
+from .conf import settings as rosetta_settings
+from .poutil import find_pos, pagination_range, timestamp_with_timezone
+from .signals import entry_changed, post_save
+from .storage import get_storage
+
+
+try:
+    # Python 3
+    from urllib.parse import urlencode
+except ImportError:
+    # Python 2
+    from urllib import urlencode
+
+
 
 
 def get_app_name(path):
@@ -224,7 +234,7 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
             languages.append((language[0], _(language[1]), po_files))
             has_pos = has_pos or bool(po_paths)
 
-        context['version'] = get_rosetta_version(True)
+        context['version'] = get_rosetta_version()
         context['languages'] = languages
         context['has_pos'] = has_pos
         context['po_filter'] = self.po_filter
@@ -362,7 +372,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                     )
                 ).encode('ascii', 'ignore')
                 self.po_file.metadata['X-Translated-Using'] = u"django-rosetta %s" % (
-                    get_rosetta_version(False))
+                    get_rosetta_version())
                 self.po_file.metadata['PO-Revision-Date'] = timestamp_with_timezone()
             except UnicodeDecodeError:
                 pass
@@ -514,7 +524,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         )
 
         context.update({
-            'version': get_rosetta_version(True),
+            'version': get_rosetta_version(),
             'LANGUAGES': LANGUAGES,
             'rosetta_settings': rosetta_settings,
             'rosetta_i18n_lang_name': rosetta_i18n_lang_name,
