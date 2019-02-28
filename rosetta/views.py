@@ -45,8 +45,6 @@ except ImportError:
     from urllib import urlencode
 
 
-
-
 def get_app_name(path):
     return path.split('/locale')[0].split('/')[-1]
 
