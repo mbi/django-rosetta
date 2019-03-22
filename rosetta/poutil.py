@@ -1,4 +1,5 @@
 import os
+import tempfile
 from datetime import datetime
 
 import django
@@ -53,6 +54,12 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
             paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale')))
         if os.path.exists(os.path.abspath(os.path.join(os.path.dirname(project.__file__), '..', 'locale'))):
             paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), '..', 'locale')))
+
+    case_sensitive_file_system = True
+    tmphandle, tmppath = tempfile.mkstemp()
+    if os.path.exists(tmppath.upper()):
+        # Case insensitive file system.
+        case_sensitive_file_system = False
 
     # django/locale
     if django_apps:
