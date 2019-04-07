@@ -87,7 +87,7 @@ class RosettaTestCase(TestCase):
             os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
         )
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_2_PickFile(self):
@@ -101,7 +101,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('content-type' in r._headers.keys())
         self.assertTrue('application/x-zip' in r._headers.get('content-type'))
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_4_DoChanges(self):
@@ -137,7 +137,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('String 2' in str(r.content))
         self.assertTrue('Hello, world' in str(r.content))
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_5_TestIssue67(self):
@@ -171,7 +171,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('or n%100>=20) ? 1 : 2)' not in str(content))
         del(content)
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_6_ExcludedApps(self):
@@ -190,7 +190,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.project_file_list_url)
         self.assertNotContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_8_hideObsoletes(self):
@@ -297,7 +297,7 @@ class RosettaTestCase(TestCase):
             self.assertTrue(r.content)
             self.assertEqual(r.status_code, 200)
 
-    @override_settings(LANGUAGES=(('fr', 'French'), ('xx', 'Dummy Language'),))
+    @override_settings(ROSETTA_LANGUAGES=(('fr', 'French'), ('xx', 'Dummy Language'),))
     def test_13_catalog_filters(self):
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue(
@@ -488,7 +488,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
         self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
 
-    @override_settings(LANGUAGES=(
+    @override_settings(ROSETTA_LANGUAGES=(
         ('xx', 'dummy language'),
     ))
     def test_23_save_header_data(self):
@@ -590,7 +590,7 @@ class RosettaTestCase(TestCase):
 
     @override_settings(
         ROSETTA_POFILENAMES=('pr44.po', ),
-        LANGUAGES=(('xx', 'dummy language'),)
+        ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
     )
     def test_30_pofile_names(self):
         os.unlink(self.dest_file)
@@ -648,7 +648,7 @@ class RosettaTestCase(TestCase):
 
     @override_settings(
         ROSETTA_ENABLE_REFLANG=True,
-        LANGUAGES=(('xx', 'dummy language'),)
+        ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
     )
     def test_33_reflang(self):
         self.copy_po_file_from_template('./django.po.issue60.template')
@@ -705,7 +705,7 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.all_file_list_url)
         self.assertContains(r, 'locale/bs-Cyrl-BA/LC_MESSAGES/django.po')
 
-    @override_settings(LANGUAGES=(('yy-Anot', u'Yet Another dummy language'),))
+    @override_settings(ROSETTA_LANGUAGES=(('yy-Anot', u'Yet Another dummy language'),))
     def test_37_issue_133_complex_locales(self):
         r = self.client.get(self.all_file_list_url)
         self.assertContains(r, 'locale/yy_Anot/LC_MESSAGES/django.po')
@@ -864,7 +864,7 @@ class RosettaTestCase(TestCase):
         self.assertEqual(view.po_file_path, self.dest_file)
 
         # But if the language isn't an option, we get a 404
-        with self.settings(LANGUAGES=[l for l in settings.LANGUAGES if l[0] != 'xx']):
+        with self.settings(ROSETTA_LANGUAGES=[l for l in settings.LANGUAGES if l[0] != 'xx']):
             view = self._setup_view(
                 view=views.TranslationFormView(),
                 request=request,
@@ -982,6 +982,20 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.all_file_list_url)
         self.assertRedirects(r, '/custom-url/?next=/rosetta/files/all/', fetch_redirect_response=False)
         self.assertEqual(302, r.status_code)
+
+    def test_51_rosetta_languages(self):
+        self.assertTrue('xx' in dict(settings.LANGUAGES))
+        self.assertFalse('yy' in dict(settings.LANGUAGES))
+
+        with self.settings(ROSETTA_LANGUAGES=(('xx', 'foo language'), )):
+            r = self.client.get(self.project_file_list_url)
+            self.assertTrue('foo language' in str(r.content))
+            self.assertFalse('bar language' in str(r.content))
+
+        with self.settings(ROSETTA_LANGUAGES=(('xx', 'foo language'), ('yy', 'bar language'), )):
+            r = self.client.get(self.project_file_list_url)
+            self.assertTrue('foo language' in str(r.content))
+            self.assertTrue('bar language' in str(r.content))
 
 
 # Stubbed access control function

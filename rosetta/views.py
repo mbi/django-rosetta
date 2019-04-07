@@ -102,14 +102,14 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
     def language_id(self):
         """Determine/return the language id from the url kwargs, after
         validating that:
-        1. the language is in settings.LANGUAGES, and
+        1. the language is in rosetta_settings.ROSETTA_LANGUAGES, and
         2. the current user is permitted to translate that language
 
         (If either of the above fail, throw a 404.)
         """
         # (Formerly known as "rosetta_i18n_lang_code")
         lang_id = self.kwargs['lang_id']
-        if lang_id not in {l[0] for l in settings.LANGUAGES}:
+        if lang_id not in {l[0] for l in rosetta_settings.ROSETTA_LANGUAGES}:
             raise Http404
         if not can_translate_language(self.request.user, lang_id):
             raise Http404
@@ -218,7 +218,7 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
 
         languages = []
         has_pos = False
-        for language in settings.LANGUAGES:
+        for language in rosetta_settings.ROSETTA_LANGUAGES:
             if not can_translate_language(self.request.user, language[0]):
                 continue
 
@@ -445,7 +445,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
 
         # Handle REF_LANG setting; mark up our entries with the reg lang's
         # corresponding translations
-        LANGUAGES = list(settings.LANGUAGES)
+        LANGUAGES = list(rosetta_settings.ROSETTA_LANGUAGES)
         if rosetta_settings.ENABLE_REFLANG:
             if self.ref_lang_po_file:
                 for o in paginator.object_list:
@@ -485,7 +485,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         main_language = None
         if main_language_id and main_language_id != self.language_id:
             # Translate from id to language name
-            for language in settings.LANGUAGES:
+            for language in rosetta_settings.ROSETTA_LANGUAGES:
                 if language[0] == main_language_id:
                     main_language = _(language[1])
                     break
@@ -502,7 +502,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
 
         # Collect some constants for the template
         rosetta_i18n_lang_name = six.text_type(
-            dict(settings.LANGUAGES).get(self.language_id)
+            dict(rosetta_settings.ROSETTA_LANGUAGES).get(self.language_id)
         )
         # "bidi" as in "bi-directional"
         rosetta_i18n_lang_bidi = self.language_id.split('-')[0] in settings.LANGUAGES_BIDI
@@ -552,11 +552,11 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         """Return the language id for the "reference language" (the language to
         be translated *from*, if not English).
 
-        Throw a 404 if it's not in settings.LANGUAGES.
+        Throw a 404 if it's not in rosetta_settings.ROSETTA_LANGUAGES.
         """
         ref_lang = self._request_request('ref_lang', 'msgid')
         if ref_lang != 'msgid':
-            allowed_languages = {l[0] for l in settings.LANGUAGES}
+            allowed_languages = {l[0] for l in rosetta_settings.ROSETTA_LANGUAGES}
             if ref_lang not in allowed_languages:
                 raise Http404
         return ref_lang

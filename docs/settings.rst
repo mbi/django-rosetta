@@ -22,6 +22,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_ENABLE_REFLANG``: Enables a selector for picking a reference language other than English. Defaults to ``False``.
 * ``ROSETTA_SHOW_AT_ADMIN_PANEL``: Adds a handy link to Rosetta at the bottom of the Django admin apps index. Defaults to ``False``.
 * ``ROSETTA_LOGIN_URL``: Use this if you want to override the login URL for rosetta. Defaults to ``settings.LOGIN_URL``.
+* ``ROSETTA_LANGUAGES``: List of languages that Rosetta will offer to translate. This is useful when you wish to translate a language that is not yet defined in ``settings.LANGUAGES``. Defaults to ``settings.LANGUAGES``.
 
 Storages
 --------
