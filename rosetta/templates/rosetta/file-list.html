@@ -1,5 +1,5 @@
 {% extends "rosetta/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block pagetitle %}{{block.super}} - {% trans "Language selection" %}{% endblock %}
 
@@ -32,7 +32,7 @@
                         <th class="r">{% trans "Progress"%}</th>
                         <th class="r">{% trans "Messages" %}</th>
                         <th class="r">{% trans "Translated" %}</th>
-                        <th class="r">{% trans "Fuzzy"%}</th>
+                        <th class="info-tip r" title="{% trans "Fuzzy entries call for revision by the translator." %}" class="r">{% trans "Fuzzy"%}</th>
                         <th class="r">{% trans "Obsolete"%}</th>
                         <th>{% trans "File" %}</th>
                     </tr>

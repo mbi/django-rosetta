@@ -35,3 +35,14 @@ div.module {margin-bottom: 20px;}
 #toolbar #translate-all { float:right}
 #toolbar form { float:left; }
 #changelist table thead th { padding: 2px 5px; }
+
+
+.info-tip::after {
+    content: '?';
+    color: white;
+    background-color: #bbb;
+    margin-left: 5px;
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-size: 11px;
+}

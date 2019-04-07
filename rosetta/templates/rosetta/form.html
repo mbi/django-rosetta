@@ -75,7 +75,7 @@
                         <th><div class="text">{% trans "Original" %}</div></th>
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
-                        <th class="c"><input style="display: inline;" id="action-toggle" type="checkbox"> {% trans "Fuzzy" %}</th>
+                        <th class="info-tip c" title="{% trans "Fuzzy entries call for revision by the translator." %}"><input style="display: inline;" id="action-toggle" type="checkbox"> {% trans "Fuzzy" %}</th>
                         <th>{% trans "Occurrences(s)" %}</th>
                     </tr>
                 </thead>
