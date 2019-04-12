@@ -708,7 +708,7 @@ class RosettaTestCase(TestCase):
     @override_settings(ROSETTA_LANGUAGES=(('yy-Anot', u'Yet Another dummy language'),))
     def test_37_issue_133_complex_locales(self):
         r = self.client.get(self.all_file_list_url)
-        self.assertContains(r, 'locale/yy_Anot/LC_MESSAGES/django.po')
+        self.assertContains(r, 'locale/yy-Anot/LC_MESSAGES/django.po')
 
     def test_38_issue_161_more_weird_locales(self):
         r = self.client.get(self.all_file_list_url)

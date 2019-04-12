@@ -116,12 +116,18 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         if path not in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
             for lang_ in langs:
                 dirname = os.path.join(path, lang_, 'LC_MESSAGES')
-                if not case_sensitive_file_system:
-                    dirname = dirname.lower()
                 for fn in rosetta_settings.POFILENAMES:
                     filename = os.path.join(dirname, fn)
-                    if os.path.isfile(filename):
-                        ret.add(os.path.abspath(filename))
+                    abs_path = os.path.abspath(filename)
+                    # On case insensitive filesystems (looking at you, MacOS)
+                    # compare the lowercase absolute path of the po file
+                    # to all lowercased paths already collected.
+                    # This is not an issue on sane filesystems
+                    if not case_sensitive_file_system:
+                        if filename.lower() in [p.lower() for p in ret]:
+                            continue
+                    if os.path.isfile(abs_path):
+                        ret.add(abs_path)
     return list(sorted(ret))
 
 

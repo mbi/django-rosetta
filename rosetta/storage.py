@@ -96,19 +96,19 @@ class CacheRosettaStorage(BaseRosettaStorage):
 
     def get(self, key, default=None):
         # print ('get', self._key_prefix + key)
-        return cache.get(self._key_prefix + key, default)
+        return cache.get((self._key_prefix + key).lower(), default)
 
     def set(self, key, val):
         # print ('set', self._key_prefix + key)
-        cache.set(self._key_prefix + key, val, 86400)
+        cache.set((self._key_prefix + key).lower(), val, 86400)
 
     def has(self, key):
         # print ('has', self._key_prefix + key)
-        return (self._key_prefix + key) in cache
+        return (self._key_prefix + key).lower() in cache
 
     def delete(self, key):
         # print ('del', self._key_prefix + key)
-        cache.delete(self._key_prefix + key)
+        cache.delete((self._key_prefix + key).lower())
 
 
 def get_storage(request):
