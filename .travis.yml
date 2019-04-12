@@ -29,10 +29,7 @@ matrix:
   - os: osx
     osx_image: xcode9.4
     language: generic
-    env: TOX_ENV=py37-django22
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
+    env: TOX_ENV=py36-django22
 
 install:
   - pip install tox
