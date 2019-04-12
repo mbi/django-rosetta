@@ -32,7 +32,7 @@ matrix:
     env: TOX_ENV=py36-django22
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew upgrade memcached; brew services start memcached; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install memcached; brew services start memcached; fi
 
 install:
   - pip install tox
