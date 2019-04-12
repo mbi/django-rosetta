@@ -26,10 +26,9 @@ matrix:
   - python: "3.7"
     env: TOX_ENV=py37-django22
     dist: xenial
-  - python: "3.7"
-    env: TOX_ENV=py37-django22
-    os: osx
+  - os: osx
     osx_image: xcode9.4
+    env: TOX_ENV=py37-django22
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
