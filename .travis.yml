@@ -31,6 +31,8 @@ matrix:
     os: osx
     osx_image: xcode9.4
 
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install python3; fi
 
 install:
   - pip install tox
