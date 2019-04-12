@@ -26,7 +26,10 @@ matrix:
   - python: "3.7"
     env: TOX_ENV=py37-django22
     dist: xenial
-
+  - python: "3.7"
+    env: TOX_ENV=py37-django22
+    os: osx
+    osx_image: xcode9.4
 
 
 install:
