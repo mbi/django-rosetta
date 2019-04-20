@@ -122,6 +122,14 @@ google.setOnLoadCallback(function() {
                 $(e).removeAttr('checked');
             }
         });
+    });
+    $('tbody .translation textarea').change(function () {
+        var fuzzy = $(this).closest('tr').find('input[type="checkbox"]');
+        if(fuzzy[0].checked){
+            fuzzy[0].checked = false;
+            fuzzy.removeAttr( 'checked')
+        }
+
     })
 
 });
