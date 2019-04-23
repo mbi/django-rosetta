@@ -3,6 +3,7 @@ Version History
 
 Version 0.9.4 (unreleased)
 --------------------------
+* Added ROSETTA_SHOW_OCCURRENCES: Option to hide file name & path (#77, PR #221, thanks @sarathak)
 * Unfuzzy fuzzy entries when the translation is changed (#16, PR #220, thanks @sarathak)
 
 
