@@ -1,6 +1,10 @@
 Version History
 ===============
 
+Version 0.9.4 (unreleased)
+--------------------------
+* Unfuzzy fuzzy entries when the translation is changed (#16, PR #220, thanks @sarathak)
+
 
 Version 0.9.3
 -------------

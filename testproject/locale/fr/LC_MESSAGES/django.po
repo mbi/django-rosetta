@@ -19,8 +19,9 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: templates/test.html:3
+#, fuzzy
 msgid "Some text to translate"
-msgstr ""
+msgstr "Crunchum ipsum dolor sit coder void, constructor function"
 
 #: templates/test.html:5
 #, python-format
@@ -32,38 +33,3 @@ msgid_plural ""
 "%(num_bottles)s bottles of beer on the wall\n"
 msgstr[0] ""
 msgstr[1] ""
-
-
-#: apps/services/comet/backend/so/cashbox.py:3573
-#, fuzzy
-msgid "Old password does not match"
-msgstr "Die beiden Passwortfelder stimmen nicht überein"
-
-#: apps/services/comet/backend/so/cashbox.py:3693
-#, fuzzy, python-format
-msgid "First time topup minimum %10.2f!"
-msgstr "Shop kann max. %10.2f aufladen!"
-
-#: apps/services/comet/backend/so/cashbox.py:3767
-msgid "Card already activated!"
-msgstr "Kundenkarte bereits aktiviert!"
-
-#: apps/services/comet/backend/so/cashbox.py:3775
-msgid "Authorization failed!"
-msgstr "Authentifizierung fehlgeschlagen!"
-
-#: apps/services/comet/backend/so/cashbox.py:3777
-msgid "User locked with an other card!"
-msgstr "Benutzer hat bereits eine andere Kundenkarte!"
-
-#: apps/services/comet/backend/so/cashbox.py:3836
-msgid "Password less withdraw active"
-msgstr "Passwort erfolgreich geändert"
-
-#: apps/services/comet/backend/so/cashbox.py:3971
-msgid "Insufficient balance to create voucher."
-msgstr "Ungenügend Guthaben zur erstellung des Gutscheins."
-
-#: apps/services/comet/backend/so/cashbox.py:4194
-msgid "match not found"
-msgstr "Spiel nicht gefunden"
