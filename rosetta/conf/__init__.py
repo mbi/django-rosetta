@@ -52,7 +52,8 @@ class RosettaSettings(object):
         'ROSETTA_SHOW_AT_ADMIN_PANEL': ('SHOW_AT_ADMIN_PANEL', False),
         'ROSETTA_LOGIN_URL': ('LOGIN_URL', dj_settings.LOGIN_URL),
 
-        'ROSETTA_LANGUAGES': ('ROSETTA_LANGUAGES', dj_settings.LANGUAGES)
+        'ROSETTA_LANGUAGES': ('ROSETTA_LANGUAGES', dj_settings.LANGUAGES),
+        'ROSETTA_SHOW_OCCURRENCES': ('SHOW_OCCURRENCES', True),
     }
 
     def __init__(self):

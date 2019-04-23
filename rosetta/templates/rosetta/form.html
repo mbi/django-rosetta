@@ -76,7 +76,7 @@
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
                         <th class="info-tip c" title="{% trans "Fuzzy entries call for revision by the translator." %}"><input style="display: inline;" id="action-toggle" type="checkbox"> {% trans "Fuzzy" %}</th>
-                        <th>{% trans "Occurrences(s)" %}</th>
+                        {% if rosetta_settings.SHOW_OCCURRENCES %}<th>{% trans "Occurrences(s)" %}</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -128,14 +128,14 @@
                             <td class="c">
                                 <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
                             </td>
-                            <td class="location">
+                            {% if rosetta_settings.SHOW_OCCURRENCES %}<td class="location">
                                 {% for fn,lineno in message.occurrences %}
                                     <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}{% if lineno %}:{{lineno}}{% endif %}</code>
                                 {% endfor %}
                                 {% if message.occurrences|length|gt:"3" %}
                                     <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
                                 {% endif %}
-                            </td>
+                            </td>{% endif %}
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -115,6 +115,7 @@ SECRET_KEY = 'empty'
 ROSETTA_ENABLE_REFLANG = True
 ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS = True
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
+# ROSETTA_SHOW_OCCURRENCES = True
 
 # fake azure key that matches the one in
 # fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml

@@ -661,6 +661,15 @@ class RosettaTestCase(TestCase):
         # The translated string in the test PO file ends up in the "Reference" column
         self.assertTrue('<span class="message">translated-string1</span>' in str(r.content))
 
+    def test_show_occurrences(self):
+        r = self.client.get(self.xx_form_url)
+        # Verify that occurrences in view
+        self.assertTrue('<td class="location">' in str(r.content))
+        with self.settings(ROSETTA_SHOW_OCCURRENCES=False):
+            r = self.client.get(self.xx_form_url)
+            # Verify that occurrences not in view
+            self.assertFalse('<td class="location">' in str(r.content))
+
     def test_34_issue_113_app_configs(self):
         r = self.client.get(self.all_file_list_url)
         self.assertTrue('rosetta/files/all/xx/1/">Test_App' in str(r.content))
