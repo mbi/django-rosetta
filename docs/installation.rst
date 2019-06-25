@@ -23,6 +23,16 @@ Install Rosetta
 
 Note: you can use whatever you wish as the URL prefix.
 
+As of Django 1.6 you'll need::
+
+    from django.conf import settings
+    from django.conf.urls import url,include
+
+    if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns.append(url(r'^rosetta/', include('rosetta.urls')))
+
+You'll need to access /admin and LOGIN BEFORE ACCESSING /rosetta.
+
 To uninstall Rosetta, simply comment out or remove the ``'rosetta'`` line in your ``INSTALLED_APPS``
 
 
