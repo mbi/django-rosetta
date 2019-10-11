@@ -543,8 +543,15 @@ class RosettaTestCase(TestCase):
         response = self.client.get(self.project_file_list_url)
         self.assertEqual(200, response.status_code)
 
-        # Now replace access control, and check we get redirected
+        # Now replace access control with a function reference,
+        # and check we get redirected
         with self.settings(ROSETTA_ACCESS_CONTROL_FUNCTION='rosetta.tests.no_access'):
+            response = self.client.get(self.project_file_list_url)
+            self.assertEqual(302, response.status_code)
+
+        # Now replace access control with a function itself,
+        # and check we get redirected
+        with self.settings(ROSETTA_ACCESS_CONTROL_FUNCTION=lambda user: False):
             response = self.client.get(self.project_file_list_url)
             self.assertEqual(302, response.status_code)
 
