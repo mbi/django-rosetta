@@ -21,7 +21,7 @@ msgstr ""
 #: rosetta/templates/rosetta/admin_index.html:13
 #| msgid "Translated only"
 msgid "Translations"
-msgstr "Traducidos"
+msgstr "Traducciones"
 
 #: rosetta/templates/rosetta/admin_index.html:14
 msgid "Change"
