@@ -1,11 +1,12 @@
 Version History
 ===============
 
-Version 0.9.4 (unreleased)
---------------------------
+Version 0.9.4
+-------------
 * Added ROSETTA_SHOW_OCCURRENCES: Option to hide file name & path (#77, PR #221, thanks @sarathak)
 * Unfuzzy fuzzy entries when the translation is changed (#16, PR #220, thanks @sarathak)
 * Updated spanish translation (#230, thank you @mondeja)
+* Test against Django 3.0 and Python 3.8
 
 
 Version 0.9.3

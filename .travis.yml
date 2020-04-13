@@ -26,6 +26,9 @@ matrix:
   - python: "3.7"
     env: TOX_ENV=py37-django22
     dist: xenial
+  - python: "3.7"
+    env: TOX_ENV=py37-django30
+    dist: xenial
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install memcached; brew services start memcached; fi

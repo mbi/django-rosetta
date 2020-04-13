@@ -63,6 +63,7 @@ MIDDLEWARE = (
 
 # Note: languages are overridden in the test runner
 LANGUAGES = (
+    ('en', u'English'),
     ('bs-Cyrl-BA', u'Bosnian (Cyrillic) (Bosnia and Herzegovina)'),
     ('ja', u'日本語'),
     ('xx', u'XXXXX'),
@@ -70,6 +71,9 @@ LANGUAGES = (
     ('zh_Hans', u'Chinese (Simplified)'),
     ('fr_FR.utf8', u'French (France), UTF8'),
 )
+
+SILENCED_SYSTEM_CHECKS = ["translation.E002"]
+
 
 LOCALE_PATHS = [
     os.path.join(PROJECT_PATH, 'locale'),
