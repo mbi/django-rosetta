@@ -572,7 +572,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 separator=os.sep,
                 ref_lang=self.ref_lang
             )
-            pattern = '\{separator}locale\{separator}[a-z]{{2}}'.format(separator=os.sep)
+            pattern = r'\{separator}locale\{separator}[a-z]{{2}}'.format(separator=os.sep)
             ref_fn = re.sub(pattern, replacement, self.po_file_path,)
             try:
                 ref_pofile = pofile(ref_fn)

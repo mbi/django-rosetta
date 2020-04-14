@@ -1,6 +1,12 @@
 Version History
 ===============
 
+
+Version 0.9.5 (unreleased)
+--------------------------
+* Fixed DeprecationWarning: invalid escape sequence (#234, Thanks @jayvdb)
+
+
 Version 0.9.4
 -------------
 * Added ROSETTA_SHOW_OCCURRENCES: Option to hide file name & path (#77, PR #221, thanks @sarathak)

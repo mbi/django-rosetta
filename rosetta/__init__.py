@@ -1,4 +1,4 @@
-VERSION = (0, 9, 4)
+VERSION = (0, 9, 5)
 default_app_config = "rosetta.apps.RosettaAppConfig"
 
 
