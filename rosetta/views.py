@@ -158,7 +158,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                              wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH)
             for entry in po_file:
                 # Entry is an object representing a single entry in the catalog.
-                # We interate through the *entire catalog*, pasting a hashed
+                # We iterate through the *entire catalog*, pasting a hashed
                 # value of the meat of each entry on its side in an attribute
                 # called "md5hash".
                 str_to_hash = (
@@ -174,7 +174,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                 po_file = pofile(self.po_file_path)
                 for entry in po_file:
                     # Entry is an object representing a single entry in the
-                    # catalog. We interate through the entire catalog, pasting
+                    # catalog. We iterate through the entire catalog, pasting
                     # a hashed value of the meat of each entry on its side in
                     # an attribute called "md5hash".
                     str_to_hash = (
