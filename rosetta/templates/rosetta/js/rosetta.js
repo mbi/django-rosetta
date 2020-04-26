@@ -124,10 +124,10 @@ google.setOnLoadCallback(function() {
         });
     });
     
-    var NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = undefined;
+    var _NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = undefined;
     $('input[type="checkbox"]').click(function() {
         if (!$(this)[0].checked) {
-            NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = $(this).attr("name");
+            _NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = $(this).attr("name");
         }
     })
     $('tbody .translation textarea').change(function (e) {
@@ -135,12 +135,12 @@ google.setOnLoadCallback(function() {
         setTimeout(function() {
             var fuzzy = self.closest('tr').find('input[type="checkbox"]');
             if (fuzzy[0].checked) {
-                if (NAME_CLICKED_FUZZY_CHECKED_CHECKBOX != fuzzy.attr("name")) {
+                if (_NAME_CLICKED_FUZZY_CHECKED_CHECKBOX != fuzzy.attr("name")) {
                     fuzzy[0].checked = false;
                     fuzzy.removeAttr('checked')
                 }
             }
-            NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = undefined;
+            _NAME_CLICKED_FUZZY_CHECKED_CHECKBOX = undefined;
         }, 50)
     });
 });
