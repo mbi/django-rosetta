@@ -123,13 +123,22 @@ google.setOnLoadCallback(function() {
             }
         });
     });
-    $('tbody .translation textarea').change(function () {
-        var fuzzy = $(this).closest('tr').find('input[type="checkbox"]');
-        if(fuzzy[0].checked){
-            fuzzy[0].checked = false;
-            fuzzy.removeAttr( 'checked')
-        }
-
+    
+    var _CLICK_NAME_FUZZY_CHECKED_CHECKBOX = undefined;
+    $('input[type="checkbox"]').click(function() {
+        _CLICK_NAME_FUZZY_CHECKED_CHECKBOX = $(this).attr("name");
     })
-
+    $('tbody .translation textarea').change(function (e) {
+        var self = $(e.target);
+        setTimeout(function() {
+            var fuzzy = self.closest('tr').find('input[type="checkbox"]');
+            if (fuzzy[0].checked) {
+                if (_CLICK_NAME_FUZZY_CHECKED_CHECKBOX != fuzzy.attr("name")) {
+                    fuzzy[0].checked = false;
+                    fuzzy.removeAttr('checked')
+                }
+            }
+            _CLICK_NAME_FUZZY_CHECKED_CHECKBOX = undefined;
+        }, 50)
+    });
 });
