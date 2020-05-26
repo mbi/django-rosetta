@@ -194,4 +194,4 @@ msgstr "Көрсөтүүдө:"
 #, python-format
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
-msgstr[0] "%(message_number)sбилдирүүдөн %(hits)s даанасы"
+msgstr[0] "%(message_number)s билдирүүдөн %(hits)s даанасы"
