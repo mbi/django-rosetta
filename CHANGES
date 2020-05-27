@@ -6,6 +6,7 @@ Version 0.9.5 (unreleased)
 --------------------------
 * Fixed DeprecationWarning: invalid escape sequence (#234, Thanks @jayvdb)
 * Fixed typo in documentation (#232, thanks @timgates42)
+* Added Kyrgyz translation (#239,thanks @Soyuzbek)
 
 
 Version 0.9.4
