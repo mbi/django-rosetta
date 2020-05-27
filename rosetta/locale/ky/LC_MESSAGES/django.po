@@ -1,0 +1,197 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Soyuzbek Orozbek uulu <soyuzbek196.kg@gmail.com>, 2020.
+# 
+# Translators:
+# Soyuzbek Orozbek uulu <soyuzbek196.kg@gmail.com>, 2020
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Rosetta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-26 21:56+0100\n"
+"PO-Revision-Date: 2020-05-26 15:58+0000\n"
+"Last-Translator: Soyuzbek Orozbek uulu <soyuzbek196.kg@gmail.com>, 2020\n"
+"Language-Team: Kyrgyz (https://www.transifex.com/soyuzbek-translations/teams/110315/ky/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ky\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: templates/rosetta/languages.html:5 templates/rosetta/languages.html.py:8
+msgid "Language selection"
+msgstr "Тил тандоо"
+
+#: templates/rosetta/languages.html:8 templates/rosetta/pofile.html:22
+msgid "Home"
+msgstr "Башкы"
+
+#: templates/rosetta/languages.html:9
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or "
+"higher.<br/>Setting ROSETTA_STORAGE_CLASS = "
+"'rosetta.storage.CacheRosettaStorage' in your settings file should fix this."
+msgstr ""
+"Көрсөтүлгөн тил жүктөлбөй жатат. Бул демейде Жанго 1.4 жана жогорусунда "
+"бекитилген куки отурумун колдонгондон болот. <br/>Setting "
+"ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' маселени "
+"чечиши мүмкүн."
+
+#: templates/rosetta/languages.html:15
+msgid "Filter"
+msgstr "Чыпка"
+
+#: templates/rosetta/languages.html:16
+msgid "Project"
+msgstr "Долбоор"
+
+#: templates/rosetta/languages.html:17
+msgid "Third party"
+msgstr "Үчүнчү жак"
+
+#: templates/rosetta/languages.html:19 templates/rosetta/pofile.html:39
+msgid "All"
+msgstr "Баары"
+
+#: templates/rosetta/languages.html:32
+msgid "Application"
+msgstr "Колдонмо"
+
+#: templates/rosetta/languages.html:33
+msgid "Progress"
+msgstr "Өнүгүү"
+
+#: templates/rosetta/languages.html:34
+msgid "Messages"
+msgstr "Билдирүүлөр"
+
+#: templates/rosetta/languages.html:35
+msgid "Translated"
+msgstr "Которулган"
+
+#: templates/rosetta/languages.html:36 templates/rosetta/pofile.html:61
+msgid "Fuzzy"
+msgstr "Бозомтук"
+
+#: templates/rosetta/languages.html:37
+msgid "Obsolete"
+msgstr "Колдонулбаган"
+
+#: templates/rosetta/languages.html:38
+msgid "File"
+msgstr "Файл"
+
+#: templates/rosetta/languages.html:61
+msgid "Nothing to translate!"
+msgstr "Которууга эч нерсе жок"
+
+#: templates/rosetta/languages.html:62
+msgid ""
+"You haven't specified any languages in your settings file, or haven't yet "
+"generated a batch of translation catalogs."
+msgstr ""
+"Сиз оңдоолор файлында бир да тил көрсөткөн эмессиз же котормо жыйындысын "
+"түзө элексиз."
+
+#: templates/rosetta/languages.html:63
+#, python-format
+msgid ""
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N "
+"documentation</a> for a guide on how to set up internationalization for your"
+" project."
+msgstr ""
+"Көп улуттуулукту кантип орнотууну билүү үчүн  <a "
+"href=\"%(i18n_doc_link)s\">Жанго I18n түшүндүрмөсүнө</a>  барыңыз."
+
+#: templates/rosetta/pofile.html:9
+msgid "Pick another file"
+msgstr "Башка файлды алуу"
+
+#: templates/rosetta/pofile.html:10
+msgid "Download this catalog"
+msgstr "Бул жыйнакты которуу"
+
+#: templates/rosetta/pofile.html:27
+msgid "File is read-only: download the file when done editing!"
+msgstr "Файл окуш үчүн гана:  өзгөрткөндөндөн кийин көчүрүп алыңыз!"
+
+#: templates/rosetta/pofile.html:28
+msgid ""
+"Some items in your last translation block couldn't be saved: this usually "
+"happens when the catalog file changes on disk after you last loaded it."
+msgstr ""
+"Сиздин котормоңузда кээбир бөлүктөр сакталбай калды: Бул демейде дискте "
+"өзгөрүү болгондугуна байланыштуу."
+
+#: templates/rosetta/pofile.html:32
+#, python-format
+msgid "Translate into %(rosetta_i18n_lang_name)s"
+msgstr "%(rosetta_i18n_lang_name)s тилине которуу"
+
+#: templates/rosetta/pofile.html:35
+msgid "Display:"
+msgstr "Көрсөт:"
+
+#: templates/rosetta/pofile.html:36
+msgid "Untranslated only"
+msgstr "Которулбагандар гана"
+
+#: templates/rosetta/pofile.html:37
+msgid "Translated only"
+msgstr "Которулгандар гана"
+
+#: templates/rosetta/pofile.html:38
+msgid "Fuzzy only"
+msgstr "Бозомтуктар гана"
+
+#: templates/rosetta/pofile.html:46
+msgid "Search"
+msgstr "Издөө"
+
+#: templates/rosetta/pofile.html:48
+msgid "Go"
+msgstr "Жөнө"
+
+#: templates/rosetta/pofile.html:58
+msgid "Original"
+msgstr "Нукурасы"
+
+#: templates/rosetta/pofile.html:62
+msgid "Occurrences(s)"
+msgstr "Окуйа(-лар)"
+
+#: templates/rosetta/pofile.html:76 templates/rosetta/pofile.html.py:79
+#: templates/rosetta/pofile.html:94 templates/rosetta/pofile.html.py:97
+msgid "Context hint"
+msgstr "мазмун ишараты"
+
+#: templates/rosetta/pofile.html:104
+msgid "suggest"
+msgstr "сунуш"
+
+#: templates/rosetta/pofile.html:115
+#, python-format
+msgid "%(more_count)s more"
+msgid_plural "%(more_count)s more"
+msgstr[0] "%(more_count)s нерсе көп"
+
+#: templates/rosetta/pofile.html:127
+msgid "Save and translate next block"
+msgstr "Сактап кийинки бөлүккө өт"
+
+#: templates/rosetta/pofile.html:131
+msgid "Skip to page:"
+msgstr "Бул бетке өт:"
+
+#: templates/rosetta/pofile.html:144
+msgid "Displaying:"
+msgstr "Көрсөтүүдө:"
+
+#: templates/rosetta/pofile.html:148
+#, python-format
+msgid "%(hits)s/%(message_number)s message"
+msgid_plural "%(hits)s/%(message_number)s messages"
+msgstr[0] "%(message_number)s билдирүүдөн %(hits)s даанасы"
