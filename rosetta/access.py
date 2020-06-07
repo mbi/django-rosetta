@@ -15,13 +15,18 @@ def get_access_control_function():
     Return a predicate for determining if a user can
     access the Rosetta views
     """
-    fn_path = getattr(settings, 'ROSETTA_ACCESS_CONTROL_FUNCTION', None)
-    if fn_path is None:
+    access_function = getattr(settings, 'ROSETTA_ACCESS_CONTROL_FUNCTION', None)
+    if access_function is None:
         return is_superuser_staff_or_in_translators_group
-    # Dynamically load a permissions function
-    perm_module, perm_func = fn_path.rsplit('.', 1)
-    perm_module = importlib.import_module(perm_module)
-    return getattr(perm_module, perm_func)
+    elif isinstance(access_function, str):
+        # Dynamically load a permissions function
+        perm_module, perm_func = access_function.rsplit('.', 1)
+        perm_module = importlib.import_module(perm_module)
+        return getattr(perm_module, perm_func)
+    elif callable(access_function):
+        return access_function
+    else:
+        raise TypeError(access_function)
 
 
 # Default access control test
