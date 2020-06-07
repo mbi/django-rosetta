@@ -9,6 +9,8 @@ Version 0.9.5 (unreleased)
 * Added Kyrgyz translation (#239,thanks @Soyuzbek)
 * Ignore translator context hints checking unmatched variables (#238, #239, thanks @jeancochrane and @mondeja)
 * Uncheck fuzzy on translation keyup instead of change (#235 @mondeja)
+* Allow passing a function itself to the setting ROSETTA_ACCESS_CONTROL (#227, thanks @alvra)
+* Dropped support for Django 1.11 and Python 2
 
 
 Version 0.9.4

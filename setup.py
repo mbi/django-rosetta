@@ -1,6 +1,7 @@
-from setuptools import setup, find_packages
-from setuptools.command.test import test as test_command
 import sys
+
+from setuptools import find_packages, setup
+from setuptools.command.test import test as test_command
 
 
 class Tox(test_command):
@@ -19,11 +20,13 @@ class Tox(test_command):
         # import here, cause outside the eggs aren't loaded
         import tox
         import shlex
+
         args = self.tox_args
         if args:
             args = shlex.split(self.tox_args)
         errno = tox.cmdline(args=args)
         sys.exit(errno)
+
 
 with open('README.rst') as readme:
     long_description = readme.read()
@@ -57,9 +60,9 @@ setup(
     zip_safe=False,
     install_requires=[
         'six >=1.2.0',
-        'Django >= 1.11',
+        'Django >= 2.0',
         'requests >= 2.1.0',
-        'polib >= 1.1.0'
+        'polib >= 1.1.0',
     ],
     tests_require=['tox', 'vcrpy'],
     cmdclass={'test': Tox},

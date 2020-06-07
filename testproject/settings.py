@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
-# from __future__ import unicode_literals
-import django
 import os
 import sys
+
+import django
 
 
 SITE_ID = 1
@@ -15,7 +14,7 @@ DJANGO_VERSION = django.get_version()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(PROJECT_PATH, 'rosetta.db')
+        'NAME': os.path.join(PROJECT_PATH, 'rosetta.db'),
     }
 }
 
@@ -23,7 +22,7 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': 'ROSETTA_TEST'
+        'KEY_PREFIX': 'ROSETTA_TEST',
     }
 }
 
@@ -58,7 +57,7 @@ MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware'
+    'django.contrib.messages.middleware.MessageMiddleware',
 )
 
 # Note: languages are overridden in the test runner
@@ -75,15 +74,11 @@ LANGUAGES = (
 SILENCED_SYSTEM_CHECKS = ["translation.E002"]
 
 
-LOCALE_PATHS = [
-    os.path.join(PROJECT_PATH, 'locale'),
-]
+LOCALE_PATHS = [os.path.join(PROJECT_PATH, 'locale')]
 
 SOUTH_TESTS_MIGRATE = False
 
-FIXTURE_DIRS = (
-    os.path.join(PROJECT_PATH, 'fixtures'),
-)
+FIXTURE_DIRS = (os.path.join(PROJECT_PATH, 'fixtures'),)
 STATIC_URL = '/static/'
 ROOT_URLCONF = 'testproject.urls'
 
@@ -102,10 +97,10 @@ TEMPLATES = [
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
-                "django.contrib.messages.context_processors.messages"
-            )
-        }
-    },
+                "django.contrib.messages.context_processors.messages",
+            ),
+        },
+    }
 ]
 
 STATIC_URL = '/static/'

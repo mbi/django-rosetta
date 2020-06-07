@@ -1,34 +1,27 @@
-# -*- coding: utf-8 -*-
 import filecmp
 import hashlib
 import os
 import shutil
-import vcr
-try:
-    # Python 3
-    from urllib.parse import urlencode
-except ImportError:
-    # Python 2
-    from urllib import urlencode
+from urllib.parse import urlencode
 
-from django.conf import settings
-from django.dispatch import receiver
-from django.core.exceptions import ImproperlyConfigured
-from django.http import Http404
-from django.test import TestCase, RequestFactory, override_settings
-from django.test.client import Client
 from django import VERSION
-from django.urls import reverse, resolve
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from django.dispatch import receiver
+from django.http import Http404
+from django.test import RequestFactory, TestCase, override_settings
+from django.test.client import Client
+from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
-import six
 
+import six
+import vcr
+from rosetta import views
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
-from rosetta import views
 
 
 class RosettaTestCase(TestCase):
-
     def __init__(self, *args, **kwargs):
         super(RosettaTestCase, self).__init__(*args, **kwargs)
         self.curdir = os.path.dirname(__file__)
@@ -39,9 +32,15 @@ class RosettaTestCase(TestCase):
     def setUp(self):
         from django.contrib.auth.models import User
 
-        user = User.objects.create_superuser('test_admin', 'test@test.com', 'test_password')
-        user2 = User.objects.create_superuser('test_admin2', 'test@test2.com', 'test_password')
-        user3 = User.objects.create_superuser('test_admin3', 'test@test2.com', 'test_password')
+        user = User.objects.create_superuser(
+            'test_admin', 'test@test.com', 'test_password'
+        )
+        user2 = User.objects.create_superuser(
+            'test_admin2', 'test@test2.com', 'test_password'
+        )
+        user3 = User.objects.create_superuser(
+            'test_admin3', 'test@test2.com', 'test_password'
+        )
 
         user3.is_staff = False
         user3.save()
@@ -84,15 +83,14 @@ class RosettaTestCase(TestCase):
     def test_1_ListLoading(self):
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue(
-            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
+            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po')
+            in r.content.decode()
         )
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_2_PickFile(self):
         r = self.client.get(self.xx_form_url)
-        self.assertTrue('dummy language' in str(r.content))
+        self.assertTrue('dummy language' in r.content.decode())
 
     def test_3_DownloadZIP(self):
         kwargs = {'po_filter': 'third-party', 'lang_id': 'xx', 'idx': 0}
@@ -101,9 +99,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue('content-type' in r._headers.keys())
         self.assertTrue('application/x-zip' in r._headers.get('content-type'))
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_4_DoChanges(self):
         self.copy_po_file_from_template('./django.po.template')
         untranslated_url = self.xx_form_url + '?msg_filter=untranslated'
@@ -113,10 +109,10 @@ class RosettaTestCase(TestCase):
         r = self.client.get(untranslated_url)
 
         # make sure both strings are untranslated
-        self.assertTrue('dummy language' in str(r.content))
-        self.assertTrue('String 1' in str(r.content))
-        self.assertTrue('String 2' in str(r.content))
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+        self.assertTrue('dummy language' in r.content.decode())
+        self.assertTrue('String 1' in r.content.decode())
+        self.assertTrue('String 2' in r.content.decode())
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
@@ -126,20 +122,18 @@ class RosettaTestCase(TestCase):
         r = self.client.get(untranslated_url)
 
         # the translated string no longer is up for translation
-        self.assertTrue('String 1' in str(r.content))
-        self.assertTrue('String 2' not in str(r.content))
+        self.assertTrue('String 1' in r.content.decode())
+        self.assertTrue('String 2' not in r.content.decode())
 
         # display only translated strings
         r = self.client.get(translated_url)
 
         # The translation was persisted
-        self.assertTrue('String 1' not in str(r.content))
-        self.assertTrue('String 2' in str(r.content))
-        self.assertTrue('Hello, world' in str(r.content))
+        self.assertTrue('String 1' not in r.content.decode())
+        self.assertTrue('String 2' in r.content.decode())
+        self.assertTrue('Hello, world' in r.content.decode())
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_5_TestIssue67(self):
         # issue 67: http://code.google.com/p/django-rosetta/issues/detail?id=67
         self.copy_po_file_from_template('./django.po.issue67.template')
@@ -149,15 +143,15 @@ class RosettaTestCase(TestCase):
             content = f_.read()
         self.assertTrue('Hello, world' not in six.text_type(content))
         self.assertTrue('|| n%100>=20) ? 1 : 2)' in six.text_type(content))
-        del(content)
+        del content
 
         r = self.client.get(self.xx_form_url + '?msg_filter=untranslated')
 
         # make sure all strings are untranslated
-        self.assertTrue('dummy language' in str(r.content))
-        self.assertTrue('String 1' in str(r.content))
-        self.assertTrue('String 2' in str(r.content))
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+        self.assertTrue('dummy language' in r.content.decode())
+        self.assertTrue('String 1' in r.content.decode())
+        self.assertTrue('String 2' in r.content.decode())
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
@@ -169,13 +163,11 @@ class RosettaTestCase(TestCase):
         self.assertTrue('Hello, world' in str(content))
         self.assertTrue('|| n%100>=20) ? 1 : 2)' in str(content))
         self.assertTrue('or n%100>=20) ? 1 : 2)' not in str(content))
-        del(content)
+        del content
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_6_ExcludedApps(self):
-        with self.settings(ROSETTA_EXCLUDED_APPLICATIONS=('rosetta', )):
+        with self.settings(ROSETTA_EXCLUDED_APPLICATIONS=('rosetta',)):
             r = self.client.get(self.third_party_file_list_url)
             self.assertNotContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
@@ -190,17 +182,15 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.project_file_list_url)
         self.assertNotContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_8_hideObsoletes(self):
         r = self.client.get(self.xx_form_url)
 
         # not in listing
         for p in range(1, 5):
             r = self.client.get(self.xx_form_url + '?page=%d' % p)
-            self.assertTrue('dummy language' in str(r.content))
-            self.assertTrue('Les deux' not in str(r.content))
+            self.assertTrue('dummy language' in r.content.decode())
+            self.assertTrue('Les deux' not in r.content.decode())
 
         r = self.client.get(self.xx_form_url + '?query=Les%20Deux')
         self.assertContains(r, 'dummy language')
@@ -278,7 +268,7 @@ class RosettaTestCase(TestCase):
 
     def test_11_issue_80_tab_indexes(self):
         r = self.client.get(self.xx_form_url)
-        self.assertTrue('tabindex="3"' in str(r.content))
+        self.assertTrue('tabindex="3"' in r.content.decode())
 
     def test_12_issue_82_staff_user(self):
         self.client3 = Client()
@@ -297,37 +287,37 @@ class RosettaTestCase(TestCase):
             self.assertTrue(r.content)
             self.assertEqual(r.status_code, 200)
 
-    @override_settings(ROSETTA_LANGUAGES=(('fr', 'French'), ('xx', 'Dummy Language'),))
+    @override_settings(ROSETTA_LANGUAGES=(('fr', 'French'), ('xx', 'Dummy Language')))
     def test_13_catalog_filters(self):
         r = self.client.get(self.third_party_file_list_url)
         self.assertTrue(
-            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
+            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po')
+            in r.content.decode()
         )
-        self.assertTrue(('contrib') not in str(r.content))
 
         url = reverse('rosetta-file-list', kwargs={'po_filter': 'django'})
         r = self.client.get(url)
         self.assertTrue(
-            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content)
+            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po')
+            not in r.content.decode()
         )
-        self.assertTrue(('contrib') in str(r.content))
 
         r = self.client.get(self.all_file_list_url)
         self.assertTrue(
-            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') in str(r.content)
+            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po')
+            in r.content.decode()
         )
-        self.assertTrue(('contrib') in str(r.content))
 
         r = self.client.get(self.project_file_list_url)
         self.assertTrue(
-            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po') not in str(r.content)
+            os.path.normpath('rosetta/locale/xx/LC_MESSAGES/django.po')
+            not in r.content.decode()
         )
-        self.assertTrue(('contrib') not in str(r.content))
 
     def test_14_issue_99_context_and_comments(self):
         r = self.client.get(self.xx_form_url)
-        self.assertTrue('This is a text of the base template' in str(r.content))
-        self.assertTrue('Context hint' in str(r.content))
+        self.assertTrue('This is a text of the base template' in r.content.decode())
+        self.assertTrue('Context hint' in r.content.decode())
 
     def test_15_issue_87_entry_changed_signal(self):
         self.copy_po_file_from_template('./django.po.template')
@@ -338,7 +328,8 @@ class RosettaTestCase(TestCase):
             self.test_old_msgstr = kwargs.get('old_msgstr')
             self.test_new_msgstr = sender.msgstr
             self.test_msg_id = sender.msgid
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
@@ -348,7 +339,7 @@ class RosettaTestCase(TestCase):
         self.assertTrue(self.test_new_msgstr == 'Hello, world')
         self.assertTrue(self.test_msg_id == 'String 2')
 
-        del(self.test_old_msgstr, self.test_new_msgstr, self.test_msg_id)
+        del (self.test_old_msgstr, self.test_new_msgstr, self.test_msg_id)
 
     def test_16_issue_101_post_save_signal(self):
         self.copy_po_file_from_template('./django.po.template')
@@ -358,14 +349,14 @@ class RosettaTestCase(TestCase):
         def test_receiver(sender, **kwargs):
             self.test_sig_lang = kwargs.get('language_code')
 
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
         self.client.post(self.xx_form_url, data)
 
         self.assertTrue(self.test_sig_lang == 'xx')
-        del(self.test_sig_lang)
+        del self.test_sig_lang
 
     def test_17_issue_103_post_save_signal_has_request(self):
         self.copy_po_file_from_template('./django.po.template')
@@ -375,31 +366,32 @@ class RosettaTestCase(TestCase):
         def test_receiver(sender, **kwargs):
             self.test_16_has_request = 'request' in kwargs
 
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
         r = self.client.post(self.xx_form_url, data)
 
         self.assertTrue(self.test_16_has_request)
-        del(self.test_16_has_request)
+        del self.test_16_has_request
 
     def test_18_Test_Issue_gh24(self):
         self.copy_po_file_from_template('./django.po.issue24gh.template')
         r = self.client.get(self.xx_form_url)
 
-        self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in str(r.content))
+        self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in r.content.decode())
 
         # Post a translation, it should have properly wrapped lines
-        data = {'m_bb9d8fe6159187b9ea494c1b313d23d4':
-                'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean '
-                'commodo ligula eget dolor. Aenean massa. Cum sociis natoque '
-                'penatibus et magnis dis parturient montes, nascetur ridiculus '
-                'mus. Donec quam felis, ultricies nec, pellentesque eu, pretium '
-                'quis, sem. Nulla consequat massa quis enim. Donec pede justo, '
-                'fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, '
-                'rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum '
-                'felis eu pede mollis pretium.'}
+        data = {
+            'm_bb9d8fe6159187b9ea494c1b313d23d4': 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean '
+            'commodo ligula eget dolor. Aenean massa. Cum sociis natoque '
+            'penatibus et magnis dis parturient montes, nascetur ridiculus '
+            'mus. Donec quam felis, ultricies nec, pellentesque eu, pretium '
+            'quis, sem. Nulla consequat massa quis enim. Donec pede justo, '
+            'fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, '
+            'rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum '
+            'felis eu pede mollis pretium.'
+        }
         r = self.client.post(self.xx_form_url, data)
         with open(self.dest_file, 'r') as po_file:
             pofile_content = po_file.read()
@@ -410,7 +402,7 @@ class RosettaTestCase(TestCase):
         self.copy_po_file_from_template('./django.po.issue24gh.template')
         with self.settings(ROSETTA_POFILE_WRAP_WIDTH=0):
             r = self.client.get(self.xx_form_url)
-            self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in str(r.content))
+            self.assertTrue('m_bb9d8fe6159187b9ea494c1b313d23d4' in r.content.decode())
             r = self.client.post(self.xx_form_url, data)
             with open(self.dest_file, 'r') as po_file:
                 pofile_content = po_file.read()
@@ -419,9 +411,9 @@ class RosettaTestCase(TestCase):
     def test_19_Test_Issue_gh34(self):
         self.copy_po_file_from_template('./django.po.issue34gh.template')
         r = self.client.get(self.xx_form_url)
-        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_1' in str(r.content))
-        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_0' in str(r.content))
-        self.assertTrue('m_09f7e02f1290be211da707a266f153b3' in str(r.content))
+        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_1' in r.content.decode())
+        self.assertTrue('m_ff7060c1a9aae9c42af4d54ac8551f67_0' in r.content.decode())
+        self.assertTrue('m_09f7e02f1290be211da707a266f153b3' in r.content.decode())
 
         # post a translation, it should have properly wrapped lines
         data = {
@@ -443,15 +435,16 @@ class RosettaTestCase(TestCase):
     def test_20_Test_Issue_gh38(self):
         # (Have to log in again, since our session engine changed)
         self.client.login(username='test_admin', password='test_password')
-        self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware'
-                        in settings.MIDDLEWARE)
+        self.assertTrue(
+            'django.contrib.sessions.middleware.SessionMiddleware' in settings.MIDDLEWARE
+        )
 
         # Only one backend to test: cache backend
         self.copy_po_file_from_template('./django.po.issue38gh.template')
 
         r = self.client.get(self.xx_form_url)
         self.assertFalse(len(str(self.client.cookies.get('sessionid'))) > 4096)
-        self.assertTrue('m_9efd113f7919952523f06e0d88da9c54' in str(r.content))
+        self.assertTrue('m_9efd113f7919952523f06e0d88da9c54' in r.content.decode())
 
         data = {'m_9efd113f7919952523f06e0d88da9c54': 'Testing cookie length'}
         r = self.client.post(self.xx_form_url, data)
@@ -460,8 +453,8 @@ class RosettaTestCase(TestCase):
         self.assertTrue('Testing cookie length' in pofile_content)
 
         r = self.client.get(self.xx_form_url + '?filter=translated')
-        self.assertTrue('Testing cookie length' in str(r.content))
-        self.assertTrue('m_9f6c442c6d579707440ba9dada0fb373' in str(r.content))
+        self.assertTrue('Testing cookie length' in r.content.decode())
+        self.assertTrue('m_9f6c442c6d579707440ba9dada0fb373' in r.content.decode())
 
     @override_settings(ROSETTA_STORAGE_CLASS='rosetta.storage.CacheRosettaStorage')
     def test_21_concurrency_of_cache_backend(self):
@@ -474,7 +467,7 @@ class RosettaTestCase(TestCase):
         self.client2.get(self.xx_form_url)
         self.assertNotEqual(
             self.client.session.get('rosetta_cache_storage_key_prefix'),
-            self.client2.session.get('rosetta_cache_storage_key_prefix')
+            self.client2.session.get('rosetta_cache_storage_key_prefix'),
         )
 
         # Clean up (restore perms)
@@ -485,12 +478,10 @@ class RosettaTestCase(TestCase):
 
         r = self.client.get(self.xx_form_url)
         # We have distinct hashes, even though the msgid and msgstr are identical
-        self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in str(r.content))
-        self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in str(r.content))
+        self.assertTrue('m_4765f7de94996d3de5975fa797c3451f' in r.content.decode())
+        self.assertTrue('m_08e4e11e2243d764fc45a5a4fba5d0f2' in r.content.decode())
 
-    @override_settings(ROSETTA_LANGUAGES=(
-        ('xx', 'dummy language'),
-    ))
+    @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_23_save_header_data(self):
         from django.contrib.auth.models import User
 
@@ -510,10 +501,10 @@ class RosettaTestCase(TestCase):
         r = self.client.get(self.xx_form_url + '?filter=untranslated')
 
         # make sure both strings are untranslated
-        self.assertTrue('dummy language' in str(r.content))
-        self.assertTrue('String 1' in str(r.content))
-        self.assertTrue('String 2' in str(r.content))
-        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in str(r.content))
+        self.assertTrue('dummy language' in r.content.decode())
+        self.assertTrue('String 1' in r.content.decode())
+        self.assertTrue('String 2' in r.content.decode())
+        self.assertTrue('m_e48f149a8b2e8baa81b816c0edf93890' in r.content.decode())
 
         # post a translation
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
@@ -533,10 +524,10 @@ class RosettaTestCase(TestCase):
         # Load the template file
         r = self.client.get(self.xx_form_url)
 
-        self.assertTrue('Progress: 0%' in str(r.content))
+        self.assertTrue('Progress: 0%' in r.content.decode())
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
         r = self.client.post(self.xx_form_url, data, follow=True)
-        self.assertTrue('Progress: 25%' in str(r.content))
+        self.assertTrue('Progress: 25%' in r.content.decode())
 
     def test_25_replace_access_control(self):
         # Test default access control allows access
@@ -562,17 +553,18 @@ class RosettaTestCase(TestCase):
 
     def test_27_extended_urlconf_language_code_loads_file(self):
         url = reverse(
-            'rosetta-form',
-            kwargs={'po_filter': 'all', 'lang_id': 'fr_FR.utf8', 'idx': 0}
+            'rosetta-form', kwargs={'po_filter': 'all', 'lang_id': 'fr_FR.utf8', 'idx': 0}
         )
         r = self.client.get(url)
-        self.assertTrue('French (France), UTF8' in str(r.content))
-        self.assertTrue('m_03a603523bd75b00414a413657acdeb2' in str(r.content))
+        self.assertTrue('French (France), UTF8' in r.content.decode())
+        self.assertTrue('m_03a603523bd75b00414a413657acdeb2' in r.content.decode())
 
     def test_28_issue_gh87(self):
         """Make sure that rosetta_i18n_catalog_filter is passed into the context."""
         r = self.client.get(self.third_party_file_list_url)
-        self.assertContains(r, '<li class="active"><a href="/rosetta/files/third-party/">')
+        self.assertContains(
+            r, '<li class="active"><a href="/rosetta/files/third-party/">'
+        )
 
     @override_settings(
         SESSION_ENGINE='django.contrib.sessions.backends.signed_cookies',
@@ -580,8 +572,10 @@ class RosettaTestCase(TestCase):
     )
     def test_29_unsupported_p3_django_16_storage(self):
         if VERSION[0:2] < (2, 0):
-            self.assertTrue('django.contrib.sessions.middleware.SessionMiddleware'
-                            in settings.MIDDLEWARE)
+            self.assertTrue(
+                'django.contrib.sessions.middleware.SessionMiddleware'
+                in settings.MIDDLEWARE
+            )
 
             # Force caching to be used by making the pofile read-only
             os.chmod(self.dest_file, 292)  # 0444
@@ -596,8 +590,7 @@ class RosettaTestCase(TestCase):
             os.chmod(self.dest_file, 420)  # 0644
 
     @override_settings(
-        ROSETTA_POFILENAMES=('pr44.po', ),
-        ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
+        ROSETTA_POFILENAMES=('pr44.po',), ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
     )
     def test_30_pofile_names(self):
         os.unlink(self.dest_file)
@@ -605,15 +598,14 @@ class RosettaTestCase(TestCase):
             os.path.join(self.curdir, '../locale/xx/LC_MESSAGES/pr44.po')
         )
         shutil.copy(
-            os.path.normpath(os.path.join(self.curdir, './pr44.po.template')),
-            destfile
+            os.path.normpath(os.path.join(self.curdir, './pr44.po.template')), destfile
         )
 
         r = self.client.get(self.third_party_file_list_url)
-        self.assertTrue('xx/LC_MESSAGES/pr44.po' in str(r.content))
+        self.assertTrue('xx/LC_MESSAGES/pr44.po' in r.content.decode())
 
         r = self.client.get(self.xx_form_url)
-        self.assertTrue('dummy language' in str(r.content))
+        self.assertTrue('dummy language' in r.content.decode())
 
         # (Clean up)
         os.unlink(destfile)
@@ -654,32 +646,35 @@ class RosettaTestCase(TestCase):
             self.assertContains(r, 'rosetta/locale/xx/LC_MESSAGES/django.po')
 
     @override_settings(
-        ROSETTA_ENABLE_REFLANG=True,
-        ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
+        ROSETTA_ENABLE_REFLANG=True, ROSETTA_LANGUAGES=(('xx', 'dummy language'),)
     )
     def test_33_reflang(self):
         self.copy_po_file_from_template('./django.po.issue60.template')
         r = self.client.get(self.xx_form_url)
 
         # Verify that there's an option to select a reflang
-        self.assertTrue('<option value="?ref_lang=xx">dummy language</option>' in str(r.content))
+        self.assertTrue(
+            '<option value="?ref_lang=xx">dummy language</option>' in r.content.decode()
+        )
 
         r = self.client.get(self.xx_form_url + '?ref_lang=xx')
         # The translated string in the test PO file ends up in the "Reference" column
-        self.assertTrue('<span class="message">translated-string1</span>' in str(r.content))
+        self.assertTrue(
+            '<span class="message">translated-string1</span>' in r.content.decode()
+        )
 
     def test_show_occurrences(self):
         r = self.client.get(self.xx_form_url)
         # Verify that occurrences in view
-        self.assertTrue('<td class="location">' in str(r.content))
+        self.assertTrue('<td class="location">' in r.content.decode())
         with self.settings(ROSETTA_SHOW_OCCURRENCES=False):
             r = self.client.get(self.xx_form_url)
             # Verify that occurrences not in view
-            self.assertFalse('<td class="location">' in str(r.content))
+            self.assertFalse('<td class="location">' in r.content.decode())
 
     def test_34_issue_113_app_configs(self):
         r = self.client.get(self.all_file_list_url)
-        self.assertTrue('rosetta/files/all/xx/1/">Test_App' in str(r.content))
+        self.assertTrue('rosetta/files/all/xx/1/">Test_App' in r.content.decode())
 
     @override_settings(ROSETTA_STORAGE_CLASS='rosetta.storage.CacheRosettaStorage')
     def test_35_issue_135_display_exception_messages(self):
@@ -733,7 +728,7 @@ class RosettaTestCase(TestCase):
     def test_39_invalid_get_page(self):
         url = self.xx_form_url + '?filter=untranslated'
 
-        r = self.client.get(url)   # Page not specified
+        r = self.client.get(url)  # Page not specified
         self.assertEqual(r.context['page'], 1)
 
         r = self.client.get(url + '&page=')  # No number given
@@ -746,7 +741,6 @@ class RosettaTestCase(TestCase):
         self.assertEqual(r.context['page'], 1)
 
     def test_40_issue_155_auto_compile(self):
-
         def file_hash(file_string):
             if six.PY3:
                 with open(file_string, encoding="latin-1") as file:
@@ -786,32 +780,50 @@ class RosettaTestCase(TestCase):
         # Disable auto-compilation of the MO when the PO is saved
         with self.settings(ROSETTA_AUTO_COMPILE=False):
             # Make a change to the translations
-            po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+            po_file_hash_before, mo_file_hash_before = (
+                po_file_hash_after,
+                mo_file_hash_after,
+            )
             msg_hashes = message_hashes()
             data = {msg_hashes['String 1']: "Translation 3"}
             self.client.post(self.xx_form_url, data)
-            po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+            po_file_hash_after, mo_file_hash_after = (
+                file_hash(po_file),
+                file_hash(mo_file),
+            )
 
             # Only the PO should have changed, the MO should be unchanged
             self.assertNotEqual(po_file_hash_before, po_file_hash_after)
             self.assertEqual(mo_file_hash_before, mo_file_hash_after)
 
             # Verify that translating another string also leaves the MO unchanged
-            po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+            po_file_hash_before, mo_file_hash_before = (
+                po_file_hash_after,
+                mo_file_hash_after,
+            )
             msg_hashes = message_hashes()
             data = {msg_hashes['String 2']: "Translation 4"}
             self.client.post(self.xx_form_url, data)
-            po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+            po_file_hash_after, mo_file_hash_after = (
+                file_hash(po_file),
+                file_hash(mo_file),
+            )
 
             self.assertNotEqual(po_file_hash_before, po_file_hash_after)
             self.assertEqual(mo_file_hash_before, mo_file_hash_after)
 
         with self.settings(ROSETTA_AUTO_COMPILE=True):
-            po_file_hash_before, mo_file_hash_before = po_file_hash_after, mo_file_hash_after
+            po_file_hash_before, mo_file_hash_before = (
+                po_file_hash_after,
+                mo_file_hash_after,
+            )
             msg_hashes = message_hashes()
             data = {msg_hashes['String 2']: "Translation 5"}
             self.client.post(self.xx_form_url, data)
-            po_file_hash_after, mo_file_hash_after = file_hash(po_file), file_hash(mo_file)
+            po_file_hash_after, mo_file_hash_after = (
+                file_hash(po_file),
+                file_hash(mo_file),
+            )
 
             self.assertNotEqual(po_file_hash_before, po_file_hash_after)
             self.assertNotEqual(mo_file_hash_before, mo_file_hash_after)
@@ -842,9 +854,7 @@ class RosettaTestCase(TestCase):
         request.user = self.user
         kwargs = {'po_filter': 'third-party', 'lang_id': 'xx', 'idx': 0}
         view = self._setup_view(
-            view=views.TranslationFormView(),
-            request=request,
-            **kwargs
+            view=views.TranslationFormView(), request=request, **kwargs
         )
         self.assertTrue(view.po_file_is_writable)
 
@@ -853,9 +863,7 @@ class RosettaTestCase(TestCase):
         # make the pofile read-only
         os.chmod(self.dest_file, 292)  # 0444
         view = self._setup_view(
-            view=views.TranslationFormView(),
-            request=request,
-            **kwargs
+            view=views.TranslationFormView(), request=request, **kwargs
         )
         self.assertFalse(view.po_file_is_writable)
 
@@ -873,18 +881,16 @@ class RosettaTestCase(TestCase):
         request.user = self.user
         kwargs = {'po_filter': 'third-party', 'lang_id': 'xx', 'idx': 0}
         view = self._setup_view(
-            view=views.TranslationFormView(),
-            request=request,
-            **kwargs
+            view=views.TranslationFormView(), request=request, **kwargs
         )
         self.assertEqual(view.po_file_path, self.dest_file)
 
         # But if the language isn't an option, we get a 404
-        with self.settings(ROSETTA_LANGUAGES=[l for l in settings.LANGUAGES if l[0] != 'xx']):
+        with self.settings(
+            ROSETTA_LANGUAGES=[l for l in settings.LANGUAGES if l[0] != 'xx']
+        ):
             view = self._setup_view(
-                view=views.TranslationFormView(),
-                request=request,
-                **kwargs
+                view=views.TranslationFormView(), request=request, **kwargs
             )
             with self.assertRaises(Http404):
                 view.po_file_path
@@ -975,16 +981,26 @@ class RosettaTestCase(TestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 200)
 
-    @vcr.use_cassette('fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml', match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'], record_mode='new_episodes')
+    @vcr.use_cassette(
+        'fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml',
+        match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'],
+        record_mode='new_episodes',
+    )
     def test_47_azure_ajax_translation(self):
-        r = self.client.get(reverse('rosetta.translate_text') + '?from=en&to=fr&text=hello%20world')
+        r = self.client.get(
+            reverse('rosetta.translate_text') + '?from=en&to=fr&text=hello%20world'
+        )
         self.assertContains(r, '"Salut tout le monde"')
 
     @override_settings(ROSETTA_REQUIRES_AUTH=True)
     def test_48_requires_auth_not_respected_issue_203(self):
         self.client.logout()
         r = self.client.get(self.all_file_list_url)
-        self.assertRedirects(r, '{}?next=/rosetta/files/all/'.format(settings.LOGIN_URL), fetch_redirect_response=False)
+        self.assertRedirects(
+            r,
+            '{}?next=/rosetta/files/all/'.format(settings.LOGIN_URL),
+            fetch_redirect_response=False,
+        )
         self.assertEqual(302, r.status_code)
 
     @override_settings(ROSETTA_REQUIRES_AUTH=False)
@@ -996,22 +1012,26 @@ class RosettaTestCase(TestCase):
     def test_50_custom_login_url(self):
         self.client.logout()
         r = self.client.get(self.all_file_list_url)
-        self.assertRedirects(r, '/custom-url/?next=/rosetta/files/all/', fetch_redirect_response=False)
+        self.assertRedirects(
+            r, '/custom-url/?next=/rosetta/files/all/', fetch_redirect_response=False
+        )
         self.assertEqual(302, r.status_code)
 
     def test_51_rosetta_languages(self):
         self.assertTrue('xx' in dict(settings.LANGUAGES))
         self.assertFalse('yy' in dict(settings.LANGUAGES))
 
-        with self.settings(ROSETTA_LANGUAGES=(('xx', 'foo language'), )):
+        with self.settings(ROSETTA_LANGUAGES=(('xx', 'foo language'),)):
             r = self.client.get(self.project_file_list_url)
-            self.assertTrue('foo language' in str(r.content))
-            self.assertFalse('bar language' in str(r.content))
+            self.assertTrue('foo language' in r.content.decode())
+            self.assertFalse('bar language' in r.content.decode())
 
-        with self.settings(ROSETTA_LANGUAGES=(('xx', 'foo language'), ('yy', 'bar language'), )):
+        with self.settings(
+            ROSETTA_LANGUAGES=(('xx', 'foo language'), ('yy', 'bar language'))
+        ):
             r = self.client.get(self.project_file_list_url)
-            self.assertTrue('foo language' in str(r.content))
-            self.assertTrue('bar language' in str(r.content))
+            self.assertTrue('foo language' in r.content.decode())
+            self.assertTrue('bar language' in r.content.decode())
 
 
 # Stubbed access control function
