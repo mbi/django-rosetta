@@ -86,7 +86,9 @@ google.setOnLoadCallback(function() {
         });
     });
 
-    $('.translation textarea').blur(function() {
+    $('.translation textarea')
+
+    .blur(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
             var RX = /%(?:\([^\s\)]*\))?[sdf]|\{[\w\d_]+?\}/g,
@@ -110,9 +112,18 @@ google.setOnLoadCallback(function() {
             }
             return true;
         }
-    });
+    })
 
-    $('.translation textarea').eq(0).focus();
+    .keyup(function () {
+        var cb = $(this).parents('tr').find('td.c input[type="checkbox"]');
+        if(cb.is(':checked')){
+            cb[0].checked = false;
+            cb.removeAttr( 'checked')
+        }
+
+    })
+
+    .eq(0).focus();
 
     $('#action-toggle').change(function(){
         jQuery('tbody td.c input[type="checkbox"]').each(function(i, e) {
@@ -123,13 +134,5 @@ google.setOnLoadCallback(function() {
             }
         });
     });
-    $('tbody .translation textarea').change(function () {
-        var fuzzy = $(this).closest('tr').find('input[type="checkbox"]');
-        if(fuzzy[0].checked){
-            fuzzy[0].checked = false;
-            fuzzy.removeAttr( 'checked')
-        }
-
-    })
 
 });

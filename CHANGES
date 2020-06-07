@@ -8,6 +8,8 @@ Version 0.9.5 (unreleased)
 * Fixed typo in documentation (#232, thanks @timgates42)
 * Added Kyrgyz translation (#239,thanks @Soyuzbek)
 * Ignore translator context hints checking unmatched variables (#238, #239, thanks @jeancochrane and @mondeja)
+* Uncheck fuzzy on translation keyup instead of change (#235 @mondeja)
+
 
 Version 0.9.4
 -------------
