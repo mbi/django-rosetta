@@ -12,10 +12,10 @@
     <h1>&nbsp;</h1>
     <ul class="object-tools">
         <li class="nobubble">{% trans "Filter" %}:</li>
-        <li{% ifequal po_filter 'project' %} class="active"{% endifequal %}><a href="{% url 'rosetta-file-list' po_filter='project' %}">{% trans "Project" %}</a></li>
-        <li{% ifequal po_filter 'third-party' %} class="active"{% endifequal %}><a href="{% url 'rosetta-file-list' po_filter='third-party' %}">{% trans "Third party" %}</a></li>
-        <li{% ifequal po_filter 'django' %} class="active"{% endifequal %}><a href="{% url 'rosetta-file-list' po_filter='django' %}">Django</a></li>
-        <li{% ifequal po_filter 'all' %} class="active"{% endifequal %}><a href="{% url 'rosetta-file-list' po_filter='all' %}">{% trans "All" %}</a></li>
+        <li{% if po_filter == 'project' %} class="active"{% endif %}><a href="{% url 'rosetta-file-list' po_filter='project' %}">{% trans "Project" %}</a></li>
+        <li{% if po_filter == 'third-party' %} class="active"{% endif %}><a href="{% url 'rosetta-file-list' po_filter='third-party' %}">{% trans "Third party" %}</a></li>
+        <li{% if po_filter == 'django' %} class="active"{% endif %}><a href="{% url 'rosetta-file-list' po_filter='django' %}">Django</a></li>
+        <li{% if po_filter == 'all' %} class="active"{% endif %}><a href="{% url 'rosetta-file-list' po_filter='all' %}">{% trans "All" %}</a></li>
     </ul>
 
     {% if has_pos %}

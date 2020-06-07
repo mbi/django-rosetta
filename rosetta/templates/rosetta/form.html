@@ -61,7 +61,7 @@
             <label for="ref-language-selector">{% trans "Reference language" %}:</label>
             <select class="select-across" id="ref-language-selector" onchange="javascript:window.location.href = this.value;">
                 {% for langid, langname in LANGUAGES %}
-                    <option{% ifequal ref_lang langid %} selected="selected"{% endifequal %} value="?ref_lang={{ langid }}">{{langname}}</option>
+                    <option{% if ref_lang == langid %} selected="selected"{% endif %} value="?ref_lang={{ langid }}">{{langname}}</option>
                 {% endfor %}
             </select>
         </div>
