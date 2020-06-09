@@ -12,6 +12,7 @@ Version 0.9.5 (unreleased)
 * Allow passing a function itself to the setting ROSETTA_ACCESS_CONTROL (#227, thanks @alvra)
 * Dropped support for Django 1.11 and Python 2
 * Test against Django 3.1a
+* Do not show Rosetta link in admin panel if user has no access to translations (#240, thanks @mondeja)
 
 
 Version 0.9.4
