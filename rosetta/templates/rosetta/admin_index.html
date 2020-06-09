@@ -1,8 +1,9 @@
 {% extends "admin/index.html" %}
-{% load i18n %}
+{% load rosetta i18n %}
 
 {% block sidebar %}
 {{block.super}}
+{% if request.user|can_translate  %}
 <div id="rosetta-content-main">
     <div class="app-rosetta module">
         <table>
@@ -16,5 +17,5 @@
         </tbody></table>
     </div>
 </div>
-
+{% endif %}
 {% endblock %}
