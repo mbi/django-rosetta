@@ -1033,6 +1033,14 @@ class RosettaTestCase(TestCase):
             self.assertTrue('foo language' in r.content.decode())
             self.assertTrue('bar language' in r.content.decode())
 
+    def test_198_embed_in_admin_access_control(self):
+        resp = self.client.get(reverse('admin:index'))
+        self.assertContains(resp, 'rosetta-content-main')
+
+        with self.settings(ROSETTA_ACCESS_CONTROL_FUNCTION=lambda user: False):
+            resp = self.client.get(reverse('admin:index'))
+            self.assertNotContains(resp, 'rosetta-content-main')
+
 
 # Stubbed access control function
 def no_access(user):

@@ -4,9 +4,13 @@ from django.utils.html import escape
 import re
 import six
 
+from rosetta.access import can_translate
+
 
 register = template.Library()
 rx = re.compile(r'(%(\([^\s\)]*\))?[sd]|\{[\w\d_]+?\})')
+
+can_translate = register.filter(can_translate)
 
 
 def format_message(message):
