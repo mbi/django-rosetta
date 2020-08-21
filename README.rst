@@ -4,6 +4,12 @@ Rosetta
 
 .. image:: https://travis-ci.org/mbi/django-rosetta.svg?branch=develop
   :target: http://travis-ci.org/mbi/django-rosetta
+  
+.. image:: https://img.shields.io/pypi/v/django-rosetta
+  :target: https://pypi.org/project/django-rosetta/
+
+.. image:: https://img.shields.io/pypi/l/django-rosetta
+  :target: https://github.com/mbi/django-rosetta/blob/develop/LICENSE
 
 
 Rosetta is a `Django <http://www.djangoproject.com/>`_ application that eases the translation process of your Django projects.
