@@ -171,7 +171,7 @@ def remove_translators_from_context_hints(entries):
         _new_comment = ''
         for line in e.comment.split('\n'):
             _new_comment += (
-                re.sub('^Translators', '', line) +
+                re.sub('^Translators:{0,1}\s*', '', line) +
                 '\n'
             )
         e.comment = _new_comment
