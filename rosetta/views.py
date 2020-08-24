@@ -655,6 +655,9 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             else:
                 # ("all")
                 entries = [e_ for e_ in self.po_file if not e_.obsolete]
+
+        if settings.ROSSETA_HIDE_TRANSLATORS_ON_CONTEXT_HINTS:
+            entries = remove_translators_from_context_hints(entries)
         return entries
 
 

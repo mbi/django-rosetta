@@ -164,3 +164,15 @@ def pagination_range(first, last, current):
                 pass
         prev = e
     return r
+
+
+def remove_translators_from_context_hints(entries):
+    for e in entries:
+        _new_comment = ''
+        for line in e.comment.split('\n'):
+            _new_comment += (
+                re.sub('^Translators', '', line) +
+                '\n'
+            )
+        e.comment = _new_comment
+    return entries

@@ -54,6 +54,9 @@ class RosettaSettings(object):
 
         'ROSETTA_LANGUAGES': ('ROSETTA_LANGUAGES', dj_settings.LANGUAGES),
         'ROSETTA_SHOW_OCCURRENCES': ('SHOW_OCCURRENCES', True),
+        'ROSSETA_HIDE_TRANSLATORS_ON_CONTEXT_HINTS': (
+            'HIDE_TRANSLATORS_ON_CONTEXT_HINTS', False
+        ),
     }
 
     def __init__(self):
