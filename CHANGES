@@ -2,8 +2,8 @@ Version History
 ===============
 
 
-Version 0.9.5 (unreleased)
---------------------------
+Version 0.9.5
+-------------
 * Fixed DeprecationWarning: invalid escape sequence (#234, Thanks @jayvdb)
 * Fixed typo in documentation (#232, thanks @timgates42)
 * Added Kyrgyz translation (#239,thanks @Soyuzbek)
@@ -13,6 +13,7 @@ Version 0.9.5 (unreleased)
 * Dropped support for Django 1.11 and Python 2
 * Test against Django 3.1a
 * Do not show Rosetta link in admin panel if user has no access to translations (#240, thanks @mondeja)
+* Django 3.1: force #changelist to display:block (#248 thanks @realsuayip and @mondeja)
 
 
 Version 0.9.4
