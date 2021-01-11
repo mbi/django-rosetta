@@ -14,10 +14,11 @@ Install Rosetta
 3. Add an URL entry to your project's ``urls.py``, for example::
 
     from django.conf import settings
+    from django.conf.urls import include, re_path
 
     if 'rosetta' in settings.INSTALLED_APPS:
         urlpatterns += [
-            url(r'^rosetta/', include('rosetta.urls'))
+            re_path(r'^rosetta/', include('rosetta.urls'))
         ]
 
 

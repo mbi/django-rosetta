@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import re_path
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 
@@ -6,40 +6,36 @@ from . import views
 
 
 urlpatterns = [
-
-    url(r'^$',
+    re_path(
+        r'^$',
         RedirectView.as_view(
             url=reverse_lazy('rosetta-file-list', kwargs={'po_filter': 'project'}),
-            permanent=False
+            permanent=False,
         ),
         name='rosetta-old-home-redirect',
-        ),
-
-    url(r'^files/$',
+    ),
+    re_path(
+        r'^files/$',
         RedirectView.as_view(
             url=reverse_lazy('rosetta-file-list', kwargs={'po_filter': 'project'}),
-            permanent=False
+            permanent=False,
         ),
         name='rosetta-file-list-redirect',
-        ),
-
-    url(r'^files/(?P<po_filter>[\w-]+)/$',
+    ),
+    re_path(
+        r'^files/(?P<po_filter>[\w-]+)/$',
         views.TranslationFileListView.as_view(),
         name='rosetta-file-list',
-        ),
-
-    url(r'^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/$',
+    ),
+    re_path(
+        r'^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/$',
         views.TranslationFormView.as_view(),
         name='rosetta-form',
-        ),
-
-    url(r'^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/download/$',
+    ),
+    re_path(
+        r'^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/download/$',
         views.TranslationFileDownload.as_view(),
         name='rosetta-download-file',
-        ),
-
-    url(r'^translate/$',
-        views.translate_text,
-        name='rosetta.translate_text',
-        ),
+    ),
+    re_path(r'^translate/$', views.translate_text, name='rosetta.translate_text'),
 ]

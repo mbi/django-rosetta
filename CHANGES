@@ -5,6 +5,7 @@ Version History
 Version 0.9.6 (unreleased)
 --------------------------
 * Remove 'providing_args' kwarg from signals instanciation (#250, thanks @mondeja)
+* Removed support and tests for Django <= 2.1
 
 
 Version 0.9.5

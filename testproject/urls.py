@@ -1,11 +1,13 @@
-from django.conf.urls import include, url
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.conf.urls import include, re_path
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+
 admin.autodiscover()
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(r'^rosetta/', include('rosetta.urls'))
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^rosetta/', include('rosetta.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
