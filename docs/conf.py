@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Django Rosetta'
-copyright = u'2008 – 2020 Marco Bonetti and contributors'
+copyright = u'2008 – 2021 Marco Bonetti and contributors'
 author = u'Marco Bonetti'
 
 

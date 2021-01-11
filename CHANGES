@@ -2,6 +2,11 @@ Version History
 ===============
 
 
+Version 0.9.6 (unreleased)
+--------------------------
+* Remove 'providing_args' kwarg from signals instanciation (#250, thanks @mondeja)
+
+
 Version 0.9.5
 -------------
 * Fixed DeprecationWarning: invalid escape sequence (#234, Thanks @jayvdb)
