@@ -26,6 +26,8 @@ Features
 * Installed and uninstalled in under a minute
 * Uses Django's admin interface CSS
 
+.. image:: https://user-images.githubusercontent.com/131808/104168653-ac277e00-53fe-11eb-975e-8d46551fac59.png
+
 
 *************
 Documentation
