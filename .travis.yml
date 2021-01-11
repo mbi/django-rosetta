@@ -11,10 +11,8 @@ matrix:
     env: TOX_ENV=py37-django30
   - python: "3.8"
     env: TOX_ENV=py38-django31
-
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install memcached; brew services start memcached; fi
+  - python: "3.9"
+    env: TOX_ENV=py39-django31
 
 install:
   - pip install tox
