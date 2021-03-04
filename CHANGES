@@ -9,6 +9,7 @@ Version 0.9.6 (unreleased)
 * Test against Python 3.9 (#251, thanks @mondeja)
 * Upgraded Turkish translation (#253, thanks @realsuayip)
 * Added support for Google Translation API  (#222, thanks @martinsvoboda)
+* Test against Django 3.2b1
 
 
 Version 0.9.5

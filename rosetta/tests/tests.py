@@ -96,8 +96,7 @@ class RosettaTestCase(TestCase):
         kwargs = {'po_filter': 'third-party', 'lang_id': 'xx', 'idx': 0}
         url = reverse('rosetta-download-file', kwargs=kwargs)
         r = self.client.get(url)
-        self.assertTrue('content-type' in r._headers.keys())
-        self.assertTrue('application/x-zip' in r._headers.get('content-type'))
+        self.assertTrue('application/x-zip' in r['content-type'])
 
     @override_settings(ROSETTA_LANGUAGES=(('xx', 'dummy language'),))
     def test_4_DoChanges(self):

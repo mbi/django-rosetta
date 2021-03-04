@@ -9,7 +9,6 @@ SITE_ID = 1
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 PYTHON_VERSION = '%s.%s' % sys.version_info[:2]
-DJANGO_VERSION = django.get_version()
 
 DATABASES = {
     'default': {
@@ -18,14 +17,22 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'KEY_PREFIX': 'ROSETTA_TEST',
+if django.VERSION[:3] >= (3, 2, 0):
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+            'LOCATION': '127.0.0.1:11211',
+            'KEY_PREFIX': 'ROSETTA_TEST',
+        }
     }
-}
-
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+            'KEY_PREFIX': 'ROSETTA_TEST',
+        }
+    }
 
 # CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
