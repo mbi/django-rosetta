@@ -36,4 +36,4 @@ In this case the Cache-based backend should be used (by setting ``ROSETTA_STORAG
 
 Alternatively you can switch back to using the Session based storage by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'`` in your settings. This is perfectly safe on Django 1.3. On Django 1.4 or higher make sure you have DON'T use the `signed_cookies <https://docs.djangoproject.com/en/dev/topics/http/sessions/#using-cookie-based-sessions>`_ ``SESSION_BACKEND`` with this Rosetta storage backend or funky things might happen.
 
-**TL;DR**: if you run Django with gunincorn, mod-wsgi or other multi-process environment, the Django-default ``CACHES`` ``LocMemCache`` backend won't suffice: use memcache instead, or you will run into issues.
+**TL;DR**: if you run Django with gunicorn, mod-wsgi or other multi-process environment, the Django-default ``CACHES`` ``LocMemCache`` backend won't suffice: use memcache instead, or you will run into issues.
