@@ -1,11 +1,13 @@
 {% load rosetta %}
 
-google.setOnLoadCallback(function() {
+$(document).ready(function() {
+
     $('.location a').show().toggle(function() {
         $('.hide', $(this).parent()).show();
     }, function() {
         $('.hide', $(this).parent()).hide();
     });
+
 
 {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}
 
@@ -96,6 +98,7 @@ google.setOnLoadCallback(function() {
                 origs=$(this).parents('tr').find('.original>.message').html().match(RX),
                 trads=$(this).val().match(RX),
                 error = $('<span class="alert">Unmatched variables</span>');
+
             if (origs && trads) {
                 for (var i = trads.length; i--;){
                     var key = trads[i];

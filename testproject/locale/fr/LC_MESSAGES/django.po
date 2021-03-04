@@ -33,3 +33,8 @@ msgid_plural ""
 "%(num_bottles)s bottles of beer on the wall\n"
 msgstr[0] ""
 msgstr[1] ""
+
+
+#: templates/test.html:3
+msgid "We need %(num_bottles)s bottles!"
+msgstr ""
