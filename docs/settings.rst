@@ -7,6 +7,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
 * ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <http://api.yandex.com/key/form.xml?service=trnsl>`_, then specify the key here. Defaults to ``None``.
 * ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure Translator API. To use this service, you must first `register for the service <https://docs.microsoft.com/en-us/azure/cognitive-services/Translator/translator-text-how-to-signup>`_, and set ``AZURE_CLIENT_SECRET`` to either of the keys listed for your subscription. Defaults to ``None``.
+* ``GOOGLE_APPLICATION_CREDENTIALS_PATH`` and ``GOOGLE_PROJECT_ID``: Translation suggestions using Google Translation API. To use this service, you must first `register the project <https://cloud.google.com/translate/docs/quickstart-client-libraries-v3>`_. You do not have to register ENV variable. GOOGLE_APPLICATION_CREDENTIALS_PATH is path to JSON credentials file. Defaults to ``None``. You also have to install google-cloud-translate package `pip install --upgrade google-cloud-translate`
 * ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English. Default to ``'en'`` and ``'English'`` respectively.
 * ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
 * ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated. Defaults to ``()``.
@@ -24,6 +25,9 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_LOGIN_URL``: Use this if you want to override the login URL for rosetta. Defaults to ``settings.LOGIN_URL``.
 * ``ROSETTA_LANGUAGES``: List of languages that Rosetta will offer to translate. This is useful when you wish to translate a language that is not yet defined in ``settings.LANGUAGES``. Defaults to ``settings.LANGUAGES``.
 * ``ROSETTA_SHOW_OCCURRENCES``: Determines whether occurrences (where the original text appears) should be shown next to the translations for context. Defaults to ``True``.
+
+
+
 
 Storages
 --------

@@ -8,7 +8,8 @@ google.setOnLoadCallback(function() {
     });
 
 {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}
-   {% if rosetta_settings.AZURE_CLIENT_SECRET %}
+
+   {% if rosetta_settings.AZURE_CLIENT_SECRET or rosetta_settings.GOOGLE_APPLICATION_CREDENTIALS_PATH %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);
