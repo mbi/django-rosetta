@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Rosetta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-28 13:36+0100\n"
+"POT-Creation-Date: 2021-03-04 06:29-0600\n"
 "PO-Revision-Date: 2021-02-01 14:12-0551\n"
 "Last-Translator: Şuayip Üzülmez <suayip.541@gmail.com>\n"
 "Language-Team: \n"
@@ -20,87 +20,87 @@ msgstr ""
 "X-Poedit-Language: \n"
 "X-Translated-Using: django-rosetta 0.9.6\n"
 
-#: .\templates\rosetta\admin_index.html:14
+#: templates/rosetta/admin_index.html:14
 msgid "Translations"
 msgstr "Çeviriler"
 
-#: .\templates\rosetta\admin_index.html:15
+#: templates/rosetta/admin_index.html:15
 msgid "Change"
 msgstr "Değiştir"
 
-#: .\templates\rosetta\file-list.html:4 .\templates\rosetta\file-list.html:7
+#: templates/rosetta/file-list.html:4 templates/rosetta/file-list.html:7
 msgid "Language selection"
 msgstr "Dil seçimi"
 
-#: .\templates\rosetta\file-list.html:7 .\templates\rosetta\form.html:21
+#: templates/rosetta/file-list.html:7 templates/rosetta/form.html:21
 msgid "Home"
 msgstr "Ana Sayfa"
 
-#: .\templates\rosetta\file-list.html:8
+#: templates/rosetta/file-list.html:8
 msgid ""
 "Couldn't load the specified language file. This usually happens when using "
-"the Encrypted Cookies Session Storage backend on Django 1.4 or "
-"higher.<br/>Setting ROSETTA_STORAGE_CLASS = "
-"'rosetta.storage.CacheRosettaStorage' in your settings file should fix this."
+"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
+">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
+"your settings file should fix this."
 msgstr ""
 "Belirtilen dil dosyası yüklenemedi. Bu genelde Django 1.4 veya daha sonraki "
-"sürümlerinde şifrelenmiş oturum çerezleri kullanılmasından "
-"kaynaklanır.<br/>Settings dosyasında ROSETTA_STORAGE_CLASS = "
-"'rosetta.storage.CacheRosettaStorage' kullanmak bu durumu çözecektir."
+"sürümlerinde şifrelenmiş oturum çerezleri kullanılmasından kaynaklanır.<br/"
+">Settings dosyasında ROSETTA_STORAGE_CLASS = 'rosetta.storage."
+"CacheRosettaStorage' kullanmak bu durumu çözecektir."
 
-#: .\templates\rosetta\file-list.html:14
+#: templates/rosetta/file-list.html:14
 msgid "Filter"
 msgstr "Süz"
 
-#: .\templates\rosetta\file-list.html:15
+#: templates/rosetta/file-list.html:15
 msgid "Project"
 msgstr "Proje"
 
-#: .\templates\rosetta\file-list.html:16
+#: templates/rosetta/file-list.html:16
 msgid "Third party"
 msgstr "Üçüncü parti"
 
-#: .\templates\rosetta\file-list.html:18 .\templates\rosetta\form.html:44
+#: templates/rosetta/file-list.html:18 templates/rosetta/form.html:44
 msgid "All"
 msgstr "Hepsi"
 
-#: .\templates\rosetta\file-list.html:31
+#: templates/rosetta/file-list.html:31
 msgid "Application"
 msgstr "Uygulama"
 
-#: .\templates\rosetta\file-list.html:32
+#: templates/rosetta/file-list.html:32
 msgid "Progress"
 msgstr "İlerleme"
 
-#: .\templates\rosetta\file-list.html:33
+#: templates/rosetta/file-list.html:33
 msgid "Messages"
 msgstr "Mesaj"
 
-#: .\templates\rosetta\file-list.html:34
+#: templates/rosetta/file-list.html:34
 msgid "Translated"
 msgstr "Çevrildi"
 
-#: .\templates\rosetta\file-list.html:35 .\templates\rosetta\form.html:78
+#: templates/rosetta/file-list.html:35 templates/rosetta/form.html:78
 msgid "Fuzzy entries call for revision by the translator."
 msgstr "Belirsiz içeriklerin çevirmenler tarafından kontrol edilmesi gerekir."
 
-#: .\templates\rosetta\file-list.html:35 .\templates\rosetta\form.html:78
+#: templates/rosetta/file-list.html:35 templates/rosetta/form.html:78
 msgid "Fuzzy"
 msgstr "Belirsiz"
 
-#: .\templates\rosetta\file-list.html:36
+#: templates/rosetta/file-list.html:36
 msgid "Obsolete"
 msgstr "Kullanımda olmayan"
 
-#: .\templates\rosetta\file-list.html:37
+#: templates/rosetta/file-list.html:37
 msgid "File"
 msgstr "Dosya"
 
-#: .\templates\rosetta\file-list.html:60
+#: templates/rosetta/file-list.html:60
 msgid "Nothing to translate!"
 msgstr "Çevrilecek birşey yok!"
 
-#: .\templates\rosetta\file-list.html:61
+#: templates/rosetta/file-list.html:61
 msgid ""
 "You haven't specified any languages in your settings file, or haven't yet "
 "generated a batch of translation catalogs."
@@ -109,111 +109,110 @@ msgstr ""
 "kataloglarını oluşturmadınız."
 
 # python-format
-#: .\templates\rosetta\file-list.html:62
+#: templates/rosetta/file-list.html:62
 #, python-format
 msgid ""
-"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N "
-"documentation</a> for a guide on how to set up internationalization for your"
-" project."
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
+"a> for a guide on how to set up internationalization for your project."
 msgstr ""
-"Projenizdeki çoklu dilde geliştirebilmek için lütfen Django'nun <a "
-"href=\"%(i18n_doc_link)s\">Django'nun I18N dökümantasyonuna</a> başvurun."
+"Projenizdeki çoklu dilde geliştirebilmek için lütfen Django'nun <a href="
+"\"%(i18n_doc_link)s\">Django'nun I18N dökümantasyonuna</a> başvurun."
 
-#: .\templates\rosetta\form.html:8
+#: templates/rosetta/form.html:8
 msgid "Pick another file"
 msgstr "Başka bir dosya alın"
 
-#: .\templates\rosetta\form.html:9
+#: templates/rosetta/form.html:9
 msgid "Download this catalog"
 msgstr "Bu kataloğu bilgisayarınıza indirin"
 
-#: .\templates\rosetta\form.html:24
+#: templates/rosetta/form.html:24
 #, python-format
 msgid "Progress: %(percent_translated)s%%"
-msgstr "İlerleme: %(percent_translated)s%"
+msgstr "İlerleme: %(percent_translated)s%%"
 
-#: .\templates\rosetta\form.html:26
+#: templates/rosetta/form.html:26
 msgid "File is read-only: download the file when done editing!"
 msgstr ""
 "Dosya salt-okunur: İşlemleriniz bittikten sonra bilgisayarınıza indirin!"
 
-#: .\templates\rosetta\form.html:37
+#: templates/rosetta/form.html:37
 #, python-format
 msgid "Translate into %(rosetta_i18n_lang_name)s"
 msgstr "Şuna çevir: %(rosetta_i18n_lang_name)s"
 
-#: .\templates\rosetta\form.html:40
+#: templates/rosetta/form.html:40
 msgid "Display:"
 msgstr "Göster:"
 
-#: .\templates\rosetta\form.html:41
+#: templates/rosetta/form.html:41
 msgid "Untranslated only"
 msgstr "Sadece çevirilmemiş"
 
-#: .\templates\rosetta\form.html:42
+#: templates/rosetta/form.html:42
 msgid "Translated only"
 msgstr "Sadece çevirilmiş"
 
-#: .\templates\rosetta\form.html:43
+#: templates/rosetta/form.html:43
 msgid "Fuzzy only"
 msgstr "Sadece belirsiz"
 
-#: .\templates\rosetta\form.html:52
+#: templates/rosetta/form.html:52
 msgid "Search"
 msgstr "Arama"
 
-#: .\templates\rosetta\form.html:54
+#: templates/rosetta/form.html:54
 msgid "Go"
 msgstr "Git"
 
-#: .\templates\rosetta\form.html:61
+#: templates/rosetta/form.html:61
 msgid "Reference language"
 msgstr "Kaynak dil"
 
-#: .\templates\rosetta\form.html:75
+#: templates/rosetta/form.html:75
 msgid "Original"
 msgstr "Orijinal"
 
-#: .\templates\rosetta\form.html:79
+#: templates/rosetta/form.html:79
 msgid "Occurrences(s)"
 msgstr "Konum"
 
-#: .\templates\rosetta\form.html:93 .\templates\rosetta\form.html:96
-#: .\templates\rosetta\form.html:115 .\templates\rosetta\form.html:118
+#: templates/rosetta/form.html:93 templates/rosetta/form.html:96
+#: templates/rosetta/form.html:115 templates/rosetta/form.html:118
 msgid "Context hint"
 msgstr "Bağlam ipucu"
 
-#: .\templates\rosetta\form.html:125
+#: templates/rosetta/form.html:125
 msgid "suggest"
 msgstr "öner"
 
-#: .\templates\rosetta\form.html:136
+#: templates/rosetta/form.html:136
 #, python-format
 msgid "%(more_count)s more"
 msgid_plural "%(more_count)s more"
 msgstr[0] "%(more_count)s daha"
 msgstr[1] "%(more_count)s daha"
 
-#: .\templates\rosetta\form.html:148
+#: templates/rosetta/form.html:148
 msgid "Save and translate next block"
 msgstr "Kaydet ve sonraki bloğu çevir"
 
-#: .\templates\rosetta\form.html:152
+#: templates/rosetta/form.html:152
 msgid "Skip to page:"
 msgstr "Sayfaya geç:"
 
-#: .\templates\rosetta\form.html:165
+#: templates/rosetta/form.html:165
 msgid "Displaying:"
 msgstr "Gösteriliyor:"
 
-#: .\templates\rosetta\form.html:169
+#: templates/rosetta/form.html:169
 #, python-format
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
 msgstr[0] "%(hits)s/%(message_number)s mesaj"
 msgstr[1] "%(hits)s/%(message_number)s mesaj"
 
-#: .\views.py:364
+#: views.py:364
 msgid ""
 "Some items in your last translation block couldn't be saved: this usually "
 "happens when the catalog file changes on disk after you last loaded it."
