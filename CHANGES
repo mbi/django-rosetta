@@ -2,14 +2,14 @@ Version History
 ===============
 
 
-Version 0.9.6 (unreleased)
---------------------------
+Version 0.9.6
+-------------
 * Remove 'providing_args' kwarg from signals instanciation (#250, thanks @mondeja)
 * Removed support and tests for Django <= 2.1
 * Test against Python 3.9 (#251, thanks @mondeja)
 * Upgraded Turkish translation (#253, thanks @realsuayip)
 * Added support for Google Translation API  (#222, thanks @martinsvoboda)
-* Test against Django 3.2b1
+* Test against Django 3.2
 
 
 Version 0.9.5
