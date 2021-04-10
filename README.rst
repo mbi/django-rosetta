@@ -1,9 +1,9 @@
-=======
-Rosetta
-=======
+==============
+Django-Rosetta
+==============
 
-.. image:: https://travis-ci.org/mbi/django-rosetta.svg?branch=develop
-  :target: http://travis-ci.org/mbi/django-rosetta
+.. image:: https://github.com/mbi/django-rosetta/actions/workflows/test.yml/badge.svg
+  :target: https://github.com/mbi/django-rosetta/actions/workflows/test.yml
 
 .. image:: https://img.shields.io/pypi/v/django-rosetta
   :target: https://pypi.org/project/django-rosetta/
