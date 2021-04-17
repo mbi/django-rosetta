@@ -2,6 +2,10 @@ Version History
 ===============
 
 
+Version 0.9.7 (unreleased)
+--------------------------
+* Arabic translation. (#257, thanks @Bashar)
+
 Version 0.9.6
 -------------
 * Remove 'providing_args' kwarg from signals instanciation (#250, thanks @mondeja)
