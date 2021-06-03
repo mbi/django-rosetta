@@ -943,8 +943,7 @@ class RosettaTestCase(TestCase):
         self.assertContains(r, 'Lorem')
 
     def test_45_issue186_plural_msg_search(self):
-        """Confirm that search of the .po file works for plurals.
-        """
+        """Confirm that search of the .po file works for plurals."""
         self.copy_po_file_from_template('./django.po.issue186.template')
         url = self.xx_form_url + '?query=%s'
 
@@ -972,8 +971,7 @@ class RosettaTestCase(TestCase):
         self.assertContains(r, 'Child')
 
     def test_46_search_string_with_unicode_symbols(self):
-        """Confirm that search works with unicode symbols
-        """
+        """Confirm that search works with unicode symbols"""
         url = self.xx_form_url + '?' + urlencode({'query': force_bytes(u'Лорем')})
 
         # It shouldn't raise
@@ -985,6 +983,7 @@ class RosettaTestCase(TestCase):
         match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'],
         record_mode='new_episodes',
     )
+    @override_settings(DEEPL_AUTH_KEY=None, AZURE_CLIENT_SECRET="FAKE")
     def test_47_azure_ajax_translation(self):
         r = self.client.get(
             reverse('rosetta.translate_text') + '?from=en&to=fr&text=hello%20world'
@@ -1031,6 +1030,36 @@ class RosettaTestCase(TestCase):
             r = self.client.get(self.project_file_list_url)
             self.assertTrue('foo language' in r.content.decode())
             self.assertTrue('bar language' in r.content.decode())
+
+    def test_52_deepl_languages_handled_correctly(self):
+        """
+        If DEEPL_LANGUAGES set in settings, we use that one, if not, we use django's language code.
+        """
+        if settings.DEEPL_AUTH_KEY:
+            with self.settings(DEEPL_LANGUAGES={"fr_FR.utf8": "FR"}):
+                r = self.client.get(
+                    reverse(
+                        "rosetta-form",
+                        kwargs={
+                            "po_filter": "project",
+                            "lang_id": "fr_FR.utf8",
+                            "idx": "0",
+                        },
+                    )
+                )
+                self.assertContains(r, "var destLangRoot = 'FR'")
+            with self.settings(DEEPL_LANGUAGES=None):
+                r = self.client.get(
+                    reverse(
+                        "rosetta-form",
+                        kwargs={
+                            "po_filter": "project",
+                            "lang_id": "fr_FR.utf8",
+                            "idx": "0",
+                        },
+                    )
+                )
+                self.assertContains(r, "var destLangRoot = 'fr-FR.utf8'.substring(0, 2)")
 
     def test_198_embed_in_admin_access_control(self):
         resp = self.client.get(reverse('admin:index'))

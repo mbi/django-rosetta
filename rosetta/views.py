@@ -531,6 +531,12 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             {k: v for k, v in query_string_args.items() if k == 'ref_lang'}
         )
 
+        deepl_language_code = None
+        if rosetta_settings.DEEPL_LANGUAGES:
+            deepl_language_code = rosetta_settings.DEEPL_LANGUAGES.get(
+                self.language_id, None
+            )
+
         context.update(
             {
                 'version': get_rosetta_version(),
@@ -554,6 +560,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 'paginator': paginator,
                 'rosetta_i18n_pofile': self.po_file,
                 'ref_lang': self.ref_lang,
+                'deepl_language_code': deepl_language_code,
             }
         )
 
