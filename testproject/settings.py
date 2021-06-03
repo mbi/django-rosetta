@@ -129,7 +129,7 @@ ROSETTA_SHOW_AT_ADMIN_PANEL = True
 # fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml
 AZURE_CLIENT_SECRET = None  # "FAKE"
 
-DEEPL_AUTH_KEY = "409de4f4-cfd0-d1f3-c1d5-9fab3ff84a13"
+DEEPL_AUTH_KEY = None
 
 
 # Deepl API language codes are different then those of django, so if this is not set according to your desired languages,
@@ -137,4 +137,4 @@ DEEPL_AUTH_KEY = "409de4f4-cfd0-d1f3-c1d5-9fab3ff84a13"
 # In which case it would work fine for most of the languages,
 # But for 'en' if you want "EN-GB" for example, please set it in this dictionary.
 # Please check the supported languages list of DeepL API: https://www.deepl.com/docs-api/translating-text/request/
-DEEPL_LANGUAGES = {"fr": "FR", "en": "EN-GB", "zh_Hans": "ZH"}
+DEEPL_LANGUAGES = None  # ex: {"fr": "FR", "en": "EN-GB", "zh_Hans": "ZH"}

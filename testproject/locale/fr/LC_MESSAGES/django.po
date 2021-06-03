@@ -22,7 +22,7 @@ msgstr ""
 #: templates/test.html:3
 #, fuzzy
 msgid "Some text to translate"
-msgstr "Du texte à traduire"
+msgstr "Crunchum ipsum dolor sit coder void, constructor function"
 
 #: templates/test.html:5
 #, python-format
