@@ -9,19 +9,20 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-14 02:28-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2021-05-28 09:19-0551\n"
+"Last-Translator: b'  <halit@cruncher.ch>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Translated-Using: django-rosetta 0.9.7\n"
 
 #: templates/test.html:3
 #, fuzzy
 msgid "Some text to translate"
-msgstr "Crunchum ipsum dolor sit coder void, constructor function"
+msgstr "Du texte à traduire"
 
 #: templates/test.html:5
 #, python-format
@@ -33,7 +34,6 @@ msgid_plural ""
 "%(num_bottles)s bottles of beer on the wall\n"
 msgstr[0] ""
 msgstr[1] ""
-
 
 #: templates/test.html:3
 msgid "We need %(num_bottles)s bottles!"
