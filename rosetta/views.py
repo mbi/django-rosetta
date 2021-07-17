@@ -3,9 +3,9 @@ import os
 import os.path
 import re
 import zipfile
+from io import BytesIO
 from urllib.parse import urlencode
 
-import six
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
@@ -153,9 +153,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                 # value of the meat of each entry on its side in an attribute
                 # called "md5hash".
                 str_to_hash = (
-                    six.text_type(entry.msgid)
-                    + six.text_type(entry.msgstr)
-                    + six.text_type(entry.msgctxt or '')
+                    str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or '')
                 ).encode('utf8')
                 entry.md5hash = hashlib.md5(str_to_hash).hexdigest()
         else:
@@ -169,9 +167,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                     # a hashed value of the meat of each entry on its side in
                     # an attribute called "md5hash".
                     str_to_hash = (
-                        six.text_type(entry.msgid)
-                        + six.text_type(entry.msgstr)
-                        + six.text_type(entry.msgctxt or '')
+                        str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or '')
                     ).encode('utf8')
                     entry.md5hash = hashlib.new('md5', str_to_hash).hexdigest()
                 storage.set(self.po_file_cache_key, po_file)
@@ -308,7 +304,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 # polib parses .po files into unicode strings, but
                 # doesn't bother to convert plural indexes to int,
                 # so we need unicode here.
-                plural_id = six.text_type(plural_id)
+                plural_id = str(plural_id)
 
                 # Above no longer true as of Polib 1.0.4
                 if plural_id and plural_id.isdigit():
@@ -502,7 +498,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 message.main_lang = main_lang_po.find(message.msgid).msgstr
 
         # Collect some constants for the template
-        rosetta_i18n_lang_name = six.text_type(
+        rosetta_i18n_lang_name = str(
             dict(rosetta_settings.ROSETTA_LANGUAGES).get(self.language_id)
         )
         # "bidi" as in "bi-directional"
@@ -626,12 +622,12 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
 
             def concat_entry(e):
                 return (
-                    six.text_type(e.msgstr)
-                    + six.text_type(e.msgid)
-                    + six.text_type(e.msgctxt)
-                    + six.text_type(e.comment)
+                    str(e.msgstr)
+                    + str(e.msgid)
+                    + str(e.msgctxt)
+                    + str(e.comment)
                     + u''.join([o[0] for o in e.occurrences])
-                    + six.text_type(e.msgid_plural)
+                    + str(e.msgid_plural)
                     + u''.join(e.msgstr_plural.values())
                 )
 
@@ -670,9 +666,9 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
                 offered_fn = self.po_file_path.split('/')[-1]
             po_fn = str(self.po_file_path.split('/')[-1])
             mo_fn = str(po_fn.replace('.po', '.mo'))  # not so smart, huh
-            zipdata = six.BytesIO()
+            zipdata = BytesIO()
             with zipfile.ZipFile(zipdata, mode="w") as zipf:
-                zipf.writestr(po_fn, six.text_type(self.po_file).encode("utf8"))
+                zipf.writestr(po_fn, str(self.po_file).encode("utf8"))
                 zipf.writestr(mo_fn, self.po_file.to_binary())
             zipdata.seek(0)
 

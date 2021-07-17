@@ -6,10 +6,7 @@ from django.conf import settings
 from django.core.cache import caches
 from django.core.exceptions import ImproperlyConfigured
 
-import six
-
 from .conf import settings as rosetta_settings
-
 
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
@@ -49,8 +46,13 @@ class SessionRosettaStorage(BaseRosettaStorage):
     def __init__(self, request):
         super(SessionRosettaStorage, self).__init__(request)
 
-        if 'signed_cookies' in settings.SESSION_ENGINE and 'pickle' not in settings.SESSION_SERIALIZER.lower():
-            raise ImproperlyConfigured("Sorry, but django-rosetta doesn't support the `signed_cookies` SESSION_ENGINE, because rosetta specific session files cannot be serialized.")
+        if (
+            'signed_cookies' in settings.SESSION_ENGINE
+            and 'pickle' not in settings.SESSION_SERIALIZER.lower()
+        ):
+            raise ImproperlyConfigured(
+                "Sorry, but django-rosetta doesn't support the `signed_cookies` SESSION_ENGINE, because rosetta specific session files cannot be serialized."
+            )
 
     def get(self, key, default=None):
         if key in self.request.session:
@@ -64,7 +66,7 @@ class SessionRosettaStorage(BaseRosettaStorage):
         return key in self.request.session
 
     def delete(self, key):
-        del(self.request.session[key])
+        del self.request.session[key]
 
 
 class CacheRosettaStorage(BaseRosettaStorage):
@@ -76,21 +78,32 @@ class CacheRosettaStorage(BaseRosettaStorage):
         if 'rosetta_cache_storage_key_prefix' in self.request.session:
             self._key_prefix = self.request.session['rosetta_cache_storage_key_prefix']
         else:
-            self._key_prefix = hashlib.new('sha1', six.text_type(time.time()).encode('utf8')).hexdigest()
+            self._key_prefix = hashlib.new(
+                'sha1', str(time.time()).encode('utf8')
+            ).hexdigest()
             self.request.session['rosetta_cache_storage_key_prefix'] = self._key_prefix
 
         if self.request.session['rosetta_cache_storage_key_prefix'] != self._key_prefix:
-            raise ImproperlyConfigured("You can't use the CacheRosettaStorage because your Django Session storage doesn't seem to be working. The CacheRosettaStorage relies on the Django Session storage to avoid conflicts.")
+            raise ImproperlyConfigured(
+                "You can't use the CacheRosettaStorage because your Django Session storage doesn't seem to be working. The CacheRosettaStorage relies on the Django Session storage to avoid conflicts."
+            )
 
         # Make sure we're not using DummyCache
-        if 'dummycache' in settings.CACHES[rosetta_settings.ROSETTA_CACHE_NAME]['BACKEND'].lower():
-            raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are using the DummyCache cache backend).")
+        if (
+            'dummycache'
+            in settings.CACHES[rosetta_settings.ROSETTA_CACHE_NAME]['BACKEND'].lower()
+        ):
+            raise ImproperlyConfigured(
+                "You can't use the CacheRosettaStorage if your cache isn't correctly set up (you are using the DummyCache cache backend)."
+            )
 
         # Make sure the cache actually works
         try:
             self.set('rosetta_cache_test', 'rosetta')
             if not self.get('rosetta_cache_test') == 'rosetta':
-                raise ImproperlyConfigured("You can't use the CacheRosettaStorage if your cache isn't correctly set up, please double check your Django DATABASES setting and that the cache server is responding.")
+                raise ImproperlyConfigured(
+                    "You can't use the CacheRosettaStorage if your cache isn't correctly set up, please double check your Django DATABASES setting and that the cache server is responding."
+                )
         finally:
             self.delete('rosetta_cache_test')
 
@@ -113,6 +126,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
 
 def get_storage(request):
     from rosetta.conf import settings
+
     storage_module, storage_class = settings.STORAGE_CLASS.rsplit('.', 1)
     storage_module = importlib.import_module(storage_module)
     return getattr(storage_module, storage_class)(request)

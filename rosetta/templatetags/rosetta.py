@@ -1,10 +1,8 @@
 import re
 
-import six
 from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-
 from rosetta.access import can_translate
 
 register = template.Library()
@@ -77,7 +75,7 @@ class IncrNode(template.Node):
 
     def render(self, context):
         self.val += 1
-        return six.text_type(self.val)
+        return str(self.val)
 
 
 def is_fuzzy(message):

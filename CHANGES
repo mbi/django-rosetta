@@ -7,6 +7,7 @@ Version 0.9.7 (unreleased)
 * Arabic translation. (#257, thanks @Bashar)
 * Translations via the DeepL API (#258, thanks @halitcelik)
 * Fixed unicode handling in gettext headers (#259, thanks @NotSqrt)
+* Remove six as a dependency
 
 
 Version 0.9.6
