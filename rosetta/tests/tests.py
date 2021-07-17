@@ -4,6 +4,7 @@ import os
 import shutil
 from urllib.parse import urlencode
 
+import vcr
 from django import VERSION
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -13,9 +14,6 @@ from django.test import RequestFactory, TestCase, override_settings
 from django.test.client import Client
 from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
-
-import six
-import vcr
 from rosetta import views
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
@@ -138,10 +136,10 @@ class RosettaTestCase(TestCase):
         self.copy_po_file_from_template('./django.po.issue67.template')
 
         # Make sure the plurals string is valid
-        with open(self.dest_file, 'rb') as f_:
+        with open(self.dest_file, 'r') as f_:
             content = f_.read()
-        self.assertTrue('Hello, world' not in six.text_type(content))
-        self.assertTrue('|| n%100>=20) ? 1 : 2)' in six.text_type(content))
+        self.assertTrue('Hello, world' not in content)
+        self.assertTrue('|| n%100>=20) ? 1 : 2)' in content)
         del content
 
         r = self.client.get(self.xx_form_url + '?msg_filter=untranslated')
@@ -157,7 +155,7 @@ class RosettaTestCase(TestCase):
         self.client.post(self.xx_form_url + '?msg_filter=untranslated', data)
 
         # Make sure the plurals string is still valid
-        with open(self.dest_file, 'rb') as f_:
+        with open(self.dest_file, 'r') as f_:
             content = f_.read()
         self.assertTrue('Hello, world' in str(content))
         self.assertTrue('|| n%100>=20) ? 1 : 2)' in str(content))
@@ -277,13 +275,13 @@ class RosettaTestCase(TestCase):
         # this user.
         with self.settings(ROSETTA_REQUIRES_AUTH=True):
             r = self.client3.get(self.xx_form_url)
-            self.assertFalse(r.content)
+            self.assertFalse(r.content.decode())
             self.assertEqual(r.status_code, 302)
 
         # When it's not required, we sail through.
         with self.settings(ROSETTA_REQUIRES_AUTH=False):
             r = self.client3.get(self.xx_form_url)
-            self.assertTrue(r.content)
+            self.assertTrue(r.content.decode())
             self.assertEqual(r.status_code, 200)
 
     @override_settings(ROSETTA_LANGUAGES=(('fr', 'French'), ('xx', 'Dummy Language')))
@@ -509,13 +507,13 @@ class RosettaTestCase(TestCase):
         data = {'m_e48f149a8b2e8baa81b816c0edf93890': 'Hello, world'}
         r = self.client.post(self.xx_form_url + '?filter=untranslated', data)
         # read the result
-        with open(self.dest_file, 'rb') as f_:
-            content = six.text_type(f_.read())
+        with open(self.dest_file, 'r') as f_:
+            content = f_.read()
 
         # make sure unicode data was properly converted to ascii
         self.assertTrue('Hello, world' in content)
         self.assertTrue('save_header_data@test.com' in content)
-        self.assertTrue('aeaeae aaaaaaa aaaa uuuu' in content)
+        self.assertTrue('aéaéaé aàaàaàa aâââ üüüü' in content)
 
     def test_24_percent_translation(self):
         self.copy_po_file_from_template('./django.po.template')
@@ -741,12 +739,8 @@ class RosettaTestCase(TestCase):
 
     def test_40_issue_155_auto_compile(self):
         def file_hash(file_string):
-            if six.PY3:
-                with open(file_string, encoding="latin-1") as file:
-                    file_content = file.read().encode('utf-8')
-            else:
-                with open(file_string) as file:
-                    file_content = file.read()
+            with open(file_string, encoding="latin-1") as file:
+                file_content = file.read().encode('utf-8')
             return hashlib.md5(file_content).hexdigest()
 
         def message_hashes():
@@ -886,7 +880,7 @@ class RosettaTestCase(TestCase):
 
         # But if the language isn't an option, we get a 404
         with self.settings(
-            ROSETTA_LANGUAGES=[l for l in settings.LANGUAGES if l[0] != 'xx']
+            ROSETTA_LANGUAGES=[lang for lang, __ in settings.LANGUAGES if lang != 'xx']
         ):
             view = self._setup_view(
                 view=views.TranslationFormView(), request=request, **kwargs

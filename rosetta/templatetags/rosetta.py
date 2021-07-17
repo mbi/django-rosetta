@@ -1,11 +1,11 @@
-from django import template
-from django.utils.safestring import mark_safe
-from django.utils.html import escape
 import re
+
 import six
+from django import template
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from rosetta.access import can_translate
-
 
 register = template.Library()
 rx = re.compile(r'(%(\([^\s\)]*\))?[sd]|\{[\w\d_]+?\})')
@@ -14,33 +14,45 @@ can_translate = register.filter(can_translate)
 
 
 def format_message(message):
-    return mark_safe(rx.sub('<code>\\1</code>', escape(message).replace(r'\n', '<br />\n')))
+    return mark_safe(
+        rx.sub('<code>\\1</code>', escape(message).replace(r'\n', '<br />\n'))
+    )
+
+
 format_message = register.filter(format_message)
 
 
 def lines_count(message):
     return 1 + sum([len(line) / 50 for line in message.split('\n')])
+
+
 lines_count = register.filter(lines_count)
 
 
 def mult(a, b):
     return int(a) * int(b)
+
+
 mult = register.filter(mult)
 
 
 def minus(a, b):
     try:
         return int(a) - int(b)
-    except:
+    except Exception:
         return 0
+
+
 minus = register.filter(minus)
 
 
 def gt(a, b):
     try:
         return int(a) > int(b)
-    except:
+    except Exception:
         return False
+
+
 gt = register.filter(gt)
 
 
@@ -54,6 +66,8 @@ def do_incr(parser, token):
     if name not in parser._namedIncrNodes:
         parser._namedIncrNodes[name] = IncrNode(0)
     return parser._namedIncrNodes[name]
+
+
 do_incr = register.tag('increment', do_incr)
 
 
@@ -68,4 +82,6 @@ class IncrNode(template.Node):
 
 def is_fuzzy(message):
     return message and hasattr(message, 'flags') and 'fuzzy' in message.flags
+
+
 is_fuzzy = register.filter(is_fuzzy)

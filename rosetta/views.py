@@ -2,20 +2,16 @@ import hashlib
 import os
 import os.path
 import re
-import unicodedata
 import zipfile
 from urllib.parse import urlencode
 
+import six
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.core.paginator import Paginator
-from django.http import (
-    Http404,
-    HttpResponse,
-    HttpResponseRedirect,
-    JsonResponse
-)
+from django.http import (Http404, HttpResponse, HttpResponseRedirect,
+                         JsonResponse)
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
@@ -23,8 +19,6 @@ from django.utils.functional import Promise, cached_property
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
-
-import six
 from polib import pofile
 
 from . import get_version as get_rosetta_version
@@ -104,7 +98,7 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
         """
         # (Formerly known as "rosetta_i18n_lang_code")
         lang_id = self.kwargs['lang_id']
-        if lang_id not in {l[0] for l in rosetta_settings.ROSETTA_LANGUAGES}:
+        if lang_id not in {lang[0] for lang in rosetta_settings.ROSETTA_LANGUAGES}:
             raise Http404
         if not can_translate_language(self.request.user, lang_id):
             raise Http404
@@ -227,7 +221,8 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
                 third_party_apps=third_party_apps,
             )
             po_files = [
-                (get_app_name(l), os.path.realpath(l), pofile(l)) for l in po_paths
+                (get_app_name(lang), os.path.realpath(lang), pofile(lang))
+                for lang in po_paths
             ]
             po_files.sort(key=lambda app: app[0])
             languages.append((language[0], _(language[1]), po_files))
@@ -367,15 +362,11 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
 
         if file_change and self.po_file_is_writable:
             try:
-                self.po_file.metadata['Last-Translator'] = unicodedata.normalize(
-                    'NFKD',
-                    u"%s %s <%s>"
-                    % (
-                        getattr(self.request.user, 'first_name', 'Anonymous'),
-                        getattr(self.request.user, 'last_name', 'User'),
-                        getattr(self.request.user, 'email', 'anonymous@user.tld'),
-                    ),
-                ).encode('ascii', 'ignore')
+                self.po_file.metadata['Last-Translator'] = "{} {} <{}>".format(
+                    getattr(self.request.user, 'first_name', 'Anonymous'),
+                    getattr(self.request.user, 'last_name', 'User'),
+                    getattr(self.request.user, 'email', 'anonymous@user.tld'),
+                )
                 self.po_file.metadata['X-Translated-Using'] = u"django-rosetta %s" % (
                     get_rosetta_version()
                 )
@@ -412,7 +403,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                         import uwsgi
 
                         uwsgi.reload()  # pretty easy right?
-                    except:
+                    except Exception:
                         pass  # we may not be running under uwsgi :P
                 # XXX: It would be nice to add a success message here!
             except Exception as e:
@@ -575,7 +566,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         """
         ref_lang = self._request_request('ref_lang', 'msgid')
         if ref_lang != 'msgid':
-            allowed_languages = {l[0] for l in rosetta_settings.ROSETTA_LANGUAGES}
+            allowed_languages = {lang[0] for lang in rosetta_settings.ROSETTA_LANGUAGES}
             if ref_lang not in allowed_languages:
                 raise Http404
         return ref_lang
