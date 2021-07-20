@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-09-14 02:28-0500\n"
-"PO-Revision-Date: 2021-05-28 09:19-0551\n"
-"Last-Translator: b'  <halit@cruncher.ch>'\n"
+"PO-Revision-Date: 2021-07-20 12:56-0551\n"
+"Last-Translator: La présentation różnych sposobów. Nie <admin@admin.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,7 @@ msgstr ""
 
 #: templates/test.html:3
 #, fuzzy
+#. I am a comment
 msgid "Some text to translate"
 msgstr "Crunchum ipsum dolor sit coder void, constructor function"
 
@@ -38,3 +39,11 @@ msgstr[1] ""
 #: templates/test.html:3
 msgid "We need %(num_bottles)s bottles!"
 msgstr ""
+
+#: templates/issue-260.html:260
+#. I am a comment, too
+msgctxt "BADGE_PROGRESS_OBSERVATIONS yadda yadda this and that"
+msgid "1 observation"
+msgid_plural "%{count} observations"
+msgstr[0] "1 waarneming"
+msgstr[1] "%{count} waarnemingen"

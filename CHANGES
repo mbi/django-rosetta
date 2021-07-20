@@ -8,6 +8,7 @@ Version 0.9.7 (unreleased)
 * Translations via the DeepL API (#258, thanks @halitcelik)
 * Fixed unicode handling in gettext headers (#259, thanks @NotSqrt)
 * Remove six as a dependency
+* Move context and comment hints into the right-most column (#260 thanks @jieter)
 
 
 Version 0.9.6

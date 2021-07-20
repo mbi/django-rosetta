@@ -88,15 +88,6 @@
                                     <span class="part">{{message.msgid|format_message|linebreaksbr}}</span>
                                     <span class="part">{{message.msgid_plural|format_message|linebreaksbr}}</span>
                                 </div>
-
-                                {% if message.msgctxt %}
-                                    <span class="context">{% trans "Context hint" %}: {{message.msgctxt|safe}}</span>
-                                {% else %}
-                                    {% if message.comment %}
-                                    <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
-                                    {% endif %}
-                                {% endif %}
-
                             </td>
                             <td class="translation">
                                 {% for k, msgstr in message.msgstr_plural.items %}
@@ -111,13 +102,6 @@
                                 {% else %}
                                 <span class="message">{{ message.msgid|format_message|linebreaksbr }}</span>
                                 {% endif %}
-                            {% if message.msgctxt %}
-                                <span class="context">{% trans "Context hint" %}: "{{message.msgctxt|safe}}"</span>
-                                {% else %}
-                                {% if message.comment %}
-                                <span class="context">{% trans "Context hint" %}: {{message.comment|safe}}</span>
-                                {% endif %}
-                            {% endif %}
                             </td>
                             {% if main_language %}<td class="original">{{ message.main_lang|format_message|linebreaksbr }}</td>{% endif %}
                             <td class="translation">
@@ -128,12 +112,25 @@
                             <td class="c">
                                 <input type="checkbox" name="f_{{message.md5hash}}" value="1" {% if message|is_fuzzy %}checked="checked"{% endif %} />
                             </td>
-                            {% if rosetta_settings.SHOW_OCCURRENCES %}<td class="location">
+                            {% if rosetta_settings.SHOW_OCCURRENCES %}
+                            <td class="location">
                                 {% for fn,lineno in message.occurrences %}
                                     <code{% if forloop.counter|gt:"3" %} class="hide"{% endif %}>{{ fn }}{% if lineno %}:{{lineno}}{% endif %}</code>
                                 {% endfor %}
                                 {% if message.occurrences|length|gt:"3" %}
                                     <a href="#">&hellip; ({% blocktrans count message.occurrences|length|minus:"3" as more_count %}{{more_count}} more{% plural %}{{more_count}} more{% endblocktrans %})</a>
+                                {% endif %}
+                                {% if message.msgctxt or message.comment %}
+                                    <span class="context">
+                                    {% trans "Context hint" %}:
+                                    {% if message.msgctxt %}
+                                        {{message.msgctxt|safe}}
+                                    {% endif %}
+                                    {% if message.msgctxt and message.comment %}<br/>{% endif %}
+                                    {% if message.comment %}
+                                        {{message.comment|safe}}
+                                    {% endif %}
+                                    </span>
                                 {% endif %}
                             </td>{% endif %}
                     </tr>
