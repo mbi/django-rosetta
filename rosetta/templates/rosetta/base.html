@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{% static "admin/css/base.css" %}" type="text/css"/>
     <link rel="stylesheet" href="{% static "admin/css/forms.css" %}" type="text/css"/>
     <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}" type="text/css"/>
+    {% block extra_styles %}{% endblock %}
     <style type="text/css" media="screen">
         {% include 'rosetta/css/rosetta.css' %}
     </style>
