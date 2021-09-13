@@ -16,7 +16,6 @@ import os
 import shlex
 import sys
 
-
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -25,7 +24,7 @@ import sys
 
 
 def get_version():
-    sys.path.insert(0, os.path.abspath('..'))
+    sys.path.insert(0, os.path.abspath(".."))
     from rosetta import get_version as get_version_
 
     return get_version_()
@@ -46,23 +45,23 @@ def get_version():
 extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'Django Rosetta'
-copyright = u'2008 – 2021 Marco Bonetti and contributors'
-author = u'Marco Bonetti'
+project = u"Django Rosetta"
+copyright = u"2008 – 2021 Marco Bonetti and contributors"
+author = u"Marco Bonetti"
 
 
 version = get_version()
@@ -84,7 +83,7 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ["_build"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -102,7 +101,7 @@ exclude_patterns = ['_build']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -147,7 +146,7 @@ todo_include_todos = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -210,7 +209,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'DjangoRosettadoc'
+htmlhelp_basename = "DjangoRosettadoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -231,10 +230,10 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        'DjangoRosetta.tex',
-        u'Django Rosetta Documentation',
-        u'Marco Bonetti',
-        'manual',
+        "DjangoRosetta.tex",
+        u"Django Rosetta Documentation",
+        u"Marco Bonetti",
+        "manual",
     )
 ]
 
@@ -263,7 +262,9 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'djangorosetta', u'Django Rosetta Documentation', [author], 1)]
+man_pages = [
+    (master_doc, "djangorosetta", u"Django Rosetta Documentation", [author], 1)
+]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -277,12 +278,12 @@ man_pages = [(master_doc, 'djangorosetta', u'Django Rosetta Documentation', [aut
 texinfo_documents = [
     (
         master_doc,
-        'DjangoRosetta',
-        u'Django Rosetta Documentation',
+        "DjangoRosetta",
+        u"Django Rosetta Documentation",
         author,
-        'DjangoRosetta',
-        'One line description of project.',
-        'Miscellaneous',
+        "DjangoRosetta",
+        "One line description of project.",
+        "Miscellaneous",
     )
 ]
 

@@ -10,7 +10,6 @@ from django.utils import timezone
 
 from rosetta.conf import settings as rosetta_settings
 
-
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
 
@@ -21,7 +20,7 @@ def timestamp_with_timezone(dt=None):
     """
     dt = dt or datetime.now()
     if timezone is None:
-        return dt.strftime('%Y-%m-%d %H:%M%z')
+        return dt.strftime("%Y-%m-%d %H:%M%z")
     if not dt.tzinfo:
         tz = timezone.get_current_timezone()
         if not tz:
@@ -41,19 +40,35 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
 
     # project/locale
     if settings.SETTINGS_MODULE:
-        parts = settings.SETTINGS_MODULE.split('.')
+        parts = settings.SETTINGS_MODULE.split(".")
     else:
         # if settings.SETTINGS_MODULE is None, we are probably in "test" mode
         # and override_settings() was used
         # see: https://code.djangoproject.com/ticket/25911
-        parts = os.environ.get(ENVIRONMENT_VARIABLE).split('.')
+        parts = os.environ.get(ENVIRONMENT_VARIABLE).split(".")
     project = __import__(parts[0], {}, {}, [])
-    abs_project_path = os.path.normpath(os.path.abspath(os.path.dirname(project.__file__)))
+    abs_project_path = os.path.normpath(
+        os.path.abspath(os.path.dirname(project.__file__))
+    )
     if project_apps:
-        if os.path.exists(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale'))):
-            paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), 'locale')))
-        if os.path.exists(os.path.abspath(os.path.join(os.path.dirname(project.__file__), '..', 'locale'))):
-            paths.append(os.path.abspath(os.path.join(os.path.dirname(project.__file__), '..', 'locale')))
+        if os.path.exists(
+            os.path.abspath(os.path.join(os.path.dirname(project.__file__), "locale"))
+        ):
+            paths.append(
+                os.path.abspath(
+                    os.path.join(os.path.dirname(project.__file__), "locale")
+                )
+            )
+        if os.path.exists(
+            os.path.abspath(
+                os.path.join(os.path.dirname(project.__file__), "..", "locale")
+            )
+        ):
+            paths.append(
+                os.path.abspath(
+                    os.path.join(os.path.dirname(project.__file__), "..", "locale")
+                )
+            )
 
     case_sensitive_file_system = True
     tmphandle, tmppath = tempfile.mkstemp()
@@ -63,14 +78,16 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
 
     # django/locale
     if django_apps:
-        django_paths = cache.get('rosetta_django_paths')
+        django_paths = cache.get("rosetta_django_paths")
         if django_paths is None:
             django_paths = []
-            for root, dirnames, filename in os.walk(os.path.abspath(os.path.dirname(django.__file__))):
-                if 'locale' in dirnames:
-                    django_paths.append(os.path.join(root, 'locale'))
+            for root, dirnames, filename in os.walk(
+                os.path.abspath(os.path.dirname(django.__file__))
+            ):
+                if "locale" in dirnames:
+                    django_paths.append(os.path.join(root, "locale"))
                     continue
-            cache.set('rosetta_django_paths', django_paths, 60 * 60)
+            cache.set("rosetta_django_paths", django_paths, 60 * 60)
         paths = paths + django_paths
     # settings
     for localepath in settings.LOCALE_PATHS:
@@ -79,12 +96,15 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
 
     # project/app/locale
     for app_ in apps.get_app_configs():
-        if rosetta_settings.EXCLUDED_APPLICATIONS and app_.name in rosetta_settings.EXCLUDED_APPLICATIONS:
+        if (
+            rosetta_settings.EXCLUDED_APPLICATIONS
+            and app_.name in rosetta_settings.EXCLUDED_APPLICATIONS
+        ):
             continue
 
         app_path = app_.path
         # django apps
-        if 'contrib' in app_path and 'django' in app_path and not django_apps:
+        if "contrib" in app_path and "django" in app_path and not django_apps:
             continue
 
         # third party external
@@ -95,19 +115,27 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         if not project_apps and abs_project_path in app_path:
             continue
 
-        if os.path.exists(os.path.abspath(os.path.join(app_path, 'locale'))):
-            paths.append(os.path.abspath(os.path.join(app_path, 'locale')))
-        if os.path.exists(os.path.abspath(os.path.join(app_path, '..', 'locale'))):
-            paths.append(os.path.abspath(os.path.join(app_path, '..', 'locale')))
+        if os.path.exists(os.path.abspath(os.path.join(app_path, "locale"))):
+            paths.append(os.path.abspath(os.path.join(app_path, "locale")))
+        if os.path.exists(os.path.abspath(os.path.join(app_path, "..", "locale"))):
+            paths.append(os.path.abspath(os.path.join(app_path, "..", "locale")))
 
     ret = set()
     langs = [lang]
-    if u'-' in lang:
-        _l, _c = map(lambda x: x.lower(), lang.split(u'-', 1))
-        langs += [u'%s_%s' % (_l, _c), u'%s_%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize())]
-    elif u'_' in lang:
-        _l, _c = map(lambda x: x.lower(), lang.split(u'_', 1))
-        langs += [u'%s-%s' % (_l, _c), u'%s-%s' % (_l, _c.upper()), u'%s_%s' % (_l, _c.capitalize())]
+    if u"-" in lang:
+        _l, _c = map(lambda x: x.lower(), lang.split(u"-", 1))
+        langs += [
+            u"%s_%s" % (_l, _c),
+            u"%s_%s" % (_l, _c.upper()),
+            u"%s_%s" % (_l, _c.capitalize()),
+        ]
+    elif u"_" in lang:
+        _l, _c = map(lambda x: x.lower(), lang.split(u"_", 1))
+        langs += [
+            u"%s-%s" % (_l, _c),
+            u"%s-%s" % (_l, _c.upper()),
+            u"%s_%s" % (_l, _c.capitalize()),
+        ]
 
     paths = map(os.path.normpath, paths)
     paths = list(set(paths))
@@ -115,7 +143,7 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         # Exclude paths
         if path not in rosetta_settings.ROSETTA_EXCLUDED_PATHS:
             for lang_ in langs:
-                dirname = os.path.join(path, lang_, 'LC_MESSAGES')
+                dirname = os.path.join(path, lang_, "LC_MESSAGES")
                 for fn in rosetta_settings.POFILENAMES:
                     filename = os.path.join(dirname, fn)
                     abs_path = os.path.abspath(filename)
@@ -159,7 +187,7 @@ def pagination_range(first, last, current):
     for e in r[:]:
         if prev + 1 < e:
             try:
-                r.insert(r.index(e), '...')
+                r.insert(r.index(e), "...")
             except ValueError:
                 pass
         prev = e

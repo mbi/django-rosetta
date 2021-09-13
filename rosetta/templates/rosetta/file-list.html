@@ -48,7 +48,7 @@
                         <td class="ch-translated r">{{po.translated_entries|length}}</td>
                         <td class="ch-fuzzy r">{{po.fuzzy_entries|length}}</td>
                         <td class="ch-obsolete r">{{po.obsolete_entries|length}}</td>
-                        <td class="hint">{{ path }}</td>
+                        <td class="hint"><a href="/rosetta/poedit/?file={{ path }}">{{ path }}</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

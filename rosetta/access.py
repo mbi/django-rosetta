@@ -15,12 +15,12 @@ def get_access_control_function():
     Return a predicate for determining if a user can
     access the Rosetta views
     """
-    access_function = getattr(settings, 'ROSETTA_ACCESS_CONTROL_FUNCTION', None)
+    access_function = getattr(settings, "ROSETTA_ACCESS_CONTROL_FUNCTION", None)
     if access_function is None:
         return is_superuser_staff_or_in_translators_group
     elif isinstance(access_function, str):
         # Dynamically load a permissions function
-        perm_module, perm_func = access_function.rsplit('.', 1)
+        perm_module, perm_func = access_function.rsplit(".", 1)
         perm_module = importlib.import_module(perm_module)
         return getattr(perm_module, perm_func)
     elif callable(access_function):
@@ -31,7 +31,7 @@ def get_access_control_function():
 
 # Default access control test
 def is_superuser_staff_or_in_translators_group(user):
-    if not getattr(settings, 'ROSETTA_REQUIRES_AUTH', True):
+    if not getattr(settings, "ROSETTA_REQUIRES_AUTH", True):
         return True
     try:
         if not user.is_authenticated:
@@ -39,10 +39,16 @@ def is_superuser_staff_or_in_translators_group(user):
         elif user.is_superuser and user.is_staff:
             return True
         else:
-            return user.groups.filter(name='translators').exists()
+            return user.groups.filter(name="translators").exists()
     except AttributeError:
-        if not hasattr(user, 'is_authenticated') or not hasattr(user, 'is_superuser') or not hasattr(user, 'groups'):
-            raise ImproperlyConfigured('If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html')
+        if (
+            not hasattr(user, "is_authenticated")
+            or not hasattr(user, "is_superuser")
+            or not hasattr(user, "groups")
+        ):
+            raise ImproperlyConfigured(
+                "If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html"
+            )
         raise
 
 
@@ -55,9 +61,15 @@ def can_translate_language(user, langid):
         elif user.is_superuser and user.is_staff:
             return True
         else:
-            return user.groups.filter(name='translators-%s' % langid).exists()
+            return user.groups.filter(name="translators-%s" % langid).exists()
 
     except AttributeError:
-        if not hasattr(user, 'is_authenticated') or not hasattr(user, 'is_superuser') or not hasattr(user, 'groups'):
-            raise ImproperlyConfigured('If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html')
+        if (
+            not hasattr(user, "is_authenticated")
+            or not hasattr(user, "is_superuser")
+            or not hasattr(user, "groups")
+        ):
+            raise ImproperlyConfigured(
+                "If you are using custom User Models you must implement a custom authentication method for Rosetta. See ROSETTA_ACCESS_CONTROL_FUNCTION here: https://django-rosetta.readthedocs.org/en/latest/settings.html"
+            )
         raise
