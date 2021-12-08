@@ -1,9 +1,9 @@
 Version History
 ===============
 
-Version 0.9.8 (unreleased)
---------------------------
-* Test against Django 4.0-dev
+Version 0.9.8
+-------------
+* Test against Django 4.0
 
 
 Version 0.9.7
