@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.9.9 (unreleased)
+--------------------------
+* Test test_47_azure_ajax_translation: avoid DNS lookup for better isolation. Should fix #233
+
+
 Version 0.9.8
 -------------
 * Test against Django 4.0
