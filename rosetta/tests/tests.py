@@ -975,7 +975,7 @@ class RosettaTestCase(TestCase):
     @vcr.use_cassette(
         'fixtures/vcr_cassettes/test_47_azure_ajax_translation.yaml',
         match_on=['method', 'scheme', 'host', 'port', 'path', 'query', 'raw_body'],
-        record_mode='new_episodes',
+        record_mode='once',
     )
     @override_settings(DEEPL_AUTH_KEY=None, AZURE_CLIENT_SECRET="FAKE")
     def test_47_azure_ajax_translation(self):
