@@ -1,0 +1,213 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-06 14:52+0800\n"
+"PO-Revision-Date: 2022-01-06 23:37+0000\n"
+"Last-Translator:   <1912091@admin.pc>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Translated-Using: django-rosetta 0.9.9\n"
+
+#: .\rosetta\templates\rosetta\admin_index.html:14
+msgid "Translations"
+msgstr "翻译"
+
+#: .\rosetta\templates\rosetta\admin_index.html:15
+msgid "Change"
+msgstr "修改"
+
+#: .\rosetta\templates\rosetta\file-list.html:4
+#: .\rosetta\templates\rosetta\file-list.html:7
+msgid "Language selection"
+msgstr "选择语言"
+
+#: .\rosetta\templates\rosetta\file-list.html:7
+#: .\rosetta\templates\rosetta\form.html:21
+msgid "Home"
+msgstr "主页"
+
+#: .\rosetta\templates\rosetta\file-list.html:8
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or "
+"higher.<br/>Setting ROSETTA_STORAGE_CLASS = "
+"'rosetta.storage.CacheRosettaStorage' in your settings file should fix this."
+msgstr ""
+
+#: .\rosetta\templates\rosetta\file-list.html:14
+msgid "Filter"
+msgstr "过滤器"
+
+#: .\rosetta\templates\rosetta\file-list.html:15
+msgid "Project"
+msgstr "项目"
+
+#: .\rosetta\templates\rosetta\file-list.html:16
+msgid "Third party"
+msgstr "第三方"
+
+#: .\rosetta\templates\rosetta\file-list.html:18
+#: .\rosetta\templates\rosetta\form.html:44
+msgid "All"
+msgstr "全部"
+
+#: .\rosetta\templates\rosetta\file-list.html:31
+msgid "Application"
+msgstr "应用"
+
+#: .\rosetta\templates\rosetta\file-list.html:32
+msgid "Progress"
+msgstr "进度"
+
+#: .\rosetta\templates\rosetta\file-list.html:33
+msgid "Messages"
+msgstr "消息"
+
+#: .\rosetta\templates\rosetta\file-list.html:34
+msgid "Translated"
+msgstr "已翻译"
+
+#: .\rosetta\templates\rosetta\file-list.html:35
+#: .\rosetta\templates\rosetta\form.html:78
+msgid "Fuzzy entries call for revision by the translator."
+msgstr "请尽快对不精确内容进行翻译"
+
+#: .\rosetta\templates\rosetta\file-list.html:35
+#: .\rosetta\templates\rosetta\form.html:78
+msgid "Fuzzy"
+msgstr "不精确"
+
+#: .\rosetta\templates\rosetta\file-list.html:36
+msgid "Obsolete"
+msgstr "淘汰"
+
+#: .\rosetta\templates\rosetta\file-list.html:37
+msgid "File"
+msgstr "文件"
+
+#: .\rosetta\templates\rosetta\file-list.html:60
+msgid "Nothing to translate!"
+msgstr "没有可以翻译的内容"
+
+#: .\rosetta\templates\rosetta\file-list.html:61
+msgid ""
+"You haven't specified any languages in your settings file, or haven't yet "
+"generated a batch of translation catalogs."
+msgstr "没有在 `settings.py` 中指定语言类型，也没有生成`locale`目录"
+
+#: .\rosetta\templates\rosetta\file-list.html:62
+#, python-format
+msgid ""
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N "
+"documentation</a> for a guide on how to set up internationalization for your"
+" project."
+msgstr ""
+
+#: .\rosetta\templates\rosetta\form.html:8
+msgid "Pick another file"
+msgstr "挑选其他文件"
+
+#: .\rosetta\templates\rosetta\form.html:9
+msgid "Download this catalog"
+msgstr "下载"
+
+#: .\rosetta\templates\rosetta\form.html:24
+#, python-format
+msgid "Progress: %(percent_translated)s%%"
+msgstr ""
+
+#: .\rosetta\templates\rosetta\form.html:26
+msgid "File is read-only: download the file when done editing!"
+msgstr "文件为只读：编辑完成后下载文件！"
+
+#: .\rosetta\templates\rosetta\form.html:37
+#, python-format
+msgid "Translate into %(rosetta_i18n_lang_name)s"
+msgstr "翻译成 %(rosetta_i18n_lang_name)s"
+
+#: .\rosetta\templates\rosetta\form.html:40
+msgid "Display:"
+msgstr "显示："
+
+#: .\rosetta\templates\rosetta\form.html:41
+msgid "Untranslated only"
+msgstr "未翻译"
+
+#: .\rosetta\templates\rosetta\form.html:42
+msgid "Translated only"
+msgstr "已翻译"
+
+#: .\rosetta\templates\rosetta\form.html:43
+msgid "Fuzzy only"
+msgstr "翻译不精确"
+
+#: .\rosetta\templates\rosetta\form.html:52
+msgid "Search"
+msgstr "搜索"
+
+#: .\rosetta\templates\rosetta\form.html:54
+msgid "Go"
+msgstr "开始"
+
+#: .\rosetta\templates\rosetta\form.html:61
+msgid "Reference language"
+msgstr "引用语言"
+
+#: .\rosetta\templates\rosetta\form.html:75
+msgid "Original"
+msgstr "原始内容"
+
+#: .\rosetta\templates\rosetta\form.html:79
+msgid "Occurrences(s)"
+msgstr "翻译内容所在位置"
+
+#: .\rosetta\templates\rosetta\form.html:109
+msgid "suggest"
+msgstr "反馈建议"
+
+#: .\rosetta\templates\rosetta\form.html:121
+#, python-format
+msgid "%(more_count)s more"
+msgid_plural "%(more_count)s more"
+msgstr[0] "%(more_count)s 更多内容"
+msgstr[1] "%(more_count)s 更多内容"
+
+#: .\rosetta\templates\rosetta\form.html:125
+msgid "Context hint"
+msgstr "提示"
+
+#: .\rosetta\templates\rosetta\form.html:145
+msgid "Save and translate next block"
+msgstr "保存并翻页"
+
+#: .\rosetta\templates\rosetta\form.html:149
+msgid "Skip to page:"
+msgstr "跳转页面"
+
+#: .\rosetta\templates\rosetta\form.html:162
+msgid "Displaying:"
+msgstr "显示中："
+
+#: .\rosetta\templates\rosetta\form.html:166
+#, python-format
+msgid "%(hits)s/%(message_number)s message"
+msgid_plural "%(hits)s/%(message_number)s messages"
+msgstr[0] "%(hits)s/%(message_number)s 信息"
+msgstr[1] "%(hits)s/%(message_number)s 信息"
+
+#: .\rosetta\views.py:353
+msgid ""
+"Some items in your last translation block couldn't be saved: this usually "
+"happens when the catalog file changes on disk after you last loaded it."
+msgstr ""
