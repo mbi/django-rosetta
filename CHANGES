@@ -4,6 +4,7 @@ Version History
 Version 0.9.9 (unreleased)
 --------------------------
 * Test test_47_azure_ajax_translation: avoid DNS lookup for better isolation. Should fix #233
+* Adds Chinese (Simplified) translation. (#266 thanks @chenluyong)
 
 
 Version 0.9.8
