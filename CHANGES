@@ -5,6 +5,8 @@ Version 0.9.9 (unreleased)
 --------------------------
 * Test test_47_azure_ajax_translation: avoid DNS lookup for better isolation. Should fix #233
 * Adds Chinese (Simplified) translation. (#266 thanks @chenluyong)
+* Test against Django 4.1a
+* Limit supported versions to Django 3.2 and later, using Python 3.8, 3.9 and 3.10
 
 
 Version 0.9.8
