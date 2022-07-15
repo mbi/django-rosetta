@@ -33,7 +33,7 @@ $(document).ready(function() {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: `auth_key=${authKey}&text=${orig}&source_lang=${sourceLang}&target_lang=${destLangRoot}`
+                body: `auth_key=${authKey}&text=${orig}&target_lang=${destLangRoot}`
                 }).then(response => {
                     if(response.ok) {
                         return response.json();
