@@ -10,40 +10,7 @@ $(document).ready(function() {
 
 
 {% if rosetta_settings.ENABLE_TRANSLATION_SUGGESTIONS %}
-    {% if rosetta_settings.DEEPL_AUTH_KEY %}
-
-        $('a.suggest').click(function(e){
-            e.preventDefault();
-            var a = $(this);
-            var str = a.html();
-            var orig = $('.original .message', a.parents('tr')).html();
-            var trans=$('textarea',a.parent());
-            var apiUrl = "https://api-free.deepl.com/v2/translate";
-            {% if deepl_language_code %}
-                var destLangRoot = '{{ deepl_language_code }}';
-            {% else %}
-                var destLangRoot = '{{ rosetta_i18n_lang_code_normalized }}'.substring(0, 2);
-            {% endif %}
-            var sourceLang = '{{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_CODE }}'.substring(0, 2);
-            let authKey = '{{ rosetta_settings.DEEPL_AUTH_KEY }}:fx';
-
-            a.attr('class','suggesting').html('...');
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `auth_key=${authKey}&text=${orig}&source_lang=${sourceLang}&target_lang=${destLangRoot}`
-                }).then(response => {
-                    if(response.ok) {
-                        return response.json();
-                    }
-                }).then(data => {
-                    trans.val(data.translations[0].text.replace(/<br>/g, '\n').replace(/<\/?code>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
-                })
-                .catch(error => console.log(error));
-        });
-    {% elif rosetta_settings.AZURE_CLIENT_SECRET or rosetta_settings.GOOGLE_APPLICATION_CREDENTIALS_PATH %}
+    {% if rosetta_settings.AZURE_CLIENT_SECRET or rosetta_settings.GOOGLE_APPLICATION_CREDENTIALS_PATH or rosetta_settings.DEEPL_AUTH_KEY %}
     $('a.suggest').click(function(e){
         e.preventDefault();
         var a = $(this);

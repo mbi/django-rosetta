@@ -16,6 +16,7 @@ def translate(text, from_language, to_language):
         settings, 'GOOGLE_APPLICATION_CREDENTIALS_PATH', None
     )
     GOOGLE_PROJECT_ID = getattr(settings, 'GOOGLE_PROJECT_ID', None)
+    DEEPL_AUTH_KEY = getattr(settings, 'DEEPL_AUTH_KEY', None)
 
     if AZURE_CLIENT_SECRET:
         return translate_by_azure(text, from_language, to_language, AZURE_CLIENT_SECRET)
@@ -27,6 +28,8 @@ def translate(text, from_language, to_language):
             GOOGLE_APPLICATION_CREDENTIALS_PATH,
             GOOGLE_PROJECT_ID,
         )
+    elif DEEPL_AUTH_KEY:
+        return translate_by_deepl(text, from_language, to_language, DEEPL_AUTH_KEY)
     else:
         raise TranslationException('No translation API service is configured.')
 
@@ -127,3 +130,40 @@ def translate_by_google(
         raise TranslationException('Google API error: {}'.format(e))
     else:
         return str(api_response.translations[0].translated_text)
+
+
+def translate_by_deepl(text, from_language, to_language, auth_key):
+    """
+    This method does the heavy lifting of connecting to the translator API and fetching a response
+    :param text: The source text to be translated
+    :param from_language: The language of the source text
+    :param to_language: The target language to translate the text into
+    :param auth_key: An API key that grants you access to the DeepL service
+    :return: Returns the response from the AZURE service as a python object. For more information about the
+    response, please visit
+    https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate?tabs=curl
+    """
+
+    DEEPL_API_URL = "https://api-free.deepl.com/v2/translate"
+
+    headers = {
+        "Authorization": f"DeepL-Auth-Key {settings.DEEPL_AUTH_KEY}",
+    }
+
+    r = requests.post(
+        DEEPL_API_URL,
+        headers=headers,
+        data={
+            "text": text,
+            "source_lang": from_language,
+            "target_lang": to_language,
+        },
+    )
+
+    try:
+        r.raise_for_status()
+        return r.json()["translations"][0]["text"]
+    except requests.exceptions.RequestException as err:
+        raise TranslationException(
+            "Error connecting to DeepL Translation Service: {0}".format(err)
+        )
