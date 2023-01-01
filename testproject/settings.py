@@ -3,6 +3,7 @@ import sys
 
 import django
 
+
 SITE_ID = 1
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -68,13 +69,13 @@ MIDDLEWARE = (
 
 # Note: languages are overridden in the test runner
 LANGUAGES = (
-    ("en", u"English"),
-    ("bs-Cyrl-BA", u"Bosnian (Cyrillic) (Bosnia and Herzegovina)"),
-    ("ja", u"日本語"),
-    ("xx", u"XXXXX"),
-    ("fr", u"French"),
-    ("zh_Hans", u"Chinese (Simplified)"),
-    ("fr_FR.utf8", u"French (France), UTF8"),
+    ("en", "English"),
+    ("bs-Cyrl-BA", "Bosnian (Cyrillic) (Bosnia and Herzegovina)"),
+    ("ja", "日本語"),
+    ("xx", "XXXXX"),
+    ("fr", "French"),
+    ("zh_Hans", "Chinese (Simplified)"),
+    ("fr_FR.utf8", "French (France), UTF8"),
 )
 
 
