@@ -9,6 +9,7 @@ Version 0.9.9 (unreleased)
 * Limit supported versions to Django 3.2 and later, using Python 3.8, 3.9 and 3.10
 * Proxy Deepl translations suggestions through the back-end to avoid CORS issues. (#271 thanks @rafaelromon, @biermeester and @matthiask)
 * Format code with pre-commit
+* Test against Django 4.2a
 
 
 Version 0.9.8
