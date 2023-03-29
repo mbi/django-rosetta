@@ -1,0 +1,37 @@
+interactions:
+- request:
+    body: target_lang=FR&text=hello+world
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Authorization:
+      - DeepL-Auth-Key FAKE
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '31'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.26.0
+    method: POST
+    uri: https://api-free.deepl.com/v2/translate
+  response:
+    body: {string: '{"translations": [{"detected_source_language": "EN", "text": "Salut tout le monde"}]}'}
+    headers:
+      access-control-allow-origin:
+      - '*'
+      content-length:
+      - '0'
+      date:
+      - Sun, 01 Jan 2023 13:07:33 GMT
+      server:
+      - nginx
+      strict-transport-security:
+      - max-age=63072000; includeSubDomains; preload
+    status:
+      code: 200
+      message: OK
+version: 1

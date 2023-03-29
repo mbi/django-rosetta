@@ -201,4 +201,3 @@ msgstr "در حال نمایش:"
 msgid "%(hits)s/%(message_number)s message"
 msgid_plural "%(hits)s/%(message_number)s messages"
 msgstr[0] "%(hits)s از %(message_number)s پیام"
-

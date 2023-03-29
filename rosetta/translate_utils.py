@@ -1,9 +1,9 @@
 import json
 import uuid
 
-from django.conf import settings
-
 import requests
+
+from django.conf import settings
 
 
 class TranslationException(Exception):
@@ -11,13 +11,29 @@ class TranslationException(Exception):
 
 
 def translate(text, from_language, to_language):
-    AZURE_CLIENT_SECRET = getattr(settings, 'AZURE_CLIENT_SECRET', None)
+    AZURE_CLIENT_SECRET = getattr(settings, "AZURE_CLIENT_SECRET", None)
     GOOGLE_APPLICATION_CREDENTIALS_PATH = getattr(
-        settings, 'GOOGLE_APPLICATION_CREDENTIALS_PATH', None
+        settings, "GOOGLE_APPLICATION_CREDENTIALS_PATH", None
     )
-    GOOGLE_PROJECT_ID = getattr(settings, 'GOOGLE_PROJECT_ID', None)
+    GOOGLE_PROJECT_ID = getattr(settings, "GOOGLE_PROJECT_ID", None)
+    DEEPL_AUTH_KEY = getattr(settings, "DEEPL_AUTH_KEY", None)
 
-    if AZURE_CLIENT_SECRET:
+    if DEEPL_AUTH_KEY:
+        deepl_language_code = None
+        DEEPL_LANGUAGES = getattr(settings, "DEEPL_LANGUAGES", None)
+        if type(DEEPL_LANGUAGES) is dict:
+            deepl_language_code = DEEPL_LANGUAGES.get(to_language, None)
+
+        if deepl_language_code is None:
+            deepl_language_code = to_language[:2].upper()
+
+        return translate_by_deepl(
+            text,
+            deepl_language_code.upper(),
+            DEEPL_AUTH_KEY,
+        )
+
+    elif AZURE_CLIENT_SECRET:
         return translate_by_azure(text, from_language, to_language, AZURE_CLIENT_SECRET)
     elif GOOGLE_APPLICATION_CREDENTIALS_PATH and GOOGLE_PROJECT_ID:
         return translate_by_google(
@@ -28,7 +44,19 @@ def translate(text, from_language, to_language):
             GOOGLE_PROJECT_ID,
         )
     else:
-        raise TranslationException('No translation API service is configured.')
+        raise TranslationException("No translation API service is configured.")
+
+
+def translate_by_deepl(text, to_language, auth_key):
+    r = requests.post(
+        "https://api-free.deepl.com/v2/translate",
+        headers={"Authorization": f"DeepL-Auth-Key {auth_key}"},
+        data={
+            "target_lang": to_language.upper(),
+            "text": text,
+        },
+    )
+    return r.json().get("translations")[0].get("text")
 
 
 def translate_by_azure(text, from_language, to_language, subscription_key):
@@ -43,13 +71,13 @@ def translate_by_azure(text, from_language, to_language, subscription_key):
     https://docs.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate?tabs=curl
     """
 
-    AZURE_TRANSLATOR_HOST = 'https://api.cognitive.microsofttranslator.com'
-    AZURE_TRANSLATOR_PATH = '/translate?api-version=3.0'
+    AZURE_TRANSLATOR_HOST = "https://api.cognitive.microsofttranslator.com"
+    AZURE_TRANSLATOR_PATH = "/translate?api-version=3.0"
 
     headers = {
-        'Ocp-Apim-Subscription-Key': subscription_key,
-        'Content-type': 'application/json',
-        'X-ClientTraceId': str(uuid.uuid4()),
+        "Ocp-Apim-Subscription-Key": subscription_key,
+        "Content-type": "application/json",
+        "X-ClientTraceId": str(uuid.uuid4()),
     }
 
     url_parameters = {"from": from_language, "to": to_language}
@@ -112,18 +140,18 @@ def translate_by_google(
     client = google_translate.TranslationServiceClient.from_service_account_json(
         creadentials_path
     )
-    parent = "projects/{}/locations/{}".format(project_id, 'global')
+    parent = "projects/{}/locations/{}".format(project_id, "global")
     try:
         api_response = client.translate_text(
             request=dict(
                 parent=parent,
                 contents=[text],
-                mime_type='text/plain',
+                mime_type="text/plain",
                 source_language_code=input_language,
-                target_language_code=output_language.split('.', 1)[0],
+                target_language_code=output_language.split(".", 1)[0],
             )
         )
     except Exception as e:
-        raise TranslationException('Google API error: {}'.format(e))
+        raise TranslationException("Google API error: {}".format(e))
     else:
         return str(api_response.translations[0].translated_text)

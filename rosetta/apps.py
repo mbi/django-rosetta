@@ -4,10 +4,10 @@ from .conf import settings as rosetta_settings
 
 
 class RosettaAppConfig(AppConfig):
-    name = 'rosetta'
+    name = "rosetta"
 
     def ready(self):
         from django.contrib import admin
 
         if rosetta_settings.SHOW_AT_ADMIN_PANEL:
-            admin.site.index_template = 'rosetta/admin_index.html'
+            admin.site.index_template = "rosetta/admin_index.html"
