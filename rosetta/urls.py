@@ -27,12 +27,12 @@ urlpatterns = [
         name="rosetta-file-list",
     ),
     re_path(
-        r"^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/$",
+        r"^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.@]+)/(?P<idx>\d+)/$",
         views.TranslationFormView.as_view(),
         name="rosetta-form",
     ),
     re_path(
-        r"^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.]+)/(?P<idx>\d+)/download/$",
+        r"^files/(?P<po_filter>[\w-]+)/(?P<lang_id>[\w\-_\.@]+)/(?P<idx>\d+)/download/$",
         views.TranslationFileDownload.as_view(),
         name="rosetta-download-file",
     ),

@@ -11,6 +11,7 @@ Version 0.9.9 (unreleased)
 * Proxy Deepl translations suggestions through the back-end to avoid CORS issues. (#271 thanks @rafaelromon, @biermeester and @matthiask)
 * Format code with pre-commit
 * Test against Django 4.2a
+* replace case sensitivity check with setting
 
 
 Version 0.9.8

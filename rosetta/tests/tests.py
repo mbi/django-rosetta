@@ -2,9 +2,8 @@ import filecmp
 import hashlib
 import os
 import shutil
+from unittest import mock
 from urllib.parse import urlencode
-
-import vcr
 
 from django import VERSION
 from django.conf import settings
@@ -16,7 +15,9 @@ from django.test.client import Client
 from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
 
+import vcr
 from rosetta import views
+from rosetta.poutil import find_pos
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
 
@@ -382,14 +383,16 @@ class RosettaTestCase(TestCase):
 
         # Post a translation, it should have properly wrapped lines
         data = {
-            "m_bb9d8fe6159187b9ea494c1b313d23d4": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean "
-            "commodo ligula eget dolor. Aenean massa. Cum sociis natoque "
-            "penatibus et magnis dis parturient montes, nascetur ridiculus "
-            "mus. Donec quam felis, ultricies nec, pellentesque eu, pretium "
-            "quis, sem. Nulla consequat massa quis enim. Donec pede justo, "
-            "fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, "
-            "rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum "
-            "felis eu pede mollis pretium."
+            "m_bb9d8fe6159187b9ea494c1b313d23d4": (
+                "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean "
+                "commodo ligula eget dolor. Aenean massa. Cum sociis natoque "
+                "penatibus et magnis dis parturient montes, nascetur ridiculus "
+                "mus. Donec quam felis, ultricies nec, pellentesque eu, pretium "
+                "quis, sem. Nulla consequat massa quis enim. Donec pede justo, "
+                "fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, "
+                "rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum "
+                "felis eu pede mollis pretium."
+            )
         }
         r = self.client.post(self.xx_form_url, data)
         with open(self.dest_file, "r") as po_file:
@@ -762,8 +765,9 @@ class RosettaTestCase(TestCase):
         msg_hashes = message_hashes()
         data = {msg_hashes["String 1"]: "Translation 1"}
         self.client.post(self.xx_form_url, data)
-        po_file_hash_before, mo_file_hash_before = file_hash(po_file), file_hash(
-            mo_file
+        po_file_hash_before, mo_file_hash_before = (
+            file_hash(po_file),
+            file_hash(mo_file),
         )
 
         # Make a change to the translations
@@ -1052,6 +1056,23 @@ class RosettaTestCase(TestCase):
         with self.settings(ROSETTA_ACCESS_CONTROL_FUNCTION=lambda user: False):
             resp = self.client.get(reverse("admin:index"))
             self.assertNotContains(resp, "rosetta-content-main")
+
+    @mock.patch("rosetta.poutil.os.path.exists")
+    def test_273_override_case_sensitivity(self, path_mock):
+        path_mock.exists.return_value = False
+        # no setting
+        find_pos("en")
+        path_mock.assert_called_with(mock.ANY)
+
+        path_mock.reset_mock()
+        with override_settings(ROSETTA_CASE_SENSITIVE_FILESYSTEM=False):
+            find_pos("en")
+            path_mock.isfile.assert_not_called()
+
+        path_mock.reset_mock()
+        with override_settings(ROSETTA_CASE_SENSITIVE_FILESYSTEM=True):
+            find_pos("en")
+            path_mock.isfile.assert_not_called()
 
 
 # Stubbed access control function
