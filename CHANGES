@@ -1,6 +1,12 @@
 Version History
 ===============
 
+Version 0.9.10 (unreleased)
+---------------------------
+* Fix link to polib. (#277, thanks @gamboz)
+
+
+
 Version 0.9.9
 -------------
 * Use packaged jQuery instead of the CDN version. (#274, thanks @stephanema1)
