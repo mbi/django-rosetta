@@ -4,7 +4,7 @@ Version History
 Version 0.9.10 (unreleased)
 ---------------------------
 * Fix link to polib. (#277, thanks @gamboz)
-
+* Deepl: use the PRO API endpoint when using a PRO API key. (#278, thanks @nullcode)
 
 
 Version 0.9.9
