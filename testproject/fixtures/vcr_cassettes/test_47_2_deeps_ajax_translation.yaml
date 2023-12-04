@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - python-requests/2.26.0
     method: POST
-    uri: https://api-free.deepl.com/v2/translate
+    uri: https://api.deepl.com/v2/translate
   response:
     body: {string: '{"translations": [{"detected_source_language": "EN", "text": "Salut tout le monde"}]}'}
     headers:

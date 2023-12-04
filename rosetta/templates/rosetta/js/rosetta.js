@@ -93,7 +93,7 @@ $(document).ready(function() {
         if($(this).val()) {
             $('.alert', $(this).parents('tr')).remove();
             var RX = /%(?:\([^\s\)]*\))?[sdf]|\{[\w\d_]+?\}/g,
-                origs=$(this).parents('tr').find('.original>.message').html().match(RX),
+                origs=$(this).parents('tr').find('.original span').html().match(RX),
                 trads=$(this).val().match(RX),
                 error = $('<span class="alert">Unmatched variables</span>');
 

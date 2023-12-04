@@ -1,14 +1,23 @@
 Version History
 ===============
 
-Version 0.9.9 (unreleased)
---------------------------
+Version 0.10.0
+--------------
+* Fix link to polib. (#277, thanks @gamboz)
+* Deepl: use the PRO API endpoint when using a PRO API key. (#278, thanks @nullcode)
+* Limit supported versions to Django 4.2 and 5.0, using Python 3.9, 3.10, 3.11 and 3.12
+
+
+Version 0.9.9
+-------------
+* Use packaged jQuery instead of the CDN version. (#274, thanks @stephanema1)
 * Test test_47_azure_ajax_translation: avoid DNS lookup for better isolation. Should fix #233
 * Adds Chinese (Simplified) translation. (#266 thanks @chenluyong)
-* Test against Django 4.1a
+* Test against Django 4.1 and 4.2
 * Limit supported versions to Django 3.2 and later, using Python 3.8, 3.9 and 3.10
 * Proxy Deepl translations suggestions through the back-end to avoid CORS issues. (#271 thanks @rafaelromon, @biermeester and @matthiask)
 * Format code with pre-commit
+* Replace case sensitivity check with setting (#273 thanks @patroqueeet)
 
 
 Version 0.9.8

@@ -48,8 +48,13 @@ def translate(text, from_language, to_language):
 
 
 def translate_by_deepl(text, to_language, auth_key):
+    if auth_key.lower().endswith(":fx"):
+        endpoint = "https://api-free.deepl.com"
+    else:
+        endpoint = "https://api.deepl.com"
+
     r = requests.post(
-        "https://api-free.deepl.com/v2/translate",
+        f"{endpoint}/v2/translate",
         headers={"Authorization": f"DeepL-Auth-Key {auth_key}"},
         data={
             "target_lang": to_language.upper(),

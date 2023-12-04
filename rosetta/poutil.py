@@ -71,11 +71,18 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
                 )
             )
 
-    case_sensitive_file_system = True
-    tmphandle, tmppath = tempfile.mkstemp()
-    if os.path.exists(tmppath.upper()):
-        # Case insensitive file system.
-        case_sensitive_file_system = False
+    # is OS case sensitive? settings preferred over auto detection
+    case_sensitive_file_system = getattr(
+        settings, "ROSETTA_CASE_SENSITIVE_FILESYSTEM", None
+    )
+
+    # in case of no settings, attempt auto detection
+    if case_sensitive_file_system is None:
+        case_sensitive_file_system = True
+        tmphandle, tmppath = tempfile.mkstemp()
+        if os.path.exists(tmppath.upper()):
+            # Case insensitive file system.
+            case_sensitive_file_system = False
 
     # django/locale
     if django_apps:
