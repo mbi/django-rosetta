@@ -1,12 +1,4 @@
-try:
-    import django
-
-    if django.VERSION[:3] <= (3, 2, 0):
-        default_app_config = "rosetta.apps.RosettaAppConfig"
-except ImportError:
-    pass
-
-VERSION = (0, 9, 10)
+VERSION = (0, 10, 0)
 
 
 def get_version(limit=3):

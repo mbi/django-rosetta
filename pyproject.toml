@@ -6,7 +6,7 @@ order_by_type = true
 known_django = "django"
 known_django_third_party = "django_*"
 known_first_party = "apps,rosetta"
-sections = "FUTURE,STDLIB,THIRDPARTY,DJANGO,DJANGO_THIRD_PARTY,REST_FRAMEWORK,FIRSTPARTY,LOCALFOLDER"
+sections = "FUTURE,STDLIB,THIRDPARTY,DJANGO,DJANGO_THIRD_PARTY,FIRSTPARTY,LOCALFOLDER"
 skip_glob= "**/migrations/**"
 
 

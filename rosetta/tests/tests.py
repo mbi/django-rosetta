@@ -5,6 +5,8 @@ import shutil
 from unittest import mock
 from urllib.parse import urlencode
 
+import vcr
+
 from django import VERSION
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -15,7 +17,6 @@ from django.test.client import Client
 from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
 
-import vcr
 from rosetta import views
 from rosetta.poutil import find_pos
 from rosetta.signals import entry_changed, post_save
