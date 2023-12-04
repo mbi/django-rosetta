@@ -18,9 +18,9 @@ Because it doesn't export any models, Rosetta doesn't create any tables in your 
 
 Note:
 
-* As of version 0.9.0, django-rosetta requires Django 1.11 or later,
-* As of version 0.9.6, django-rosetta requires Django 2.2 or later,
-* As of version 0.9.9 django-rosetta supports Django 3.2 or later.
+* As of version 0.9.0, django-rosetta requires Django 1.11 or later
+* As of version 0.9.6, django-rosetta requires Django 2.2 or later
+* As of version 0.9.9 django-rosetta supports Django 3.2 or later
 * As of version 0.10.0, django-rosetta requires Django 4.2 or later
 
 ********
