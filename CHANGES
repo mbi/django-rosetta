@@ -1,6 +1,11 @@
 Version History
 ===============
 
+Version 0.10.1 (unreleased)
+---------------------------
+* Remamed the zh_hans locale to zh_Hans (issue #282, thanks @sunfkny)
+
+
 Version 0.10.0
 --------------
 * Fix link to polib. (#277, thanks @gamboz)
