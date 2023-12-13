@@ -61,7 +61,14 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
-    install_requires=["Django >= 4.2", "requests >= 2.30.0", "polib >= 1.1.0"],
-    tests_require=["tox", "vcrpy"],
+    install_requires=[
+        "Django >= 4.2",
+        "requests >= 2.30.0",
+        "polib >= 1.1.0",
+    ],
+    tests_require=[
+        "vcrpy",
+        "tox~=4.11.4",
+    ],
     cmdclass={"test": Tox},
 )
