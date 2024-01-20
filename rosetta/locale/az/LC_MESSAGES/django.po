@@ -1,0 +1,211 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-11-01 18:01+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: rosetta/templates/rosetta/admin_index.html:14
+msgid "Translations"
+msgstr "Tərcümələr"
+
+#: rosetta/templates/rosetta/admin_index.html:15
+msgid "Change"
+msgstr "Dəyiş"
+
+#: rosetta/templates/rosetta/file-list.html:4
+#: rosetta/templates/rosetta/file-list.html:7
+msgid "Language selection"
+msgstr "Dil seçimi"
+
+#: rosetta/templates/rosetta/file-list.html:7
+#: rosetta/templates/rosetta/form.html:21
+msgid "Home"
+msgstr "Ev"
+
+#: rosetta/templates/rosetta/file-list.html:8
+msgid ""
+"Couldn't load the specified language file. This usually happens when using "
+"the Encrypted Cookies Session Storage backend on Django 1.4 or higher.<br/"
+">Setting ROSETTA_STORAGE_CLASS = 'rosetta.storage.CacheRosettaStorage' in "
+"your settings file should fix this."
+msgstr ""
+
+#: rosetta/templates/rosetta/file-list.html:14
+msgid "Filter"
+msgstr "Filtr"
+
+#: rosetta/templates/rosetta/file-list.html:15
+msgid "Project"
+msgstr "Proyekt"
+
+#: rosetta/templates/rosetta/file-list.html:16
+msgid "Third party"
+msgstr "Üçüncü tərəf"
+
+#: rosetta/templates/rosetta/file-list.html:18
+#: rosetta/templates/rosetta/form.html:44
+msgid "All"
+msgstr "Hamısı"
+
+#: rosetta/templates/rosetta/file-list.html:31
+msgid "Application"
+msgstr "Tətbiq"
+
+#: rosetta/templates/rosetta/file-list.html:32
+msgid "Progress"
+msgstr "Proqress"
+
+#: rosetta/templates/rosetta/file-list.html:33
+msgid "Messages"
+msgstr "Mesajlar"
+
+#: rosetta/templates/rosetta/file-list.html:34
+msgid "Translated"
+msgstr "Tərcümə edilmişdir"
+
+#: rosetta/templates/rosetta/file-list.html:35
+#: rosetta/templates/rosetta/form.html:78
+msgid "Fuzzy entries call for revision by the translator."
+msgstr "Qeyri-səlis girişlər tərcüməçi tərəfindən yenidən nəzərdən keçirilməsini tələb edir."
+
+#: rosetta/templates/rosetta/file-list.html:35
+#: rosetta/templates/rosetta/form.html:78
+msgid "Fuzzy"
+msgstr "Qeyri-səlis"
+
+#: rosetta/templates/rosetta/file-list.html:36
+msgid "Obsolete"
+msgstr "Köhnə"
+
+#: rosetta/templates/rosetta/file-list.html:37
+msgid "File"
+msgstr "Fayl"
+
+#: rosetta/templates/rosetta/file-list.html:60
+msgid "Nothing to translate!"
+msgstr "Tərcümə etmək üçün heç nə yoxdur!"
+
+#: rosetta/templates/rosetta/file-list.html:61
+msgid ""
+"You haven't specified any languages in your settings file, or haven't yet "
+"generated a batch of translation catalogs."
+msgstr ""
+
+#: rosetta/templates/rosetta/file-list.html:62
+#, python-format
+msgid ""
+"Please refer to <a href=\"%(i18n_doc_link)s\">Django's I18N documentation</"
+"a> for a guide on how to set up internationalization for your project."
+msgstr ""
+
+#: rosetta/templates/rosetta/form.html:8
+msgid "Pick another file"
+msgstr "Başqa bir fayl seçin"
+
+#: rosetta/templates/rosetta/form.html:9
+msgid "Download this catalog"
+msgstr "Bu kataloqu yükləyin"
+
+#: rosetta/templates/rosetta/form.html:24
+#, python-format
+msgid "Progress: %(percent_translated)s%%"
+msgstr "ProqressI %(percent_translated)s%%"
+
+#: rosetta/templates/rosetta/form.html:26
+msgid "File is read-only: download the file when done editing!"
+msgstr "Fayl yalnız oxumaq üçündür: redaktə bitdikdən sonra faylı yükləyin!"
+
+#: rosetta/templates/rosetta/form.html:37
+#, python-format
+msgid "Translate into %(rosetta_i18n_lang_name)s"
+msgstr "Tərcümə et %(rosetta_i18n_lang_name)s"
+
+#: rosetta/templates/rosetta/form.html:40
+msgid "Display:"
+msgstr "Göstər: "
+
+#: rosetta/templates/rosetta/form.html:41
+msgid "Untranslated only"
+msgstr "Yalnız tərcümə olunmamış"
+
+#: rosetta/templates/rosetta/form.html:42
+msgid "Translated only"
+msgstr "Yalnız tərcümə olunmuş"
+
+#: rosetta/templates/rosetta/form.html:43
+msgid "Fuzzy only"
+msgstr "Yalnız qeyri-səlis"
+
+#: rosetta/templates/rosetta/form.html:52
+msgid "Search"
+msgstr "Axtar"
+
+#: rosetta/templates/rosetta/form.html:54
+msgid "Go"
+msgstr "Get"
+
+#: rosetta/templates/rosetta/form.html:61
+msgid "Reference language"
+msgstr "İstinad dili"
+
+#: rosetta/templates/rosetta/form.html:75
+msgid "Original"
+msgstr "Orijinal"
+
+#: rosetta/templates/rosetta/form.html:79
+msgid "Occurrences(s)"
+msgstr "Hadisələr"
+
+#: rosetta/templates/rosetta/form.html:109
+msgid "suggest"
+msgstr "təklif et"
+
+#: rosetta/templates/rosetta/form.html:121
+#, python-format
+msgid "%(more_count)s more"
+msgid_plural "%(more_count)s more"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosetta/templates/rosetta/form.html:125
+msgid "Context hint"
+msgstr "Kontekst işarəsi"
+
+#: rosetta/templates/rosetta/form.html:145
+msgid "Save and translate next block"
+msgstr "Yadda saxlayın və növbəti bloku tərcümə edin"
+
+#: rosetta/templates/rosetta/form.html:149
+msgid "Skip to page:"
+msgstr "Səhifəyə keçin: "
+
+#: rosetta/templates/rosetta/form.html:162
+msgid "Displaying:"
+msgstr "Göstərilir: "
+
+#: rosetta/templates/rosetta/form.html:166
+#, python-format
+msgid "%(hits)s/%(message_number)s message"
+msgid_plural "%(hits)s/%(message_number)s messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: rosetta/views.py:353
+msgid ""
+"Some items in your last translation block couldn't be saved: this usually "
+"happens when the catalog file changes on disk after you last loaded it."
+msgstr ""

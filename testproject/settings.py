@@ -63,6 +63,7 @@ LANGUAGES = (
     ("fr", "French"),
     ("zh_Hans", "Chinese (Simplified)"),
     ("fr_FR.utf8", "French (France), UTF8"),
+    ("az", "Azerbaijani"),
 )
 
 
