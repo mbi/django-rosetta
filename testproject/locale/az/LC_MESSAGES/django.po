@@ -1,0 +1,39 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-20 09:23-0600\n"
+"PO-Revision-Date: 2024-01-20 09:28-0600\n"
+"Last-Translator:   <>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.9.10\n"
+
+#: templates/test.html:3
+msgid "Some text to translate"
+msgstr "Tərcümə etmək üçün qalan mətnlər"
+
+#: templates/test.html:5
+#, python-format
+msgid ""
+"\n"
+"one bottle of beer on the wall\n"
+msgid_plural ""
+"\n"
+"%(num_bottles)s bottles of beer on the wall\n"
+msgstr[0] ""
+"\n"
+"divarda bir butulka pivə\n"
+msgstr[1] ""
+"\n"
+"%(num_bottles)s divarda pivə butulkaları\n"
