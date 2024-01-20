@@ -1,10 +1,16 @@
 Version History
 ===============
 
-Version 0.9.10 (unreleased)
+Version 0.10.1 (unreleased)
 ---------------------------
+* Remamed the zh_hans locale to zh_Hans (issue #282, thanks @sunfkny)
+* Fixed the test configuration following #282
+
+Version 0.10.0
+--------------
 * Fix link to polib. (#277, thanks @gamboz)
 * Deepl: use the PRO API endpoint when using a PRO API key. (#278, thanks @nullcode)
+* Limit supported versions to Django 4.2 and 5.0, using Python 3.9, 3.10, 3.11 and 3.12
 
 
 Version 0.9.9

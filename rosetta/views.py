@@ -683,7 +683,6 @@ class TranslationFileDownload(RosettaFileLevelMixin, View):
 
 @user_passes_test(lambda user: can_translate(user), LoginURL())
 def translate_text(request):
-
     language_from = request.GET.get("from", None)
     language_to = request.GET.get("to", None)
     text = request.GET.get("text", None)

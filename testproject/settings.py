@@ -1,8 +1,6 @@
 import os
 import sys
 
-import django
-
 
 SITE_ID = 1
 
@@ -17,22 +15,13 @@ DATABASES = {
     }
 }
 
-if django.VERSION[:3] >= (3, 2, 0):
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
-            "LOCATION": "127.0.0.1:11211",
-            "KEY_PREFIX": "ROSETTA_TEST",
-        }
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        "LOCATION": "127.0.0.1:11211",
+        "KEY_PREFIX": "ROSETTA_TEST",
     }
-else:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-            "LOCATION": "127.0.0.1:11211",
-            "KEY_PREFIX": "ROSETTA_TEST",
-        }
-    }
+}
 
 # CACHES = {'default': {'BACKEND': 'django.core.cache.backends.dummy.DummyCache'}}
 
@@ -52,10 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "rosetta",
+    "rosetta.tests.test_app.apps.TestAppConfig",
 ]
-
-if django.VERSION[0:2] >= (1, 7):
-    INSTALLED_APPS.append("rosetta.tests.test_app.apps.TestAppConfig")
 
 LANGUAGE_CODE = "en"
 
@@ -85,8 +72,6 @@ SILENCED_SYSTEM_CHECKS = ["translation.E002"]
 
 LOCALE_PATHS = [os.path.join(PROJECT_PATH, "locale")]
 
-SOUTH_TESTS_MIGRATE = False
-
 FIXTURE_DIRS = (os.path.join(PROJECT_PATH, "fixtures"),)
 STATIC_URL = "/static/"
 ROOT_URLCONF = "testproject.urls"
@@ -112,6 +97,8 @@ TEMPLATES = [
         },
     }
 ]
+
+USE_TZ = True
 
 STATIC_URL = "/static/"
 

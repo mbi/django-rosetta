@@ -11,13 +11,13 @@ repos:
         - id: trailing-whitespace
 
 -   repo: https://github.com/timothycrosley/isort
-    rev: 5.7.0
+    rev: 5.12.0
     hooks:
     - id: isort
       additional_dependencies: [toml]
 
 -   repo: https://github.com/psf/black
-    rev: 2d0c14989dca41676fc83fb36f2d652cf93fad58
+    rev: 23.3.0
     hooks:
     - id: black
 
