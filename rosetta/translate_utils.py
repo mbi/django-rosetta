@@ -1,3 +1,4 @@
+from email.mime import base
 import json
 import re
 import uuid
@@ -221,24 +222,28 @@ def translate_by_openai(
     param api_key: The OpenAI API key.
     return: The translated text.
     """
-
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key)
+    
+    OPENAI_BASE_URL = getattr(settings, "OPENAI_BASE_URL", None)
+    OPENAI_MODEL = getattr(settings, "OPENAI_MODEL", None)
     prompt_template = getattr(
         settings,
         "OPENAI_PROMPT_TEMPLATE",
         "Translate the following text from {from_language} to {to_language}:\n\n{text}",
     )
 
+    if OPENAI_BASE_URL:
+        client.base_url = OPENAI_BASE_URL
+
     prompt = prompt_template.format(
         **{"from_language": from_language, "to_language": to_language, "text": text}
     )
 
+    llm_model = OPENAI_MODEL or "gpt-3.5-turbo-instruct"
     try:
-        response = client.completions.create(
-            model="gpt-3.5-turbo-instruct", prompt=prompt
-        )
+        response = client.completions.create(model=llm_model, prompt=prompt)
         translation = response.choices[0].text.strip()
     except Exception as e:
         raise TranslationException("OpenAI API error: {}".format(e))
