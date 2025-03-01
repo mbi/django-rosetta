@@ -9,6 +9,7 @@ Version 0.10.2 (unreleased)
 * Rewrite rosetta.js: drop jQuery and modernize rosetta.js (PR #295, thanks @balazs-endresz)
 * Fix broken link in documentation (PR #300, thanks @KommuSoft)
 * Test against Django 5.2a1
+* Add OPENAI_BASE_URL and OPENAI_MODEL config for self hosted LLM translation (PR #301, thanks @ydf)
 
 Version 0.10.1
 --------------
