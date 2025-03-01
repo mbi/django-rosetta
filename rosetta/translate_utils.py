@@ -1,4 +1,3 @@
-from email.mime import base
 import json
 import re
 import uuid
@@ -225,7 +224,7 @@ def translate_by_openai(
     from openai import OpenAI
 
     client = OpenAI(api_key=api_key)
-    
+
     OPENAI_BASE_URL = getattr(settings, "OPENAI_BASE_URL", None)
     OPENAI_MODEL = getattr(settings, "OPENAI_MODEL", None)
     prompt_template = getattr(
