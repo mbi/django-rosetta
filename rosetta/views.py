@@ -413,6 +413,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         return file_change
 
     def save_to_file(self, po_file):
+        print("save_to_file", self.po_file_is_writable, rosetta_settings.FORCE_CACHE)
         if not self.po_file_is_writable or rosetta_settings.FORCE_CACHE:
             storage = get_storage(self.request)
             storage.set(self.po_file_cache_key, po_file)
