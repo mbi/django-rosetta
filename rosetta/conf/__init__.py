@@ -65,6 +65,8 @@ class RosettaSettings(object):
         "ROSETTA_LOGIN_URL": ("LOGIN_URL", dj_settings.LOGIN_URL),
         "ROSETTA_LANGUAGES": ("ROSETTA_LANGUAGES", dj_settings.LANGUAGES),
         "ROSETTA_SHOW_OCCURRENCES": ("SHOW_OCCURRENCES", True),
+        "ROSETTA_FORCE_CACHE": ("FORCE_CACHE", False),
+        "ROSETTA_CACHE_DURATION": ("CACHE_DURATION", 60 * 60 * 24),
         # Deepl API language codes are different then those of django, so if this is not set according to your desired languages,
         # We use the first 2 letters of django language code.
         # In which case it would work fine for most of the languages,
