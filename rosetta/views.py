@@ -143,12 +143,10 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
                 str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or "")
             ).encode("utf8")
             entry.md5hash = hashlib.md5(str_to_hash).hexdigest()
-    
 
     @cached_property
     def po_file(self):
         """Return the parsed .po file that is currently being translated/viewed.
-
         (Note that this parsing also involves marking up each entry with a hash
         of its contents.)
         """
@@ -414,13 +412,11 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 pass
         return file_change
 
-
     def save_to_file(self, po_file):
         if not self.po_file_is_writable or rosetta_settings.FORCE_CACHE:
             storage = get_storage(self.request)
             storage.set(self.po_file_cache_key, po_file)
             return
-
         try:
             po_file.save()
             po_filepath, ext = os.path.splitext(self.po_file_path)
@@ -455,8 +451,6 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             # XXX: It would be nice to add a success message here!
         except Exception as e:
             messages.error(self.request, e)
-
-
 
     def get_context_data(self, **kwargs):
         context = super(TranslationFormView, self).get_context_data(**kwargs)
