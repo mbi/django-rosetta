@@ -34,8 +34,6 @@ def datetime_from_timestamp(timestamp):
     """
     Return a datetime object from a timestamp with a timezone.
     """
-    if timezone is None:
-        return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
     return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
 
 
