@@ -15,28 +15,18 @@ from rosetta.conf import settings as rosetta_settings
 cache = caches[rosetta_settings.ROSETTA_CACHE_NAME]
 
 
-def timestamp_with_timezone(dt=None):
+def timestamp_with_timezone():
     """
-    Return a timestamp with a timezone for the configured locale.  If all else
-    fails, consider localtime to be UTC.
+    Return a timestamp string with a timezone for the configured locale. 
+    If all else fails, consider localtime to be UTC.
     """
-    match = re.search(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})([+-]\d{4})?', dt)
-    if not match:
-        raise ValueError(f"Invalid date format: {dt}")
-
-    date_part = match.group(1)
-    tz_part = match.group(2)
-
-    dt = datetime.strptime(date_part, "%Y-%m-%d %H:%M")    
-    if tz_part:
+    dt = datetime.now()
+    if not dt.tzinfo:
         tz = timezone.get_current_timezone()
         if not tz:
             tz = timezone.utc
         dt = dt.replace(tzinfo=timezone.get_current_timezone())
-    else:
-        dt = dt.replace(tzinfo=timezone.utc)  # Assume UTC if no timezone is given
-
-    return dt
+    return dt.strftime("%Y-%m-%d %H:%M%z")
 
 
 def datetime_from_timestamp(timestamp):
