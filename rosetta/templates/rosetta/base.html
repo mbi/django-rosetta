@@ -1,7 +1,9 @@
 <!DOCTYPE html>{% load static %}
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; script-src-elem 'self' https://translate.yandex.net" />
+        {% if rosetta_settings.CONTENT_SECURITY_POLICY %}
+        <meta http-equiv="Content-Security-Policy" content="{{ rosetta_settings.CONTENT_SECURITY_POLICY }}" />
+        {% endif %}
         <title>{% block pagetitle %}Rosetta{% endblock %}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 

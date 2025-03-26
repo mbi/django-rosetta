@@ -67,6 +67,7 @@ class RosettaSettings(object):
         "ROSETTA_SHOW_OCCURRENCES": ("SHOW_OCCURRENCES", True),
         "ROSETTA_FORCE_CACHE": ("FORCE_CACHE", False),
         "ROSETTA_CACHE_DURATION": ("CACHE_DURATION", 60 * 60 * 24),
+        "ROSETTA_CONTENT_SECURITY_POLICY": ("CONTENT_SECURITY_POLICY", "default-src 'self'; img-src 'self' data:; script-src-elem 'self' https://translate.yandex.net"),
         # Deepl API language codes are different then those of django, so if this is not set according to your desired languages,
         # We use the first 2 letters of django language code.
         # In which case it would work fine for most of the languages,
