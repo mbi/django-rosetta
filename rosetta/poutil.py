@@ -19,15 +19,24 @@ def timestamp_with_timezone(dt=None):
     Return a timestamp with a timezone for the configured locale.  If all else
     fails, consider localtime to be UTC.
     """
-    dt = dt or datetime.now()
-    if timezone is None:
-        return dt.strftime("%Y-%m-%d %H:%M%z")
-    if not dt.tzinfo:
+    match = re.search(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})([+-]\d{4})?', date_str)
+    if not match:
+        raise ValueError(f"Invalid date format: {date_str}")
+
+    date_part = match.group(1)
+    tz_part = match.group(2)
+
+    dt = datetime.strptime(date_part, "%Y-%m-%d %H:%M")
+    
+    if tz_part:
         tz = timezone.get_current_timezone()
         if not tz:
             tz = timezone.utc
         dt = dt.replace(tzinfo=timezone.get_current_timezone())
-    return dt.strftime("%Y-%m-%d %H:%M%z")
+    else:
+        dt = dt.replace(tzinfo=timezone.utc)  # Assume UTC if no timezone is given
+
+    return dt
 
 
 def datetime_from_timestamp(timestamp):
