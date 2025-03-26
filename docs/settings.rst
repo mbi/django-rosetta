@@ -30,6 +30,7 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_CASE_SENSITIVE_FILESYSTEM``: Overrides auto-detection of case sensitive OS. Defaults to ``None`` which enables auto-detection. Useful when running case sensitive OS (e.g. Ubuntu) in docker on case insensitive OS (e.g. MacOS).
 * ``ROSETTA_CACHE_DURATION``: Duration in seconds to cache the PO file when it is not possible to save on file. Defaults to ``24 hours``.
 * ``ROSETTA_FORCE_CACHE``: Force to always cache the PO file rather that try to save on file. Defaults to ``False``.
+* ``ROSETTA_CONTENT_SECURITY_POLICY``: Content-Security-Policy header value to be set in the HTML response. Default to a restrictive value that allows only same-origin scripts and styles. Set to ``None`` to disable the header.
 * ``OPENAI_API_KEY``: Translation suggestions using the OpenAI API. To use this service, you must first `register for the service <https://beta.openai.com/signup/>`, and set ``OPENAI_API_KEY`` to the key listed for your subscription. Requires `openai-python`. Defaults to ``None``.
 * ``OPENAI_PROMPT_TEMPLATE``: Format template used to generate prompt when translating with OpenAI. variables `from_language`, `to_language` and `text` are available for substitution. Defaults to ``Translate the following text from {from_language} to {to_language}:\n\n{text}``.
 * ``OPENAI_BASE_URL``: OpenAI base url for self host, example: OPENAI_BASE_URL = "https://openai.domain/v1". Defaults to ``None``
