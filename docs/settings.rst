@@ -55,6 +55,7 @@ Alternatively you can switch back to using the Session based storage by setting 
 Multiple Machines
 -----------------
 
-If you have multiple machines serving your Django app, you might want to use a shared cache backend (like memcached or database) 
-for the Rosetta cache. This way, all machines will be able to access the same cached data. You also might to set ROSETTA_FORCE_CACHE to True to
-avoid writing to the file system and set ROSETTA_CACHE_DURATION to None to avoid cache expiration.
+If you have multiple machines serving your Django app, consider using a shared cache backend (such as Memcached or a database) 
+for the Rosetta cache. This ensures that all machines can access the same cached data. You may also want to 
+set ROSETTA_FORCE_CACHE to True to prevent writing to the file system and ROSETTA_CACHE_DURATION to None to disable cache expiration.
+
