@@ -36,7 +36,7 @@ def datetime_from_timestamp(timestamp):
     The default value in a new file is "YEAR-MO-DA HO:MI+ZONE"
     """
     if timestamp.startswith("YEAR"):
-        return datetime.datetime.fromtimestamp(0)
+        return datetime.fromtimestamp(0)
     return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
 
 
