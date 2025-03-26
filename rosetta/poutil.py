@@ -34,12 +34,16 @@ def datetime_from_timestamp(timestamp):
     Return a datetime object from a timestamp with a timezone.
     The default value in a new file is "YEAR-MO-DA HO:MI+ZONE"
     """
+    tz = timezone.get_current_timezone()
+    if not tz:
+        tz = timezone.utc
     if timestamp.startswith("YEAR"):
-        tz = timezone.get_current_timezone()
-        if not tz:
-            tz = timezone.utc
         return datetime.fromtimestamp(0).replace(tzinfo=tz)
-    return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
+    try:
+        return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
+    except ValueError:
+        dt = datetime.strptime(timestamp, "%Y-%m-%d %H:%M")
+        return dt.replace(tzinfo=tz)
 
 
 def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False):

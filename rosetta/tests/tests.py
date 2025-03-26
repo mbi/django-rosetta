@@ -1115,6 +1115,12 @@ class RosettaTestCase(TestCase):
             datetime.datetime.fromtimestamp(0).date()
         )
 
+    def test_datetime_from_timestamp_without_tz(self):
+        self.assertEqual(
+            datetime_from_timestamp("2008-09-22 11:02").date(),
+            datetime.date(2008, 9, 22)
+        )
+
 
 # Stubbed access control function
 def no_access(user):
