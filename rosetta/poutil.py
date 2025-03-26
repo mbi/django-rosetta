@@ -1,6 +1,7 @@
 import os
 import tempfile
 from datetime import datetime
+import re
 
 import django
 from django.apps import apps
@@ -19,15 +20,14 @@ def timestamp_with_timezone(dt=None):
     Return a timestamp with a timezone for the configured locale.  If all else
     fails, consider localtime to be UTC.
     """
-    match = re.search(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})([+-]\d{4})?', date_str)
+    match = re.search(r'(\d{4}-\d{2}-\d{2} \d{2}:\d{2})([+-]\d{4})?', dt)
     if not match:
-        raise ValueError(f"Invalid date format: {date_str}")
+        raise ValueError(f"Invalid date format: {dt}")
 
     date_part = match.group(1)
     tz_part = match.group(2)
 
-    dt = datetime.strptime(date_part, "%Y-%m-%d %H:%M")
-    
+    dt = datetime.strptime(date_part, "%Y-%m-%d %H:%M")    
     if tz_part:
         tz = timezone.get_current_timezone()
         if not tz:
