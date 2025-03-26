@@ -1111,8 +1111,8 @@ class RosettaTestCase(TestCase):
 
     def test_datetime_from_timestamp_initial_value(self):
         self.assertEqual(
-            datetime_from_timestamp("YEAR-MO-DA HO:MI+ZONE"),
-            datetime.datetime.fromtimestamp(0)
+            datetime_from_timestamp("YEAR-MO-DA HO:MI+ZONE").date(),
+            datetime.datetime.fromtimestamp(0).date()
         )
 
 

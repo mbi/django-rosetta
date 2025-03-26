@@ -25,7 +25,7 @@ def timestamp_with_timezone():
         tz = timezone.get_current_timezone()
         if not tz:
             tz = timezone.utc
-        dt = dt.replace(tzinfo=timezone.get_current_timezone())
+        dt = dt.replace(tzinfo=tz)
     return dt.strftime("%Y-%m-%d %H:%M%z")
 
 
@@ -35,7 +35,10 @@ def datetime_from_timestamp(timestamp):
     The default value in a new file is "YEAR-MO-DA HO:MI+ZONE"
     """
     if timestamp.startswith("YEAR"):
-        return datetime.fromtimestamp(0)
+        tz = timezone.get_current_timezone()
+        if not tz:
+            tz = timezone.utc
+        return datetime.fromtimestamp(0).replace(tzinfo=tz)
     return datetime.strptime(timestamp, "%Y-%m-%d %H:%M%z")
 
 
