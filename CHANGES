@@ -1,14 +1,14 @@
 Version History
 ===============
 
-Version 0.10.2 (unreleased)
----------------------------
+Version 0.10.2
+--------------
 * Tests: update flake8 in tox tests
 * Format all rendered assets (html, css, js) in a pre-commit task. (PR #294, thanks @balazs-endresz)
 * Fix Deepl translations containing variables (#276, PR #290, thanks @halitcelik)
 * Rewrite rosetta.js: drop jQuery and modernize rosetta.js (PR #295, thanks @balazs-endresz)
 * Fix broken link in documentation (PR #300, thanks @KommuSoft)
-* Test against Django 5.2a1
+* Test against Django 5.2
 * Add OPENAI_BASE_URL and OPENAI_MODEL config for self hosted LLM translation (PR #301, thanks @ydf)
 
 Version 0.10.1
