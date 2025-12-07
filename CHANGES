@@ -1,6 +1,12 @@
 Version History
 ===============
 
+Version 0.10.3
+--------------
+* Test against Django 6.0
+* Test using tox-uv
+
+
 Version 0.10.2
 --------------
 * Tests: update flake8 in tox tests

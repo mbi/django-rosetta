@@ -59,7 +59,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Django Rosetta"
-copyright = "2008 – 2024 Marco Bonetti and contributors"
+copyright = "2008 – 2025 Marco Bonetti and contributors"
 author = "Marco Bonetti"
 
 
