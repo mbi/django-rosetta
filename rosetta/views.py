@@ -54,7 +54,7 @@ class RosettaBaseMixin(object):
     """
 
     def dispatch(self, *args, **kwargs):
-        return super(RosettaBaseMixin, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     @cached_property
     def po_filter(self):
@@ -188,6 +188,12 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
         # (This was formerly called 'rosetta_i18n_write'.)
         return os.access(self.po_file_path, os.W_OK)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # The django base template needs this to show the user tools in the header:
+        context["has_permission"] = True
+        return context
+
 
 class TranslationFileListView(RosettaBaseMixin, TemplateView):
     """Lists the languages, the gettext catalog files that can be translated,
@@ -198,7 +204,7 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
     template_name = "rosetta/file-list.html"
 
     def get_context_data(self, **kwargs):
-        context = super(TranslationFileListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         third_party_apps = self.po_filter in ("all", "third-party")
         django_apps = self.po_filter in ("all", "django")
@@ -437,7 +443,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         )
 
     def get_context_data(self, **kwargs):
-        context = super(TranslationFormView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         entries = self.get_entries()
         paginator = Paginator(entries, rosetta_settings.MESSAGES_PER_PAGE)
 

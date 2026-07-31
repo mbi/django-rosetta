@@ -1,19 +1,9 @@
 {% extends "rosetta/base.html" %}{% load static %}
 {% load rosetta i18n %}
 
-{% block header %}
-    {{ block.super }}
-    <div id="user-tools">
-        <p>
-            <span><a href="{% url 'rosetta-file-list' po_filter=po_filter %}">{% trans "Pick another file" %}</a> /
-                <a href="{% url 'rosetta-download-file' po_filter=po_filter lang_id=lang_id idx=idx %}">{% trans "Download this catalog" %}</a></span>
-        </p>
-    </div>
-{% endblock %}
+{% block title %}{{ block.super }} - {{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME }} - {{ rosetta_i18n_lang_name }} ({{ rosetta_i18n_pofile.percent_translated }}%){% endblock %}
 
-{% block pagetitle %}{{ block.super }} - {{ rosetta_settings.MESSAGES_SOURCE_LANGUAGE_NAME }} - {{ rosetta_i18n_lang_name }} ({{ rosetta_i18n_pofile.percent_translated }}%){% endblock %}
-
-{% block breadcumbs %}
+{% block breadcrumbs %}
     <div>
         <a href="{% url 'rosetta-file-list' po_filter=po_filter %}">{% trans "Home" %}</a> &rsaquo;
         {{ rosetta_i18n_lang_name }} &rsaquo;
@@ -21,16 +11,15 @@
         {% blocktrans with rosetta_i18n_pofile.percent_translated as percent_translated %}Progress: {{ percent_translated }}%{% endblocktrans %}
     </div>
     {% if not rosetta_i18n_write %}<p class="errornote read-only">{% trans "File is read-only: download the file when done editing!" %}</p>{% endif %}
-    {% if messages %}
-        <div class="messages errornote save-conflict">
-            {% for message in messages %}
-                <p class="{{ message.tags }}">{{ message|linebreaks }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div id="user-tools">
+        <p>
+            <a href="{% url 'rosetta-file-list' po_filter=po_filter %}">{% trans "Pick another file" %}</a> /
+            <a href="{% url 'rosetta-download-file' po_filter=po_filter lang_id=lang_id idx=idx %}">{% trans "Download this catalog" %}</a>
+        </p>
+    </div>
 {% endblock %}
 
-{% block main %}
+{% block content %}
     <h1>{% blocktrans %}Translate into {{ rosetta_i18n_lang_name }}{% endblocktrans %}</h1>
 
     <ul class="object-tools">
@@ -45,11 +34,9 @@
 
         <div id="toolbar">
             <form id="changelist-search" action="" method="get">
-                <div>
-                    <label for="searchbar"><img src="{% static "admin/img/icon_searchbox_rosetta.png" %}" alt="{% trans "Search" %}" /></label>
-                    <input type="text" size="40" name="query" value="{% if query %}{{ query }}{% endif %}" id="searchbar" tabindex="0" />
-                    <input type="submit" name="s" value="{% trans "Go" %}" />
-                </div>
+                <label for="searchbar"><img src="{% static "admin/img/search.svg" %}" alt="{% trans "Search" %}" /></label>
+                <input type="search" size="40" name="query" value="{% if query %}{{ query }}{% endif %}" id="searchbar" tabindex="0" />
+                <input type="submit" name="s" value="{% trans "Go" %}" />
             </form>
         </div>
 
@@ -73,7 +60,7 @@
                         {% if main_language %}<th>{{ main_language }}</th>{% endif %}
                         <th>{{ rosetta_i18n_lang_name }}</th>
                         <th class="info-tip c" title="{% trans "Fuzzy entries call for revision by the translator." %}"><input id="action-toggle" type="checkbox"> {% trans "Fuzzy" %}</th>
-                        {% if rosetta_settings.SHOW_OCCURRENCES %}<th>{% trans "Occurrences(s)" %}</th>{% endif %}
+                        {% if rosetta_settings.SHOW_OCCURRENCES %}<th class="location-header">{% trans "Occurrences(s)" %}</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -146,7 +133,7 @@
 
 
                     {% if needs_pagination %}
-                        {% trans "Skip to page:" %}
+                        {% trans "Skip to page:" %} &nbsp;
                         {% for i in page_range %}
                             {% if i == '...' %}
                                 <span class="space">{{ i }}</span>

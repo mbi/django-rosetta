@@ -233,13 +233,14 @@ class RosettaTestCase(TestCase):
         data = {"m_e48f149a8b2e8baa81b816c0edf93890": "Hello, world, from client two!"}
         r2 = self.client2.post(untranslated_url, data, follow=True)
 
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
 
         # uh-oh here comes client 1
         data = {"m_e48f149a8b2e8baa81b816c0edf93890": "Hello, world, from client one!"}
         r = self.client.post(untranslated_url, data, follow=True)
         # An error message is displayed
-        self.assertContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 1)
+        self.assertEqual(list(r.context["messages"])[0].level, 40)
 
         # client 2 won
         with open(self.dest_file, "r") as po_file:
@@ -248,13 +249,13 @@ class RosettaTestCase(TestCase):
 
         # Both clients show all strings, error messages are gone
         r = self.client.get(translated_url)
-        self.assertNotContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r2 = self.client2.get(translated_url)
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r = self.client.get(self.xx_form_url)
-        self.assertNotContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r2 = self.client2.get(self.xx_form_url)
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
 
         # Both have client's two version
         self.assertContains(r, "Hello, world, from client two!")
