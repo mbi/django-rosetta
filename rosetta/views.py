@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.functional import Promise, cached_property
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext_lazy as _, to_locale
 from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, View
 
@@ -586,9 +586,9 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         ref_pofile = None
         if rosetta_settings.ENABLE_REFLANG and self.ref_lang != "msgid":
             replacement = "{separator}locale{separator}{ref_lang}".format(
-                separator=os.sep, ref_lang=self.ref_lang
+                separator=os.sep, ref_lang=to_locale(self.ref_lang)
             )
-            pattern = r"\{separator}locale\{separator}[a-z]{{2}}".format(
+            pattern = r"\{separator}locale\{separator}[a-z]{{2}}(?:_[A-Z]{{2}})?".format(
                 separator=os.sep
             )
             ref_fn = re.sub(pattern, replacement, self.po_file_path)

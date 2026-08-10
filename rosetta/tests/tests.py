@@ -71,6 +71,11 @@ class RosettaTestCase(TestCase):
         return reverse("rosetta-form", kwargs=kwargs)
 
     @property
+    def xx_XX_form_url(self):
+        kwargs = {"po_filter": "third-party", "lang_id": "xx-XX", "idx": 0}
+        return reverse("rosetta-form", kwargs=kwargs)
+
+    @property
     def all_file_list_url(self):
         return reverse("rosetta-file-list", kwargs={"po_filter": "all"})
 
@@ -665,6 +670,24 @@ class RosettaTestCase(TestCase):
         )
 
         r = self.client.get(self.xx_form_url + "?ref_lang=xx")
+        # The translated string in the test PO file ends up in the "Reference" column
+        self.assertTrue(
+            '<span class="message">translated-string1</span>' in r.content.decode()
+        )
+
+    @override_settings(
+        ROSETTA_ENABLE_REFLANG=True, ROSETTA_LANGUAGES=(("xx", "xx dummy language"), ("xx-XX", "xx_XX dummy language"), )
+    )
+    def test_34_reflang_longer_2_characters(self):
+        self.copy_po_file_from_template("./django.po.issue60.template")
+        r = self.client.get(self.xx_XX_form_url)
+
+        # Verify that there's an option to select a reflang
+        self.assertTrue(
+            '<option value="?ref_lang=xx-XX">xx_XX dummy language</option>' in r.content.decode()
+        )
+
+        r = self.client.get(self.xx_XX_form_url + "?ref_lang=xx")
         # The translated string in the test PO file ends up in the "Reference" column
         self.assertTrue(
             '<span class="message">translated-string1</span>' in r.content.decode()
