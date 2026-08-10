@@ -114,7 +114,7 @@ class CacheRosettaStorage(BaseRosettaStorage):
 
     def set(self, key, val):
         # print ('set', self._key_prefix + key)
-        cache.set(self._key_prefix + key, val, 86400)
+        cache.set(self._key_prefix + key, val, rosetta_settings.CACHE_DURATION)
 
     def has(self, key):
         # print ('has', self._key_prefix + key)

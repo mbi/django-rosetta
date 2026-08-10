@@ -24,7 +24,7 @@ from django.views.generic import TemplateView, View
 from . import get_version as get_rosetta_version
 from .access import can_translate, can_translate_language
 from .conf import settings as rosetta_settings
-from .poutil import find_pos, pagination_range, timestamp_with_timezone
+from .poutil import find_pos, pagination_range, timestamp_with_timezone, datetime_from_timestamp
 from .signals import entry_changed, post_save
 from .storage import get_storage
 from .translate_utils import TranslationException, translate
@@ -133,44 +133,49 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
             raise Http404
         return path
 
+    def _update_po_file(self, po_file):
+        for entry in po_file:
+            # Entry is an object representing a single entry in the catalog.
+            # We iterate through the *entire catalog*, pasting a hashed
+            # value of the meat of each entry on its side in an attribute
+            # called "md5hash".
+            str_to_hash = (
+                str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or "")
+            ).encode("utf8")
+            entry.md5hash = hashlib.md5(str_to_hash).hexdigest()
+
     @cached_property
     def po_file(self):
         """Return the parsed .po file that is currently being translated/viewed.
-
         (Note that this parsing also involves marking up each entry with a hash
         of its contents.)
         """
-        if self.po_file_is_writable:
-            # If we can write changes to file, then we pull it up fresh with
-            # each request.
-            # XXX: brittle; what if this path doesn't exist? Isn't a .po file?
-            po_file = pofile(
-                self.po_file_path, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH
-            )
-            for entry in po_file:
-                # Entry is an object representing a single entry in the catalog.
-                # We iterate through the *entire catalog*, pasting a hashed
-                # value of the meat of each entry on its side in an attribute
-                # called "md5hash".
-                str_to_hash = (
-                    str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or "")
-                ).encode("utf8")
-                entry.md5hash = hashlib.md5(str_to_hash).hexdigest()
-        else:
+        # If we can write changes to file, then we can pull it up fresh with
+        # each request.
+        # XXX: brittle; what if this path doesn't exist? Isn't a .po file?
+        po_file_disk = pofile(
+            self.po_file_path, wrapwidth=rosetta_settings.POFILE_WRAP_WIDTH
+        )
+        if rosetta_settings.FORCE_CACHE or not self.po_file_is_writable:
             storage = get_storage(self.request)
             po_file = storage.get(self.po_file_cache_key, None)
-            if not po_file:
+            if po_file:
+                date_cache = datetime_from_timestamp(po_file.metadata["PO-Revision-Date"])
+                date_disk = datetime_from_timestamp(
+                    po_file_disk.metadata["PO-Revision-Date"]
+                )
+                # use the disk version if fresher
+                if date_disk > date_cache:
+                    po_file = po_file_disk
+            else:
                 po_file = pofile(self.po_file_path)
-                for entry in po_file:
-                    # Entry is an object representing a single entry in the
-                    # catalog. We iterate through the entire catalog, pasting
-                    # a hashed value of the meat of each entry on its side in
-                    # an attribute called "md5hash".
-                    str_to_hash = (
-                        str(entry.msgid) + str(entry.msgstr) + str(entry.msgctxt or "")
-                    ).encode("utf8")
-                    entry.md5hash = hashlib.new("md5", str_to_hash).hexdigest()
-                storage.set(self.po_file_cache_key, po_file)
+
+            self._update_po_file(po_file)
+            storage.set(self.po_file_cache_key, po_file)
+        else:
+            self._update_po_file(po_file_disk)
+            return po_file_disk
+
         return po_file
 
     @cached_property
@@ -289,12 +294,48 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         to the next page of messages (if there is one; otherwise they're
         redirected back to the current page).
         """
+        po_file = self.po_file
+
+        file_change = self.update_po_file(request, po_file)
+
+        if file_change:
+            self.save_to_file(po_file)
+
+        # Reconstitute url to redirect to. Start with determining whether the
+        # page number can be incremented.
+        paginator = Paginator(self.get_entries(), rosetta_settings.MESSAGES_PER_PAGE)
+        try:
+            page = int(self._request_request("page", 1))
+        except ValueError:
+            page = 1  # fall back to page 1
+        else:
+            if not (0 < page <= paginator.num_pages):
+                page = 1
+        if page < paginator.num_pages:
+            page += 1
+        query_string_args = {
+            "msg_filter": self.msg_filter,
+            "query": self.query,
+            "ref_lang": self.ref_lang,
+            "page": page,
+        }
+        # Winnow down the query string args to non-blank ones
+        query_string_args = {k: v for k, v in query_string_args.items() if v}
+        return HttpResponseRedirect(
+            "{url}?{qs}".format(
+                url=reverse("rosetta-form", kwargs=self.kwargs),
+                qs=urlencode_safe(query_string_args),
+            )
+        )
+
+    def update_po_file(self, request, po_file):
         # The message text inputs are captured as hashes of their initial
         # contents, preceded by "m_". Messages with plurals end with their
         # variation number.
         single_text_input_regex = re.compile(r"^m_([0-9a-f]+)$")
         plural_text_input_regex = re.compile(r"^m_([0-9a-f]+)_([0-9]+)$")
         file_change = False
+
         for field_name, new_msgstr in request.POST.items():
             md5hash = None
 
@@ -315,7 +356,7 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 plural_id = None
 
             if md5hash is not None:  # Empty string should be processed!
-                entry = self.po_file.find(md5hash, "md5hash")
+                entry = po_file.find(md5hash, "md5hash")
                 # If someone did a makemessage, some entries might
                 # have been removed, so we need to check.
                 if entry:
@@ -356,85 +397,60 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                         ),
                     )
 
-        if file_change and self.po_file_is_writable:
+        if file_change:
             try:
-                self.po_file.metadata["Last-Translator"] = "{} {} <{}>".format(
+                po_file.metadata["Last-Translator"] = "{} {} <{}>".format(
                     getattr(self.request.user, "first_name", "Anonymous"),
                     getattr(self.request.user, "last_name", "User"),
                     getattr(self.request.user, "email", "anonymous@user.tld"),
                 )
-                self.po_file.metadata["X-Translated-Using"] = "django-rosetta %s" % (
+                po_file.metadata["X-Translated-Using"] = "django-rosetta %s" % (
                     get_rosetta_version()
                 )
-                self.po_file.metadata["PO-Revision-Date"] = timestamp_with_timezone()
+                po_file.metadata["PO-Revision-Date"] = timestamp_with_timezone()
             except UnicodeDecodeError:
                 pass
+        return file_change
 
-            try:
-                self.po_file.save()
-                po_filepath, ext = os.path.splitext(self.po_file_path)
-
-                if rosetta_settings.AUTO_COMPILE:
-                    self.po_file.save_as_mofile(po_filepath + ".mo")
-
-                post_save.send(
-                    sender=None, language_code=self.language_id, request=self.request
-                )
-                # Try auto-reloading via the WSGI daemon mode reload mechanism
-                should_try_wsgi_reload = (
-                    rosetta_settings.WSGI_AUTO_RELOAD
-                    and "mod_wsgi.process_group" in self.request.environ
-                    and self.request.environ.get("mod_wsgi.process_group", None)
-                    and "SCRIPT_FILENAME" in self.request.environ
-                    and int(self.request.environ.get("mod_wsgi.script_reloading", 0))
-                )
-                if should_try_wsgi_reload:
-                    try:
-                        os.utime(self.request.environ.get("SCRIPT_FILENAME"), None)
-                    except OSError:
-                        pass
-                # Try auto-reloading via uwsgi daemon reload mechanism
-                if rosetta_settings.UWSGI_AUTO_RELOAD:
-                    try:
-                        import uwsgi
-
-                        uwsgi.reload()  # pretty easy right?
-                    except Exception:
-                        pass  # we may not be running under uwsgi :P
-                # XXX: It would be nice to add a success message here!
-            except Exception as e:
-                messages.error(self.request, e)
-
-        if file_change and not self.po_file_is_writable:
+    def save_to_file(self, po_file):
+        if not self.po_file_is_writable or rosetta_settings.FORCE_CACHE:
             storage = get_storage(self.request)
-            storage.set(self.po_file_cache_key, self.po_file)
-
-        # Reconstitute url to redirect to. Start with determining whether the
-        # page number can be incremented.
-        paginator = Paginator(self.get_entries(), rosetta_settings.MESSAGES_PER_PAGE)
+            storage.set(self.po_file_cache_key, po_file)
+            return
         try:
-            page = int(self._request_request("page", 1))
-        except ValueError:
-            page = 1  # fall back to page 1
-        else:
-            if not (0 < page <= paginator.num_pages):
-                page = 1
-        if page < paginator.num_pages:
-            page += 1
-        query_string_args = {
-            "msg_filter": self.msg_filter,
-            "query": self.query,
-            "ref_lang": self.ref_lang,
-            "page": page,
-        }
-        # Winnow down the query string args to non-blank ones
-        query_string_args = {k: v for k, v in query_string_args.items() if v}
-        return HttpResponseRedirect(
-            "{url}?{qs}".format(
-                url=reverse("rosetta-form", kwargs=self.kwargs),
-                qs=urlencode_safe(query_string_args),
+            po_file.save()
+            po_filepath, ext = os.path.splitext(self.po_file_path)
+
+            if rosetta_settings.AUTO_COMPILE:
+                po_file.save_as_mofile(po_filepath + ".mo")
+
+            post_save.send(
+                sender=None, language_code=self.language_id, request=self.request
             )
-        )
+            # Try auto-reloading via the WSGI daemon mode reload mechanism
+            should_try_wsgi_reload = (
+                rosetta_settings.WSGI_AUTO_RELOAD
+                and "mod_wsgi.process_group" in self.request.environ
+                and self.request.environ.get("mod_wsgi.process_group", None)
+                and "SCRIPT_FILENAME" in self.request.environ
+                and int(self.request.environ.get("mod_wsgi.script_reloading", 0))
+            )
+            if should_try_wsgi_reload:
+                try:
+                    os.utime(self.request.environ.get("SCRIPT_FILENAME"), None)
+                except OSError:
+                    pass
+            # Try auto-reloading via uwsgi daemon reload mechanism
+            if rosetta_settings.UWSGI_AUTO_RELOAD:
+                try:
+                    import uwsgi
+
+                    uwsgi.reload()  # pretty easy right?
+                except Exception:
+                    pass  # we may not be running under uwsgi :P
+            # XXX: It would be nice to add a success message here!
+        except Exception as e:
+            messages.error(self.request, e)
 
     def get_context_data(self, **kwargs):
         context = super(TranslationFormView, self).get_context_data(**kwargs)

@@ -28,6 +28,9 @@ Rosetta can be configured via the following parameters, to be defined in your pr
 * ``ROSETTA_LANGUAGES``: List of languages that Rosetta will offer to translate. This is useful when you wish to translate a language that is not yet defined in ``settings.LANGUAGES``. Defaults to ``settings.LANGUAGES``.
 * ``ROSETTA_SHOW_OCCURRENCES``: Determines whether occurrences (where the original text appears) should be shown next to the translations for context. Defaults to ``True``.
 * ``ROSETTA_CASE_SENSITIVE_FILESYSTEM``: Overrides auto-detection of case sensitive OS. Defaults to ``None`` which enables auto-detection. Useful when running case sensitive OS (e.g. Ubuntu) in docker on case insensitive OS (e.g. MacOS).
+* ``ROSETTA_CACHE_DURATION``: Duration in seconds to cache the PO file when it is not possible to save on file. Defaults to ``24 hours``.
+* ``ROSETTA_FORCE_CACHE``: Force to always cache the PO file rather that try to save on file. Defaults to ``False``.
+* ``ROSETTA_CONTENT_SECURITY_POLICY``: Content-Security-Policy header value to be set in the HTML response. Default to a restrictive value that allows only same-origin scripts and styles. Set to ``None`` to disable the header.
 * ``OPENAI_API_KEY``: Translation suggestions using the OpenAI API. To use this service, you must first `register for the service <https://beta.openai.com/signup/>`, and set ``OPENAI_API_KEY`` to the key listed for your subscription. Requires `openai-python`. Defaults to ``None``.
 * ``OPENAI_PROMPT_TEMPLATE``: Format template used to generate prompt when translating with OpenAI. variables `from_language`, `to_language` and `text` are available for substitution. Defaults to ``Translate the following text from {from_language} to {to_language}:\n\n{text}``.
 * ``OPENAI_BASE_URL``: OpenAI base url for self host, example: OPENAI_BASE_URL = "https://openai.domain/v1". Defaults to ``None``
@@ -47,3 +50,12 @@ In this case the Cache-based backend should be used (by setting ``ROSETTA_STORAG
 Alternatively you can switch back to using the Session based storage by setting ``ROSETTA_STORAGE_CLASS = 'rosetta.storage.SessionRosettaStorage'`` in your settings. This is perfectly safe on Django 1.3. On Django 1.4 or higher make sure you have DON'T use the `signed_cookies <https://docs.djangoproject.com/en/dev/topics/http/sessions/#using-cookie-based-sessions>`_ ``SESSION_BACKEND`` with this Rosetta storage backend or funky things might happen.
 
 **TL;DR**: if you run Django with gunicorn, mod-wsgi or other multi-process environment, the Django-default ``CACHES`` ``LocMemCache`` backend won't suffice: use memcache instead, or you will run into issues.
+
+
+Multiple Machines
+-----------------
+
+If you have multiple machines serving your Django app, consider using a shared cache backend (such as Memcached or a database) 
+for the Rosetta cache. This ensures that all machines can access the same cached data. You may also want to 
+set ROSETTA_FORCE_CACHE to True to prevent writing to the file system and ROSETTA_CACHE_DURATION to None to disable cache expiration.
+

@@ -4,6 +4,7 @@ import os
 import shutil
 from unittest import mock
 from urllib.parse import urlencode
+import datetime
 
 import vcr
 
@@ -21,7 +22,7 @@ from rosetta import views
 from rosetta.poutil import find_pos
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
-
+from rosetta.poutil import datetime_from_timestamp
 
 class RosettaTestCase(TestCase):
     def __init__(self, *args, **kwargs):
@@ -1107,6 +1108,18 @@ class RosettaTestCase(TestCase):
         with override_settings(ROSETTA_CASE_SENSITIVE_FILESYSTEM=True):
             find_pos("en")
             path_mock.isfile.assert_not_called()
+
+    def test_datetime_from_timestamp_initial_value(self):
+        self.assertEqual(
+            datetime_from_timestamp("YEAR-MO-DA HO:MI+ZONE").date(),
+            datetime.datetime.fromtimestamp(0).date()
+        )
+
+    def test_datetime_from_timestamp_without_tz(self):
+        self.assertEqual(
+            datetime_from_timestamp("2008-09-22 11:02").date(),
+            datetime.date(2008, 9, 22)
+        )
 
 
 # Stubbed access control function
