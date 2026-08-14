@@ -1,11 +1,14 @@
-#user-tools p span {
-    margin-left: 2em;
+nav #user-tools {
+    margin-top: 15px;
+}
+.module {
+    margin-bottom: 20px;
+}
+.module h2 {
+    padding-left: 10px;
 }
 table {
     width: 100%;
-}
-td.translation label {
-    font-size: 95%;
 }
 td.translation textarea,
 td.original {
@@ -18,25 +21,26 @@ td.original {
 td.original .plural-container {
     position: relative;
 }
-td .context,
-td.original .message {
-    display: block;
+td.original .plural-container span {
+    position: absolute;
+}
+td.original code {
+    font-size: 90%;
+    padding: 2px;
+    padding-bottom: 0;
+    background-color: var(--variable-bg-color);
 }
 td .context {
+    display: block;
     margin-top: 1rem;
     color: #999;
 }
 td.translation textarea {
-    width: 98.5%;
-    margin: 2px 0;
+    width: 98%;
+    margin-top: 2px;
 }
 .rtl td.translation textarea {
     direction: rtl;
-}
-.plural span {
-    display: block;
-    margin: 2px 0;
-    position: absolute;
 }
 td.location code,
 td.location a {
@@ -46,117 +50,136 @@ td.location a {
 td.location code.hide {
     display: none;
 }
-.submit-row {
-    margin-bottom: 0;
-    margin-top: 0.5rem;
-}
-#changelist .paginator {
-    background: var(--darkened-bg);
-    border-bottom: none;
-}
-
-li.nobubble,
-li.nobubble:hover {
-    background-image: none;
-}
-.object-tools li.active,
-.object-tools li.active a {
-    color: yellow;
-}
-p.paginator input {
-    float: right;
-}
-p.paginator span.space {
-    margin: 0 0.5em;
-}
-.paginator {
-    text-align: left;
-    border: none;
-    background: transparent;
-}
-.paginator strong {
-    margin-left: 1em;
-}
 th.r,
 td.r {
     text-align: right;
+    padding-right: 10px;
+}
+td.hint {
+    color: #777;
+    padding-left: 10px;
+    width: 60%; /* helps align the location columns on the file list page */
 }
 th.c,
 td.c {
     text-align: center;
+    width: 1%; /* don't let the fuzzy column expand on small screens */
 }
-td.original code {
-    font-size: 90%;
-    padding: 0 1px;
+li.nobubble,
+li.nobubble:hover {
+    padding: 4px 10px;
 }
-tr.row2 td.original code {
-    background-color: #ffb2a5;
-    padding: 0 0.3em;
+.object-tools li.active.active a {
+    color: var(--object-tools-fg);
+    background: var(--default-button-bg);
 }
-tr.row1 td.original code {
-    background-color: #ffb2a5;
+div.submit-row {
+    padding-left: 0 !important; /* override all media queries */
+}
+p.paginator {
+    padding: 15px 0;
+    display: block;
+}
+p.paginator input {
+    padding: 15px;
+    margin-right: 20px;
+}
+p.paginator span.space {
+    margin: 0 0.5em;
+}
+p.paginator strong {
+    margin-left: 1em;
+}
+p.paginator span.this-page,
+.paginator a:link,
+.paginator a:visited {
+    vertical-align: baseline;
+    padding: 8px 12px;
 }
 .alert {
+    /* Original source for inlined alert icon: https://github.com/django/django/blob/main/django/contrib/admin/static/admin/img/icon-alert.svg */
+    --alert-icon: url("data:image/svg+xml,%3Csvg%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%201792%201792%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%3Cpath%20fill%3D%22%23efb80b%22%20d%3D%22M1024%201375v-190q0-14-9.5-23.5t-22.5-9.5h-192q-13%200-22.5%209.5t-9.5%2023.5v190q0%2014%209.5%2023.5t22.5%209.5h192q13%200%2022.5-9.5t9.5-23.5zm-2-374l18-459q0-12-10-19-13-11-24-11h-220q-11%200-24%2011-10%207-10%2021l17%20457q0%2010%2010%2016.5t24%206.5h185q14%200%2023.5-6.5t10.5-16.5zm-14-934l768%201408q35%2063-2%20126-17%2029-46.5%2046t-63.5%2017h-1536q-34%200-63.5-17t-46.5-46q-37-63-2-126l768-1408q17-31%2047-49t65-18%2065%2018%2047%2049z%22%2F%3E%0A%3C%2Fsvg%3E%0A");
     font-weight: bold;
     padding: 4px 5px 4px 25px;
     color: red;
-    background: transparent
-        url(data:image/svg+xml,%3Csvg%20width%3D%2214%22%20height%3D%2214%22%20viewBox%3D%220%200%201792%201792%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%3Cpath%20fill%3D%22%23efb80b%22%20d%3D%22M1024%201375v-190q0-14-9.5-23.5t-22.5-9.5h-192q-13%200-22.5%209.5t-9.5%2023.5v190q0%2014%209.5%2023.5t22.5%209.5h192q13%200%2022.5-9.5t9.5-23.5zm-2-374l18-459q0-12-10-19-13-11-24-11h-220q-11%200-24%2011-10%207-10%2021l17%20457q0%2010%2010%2016.5t24%206.5h185q14%200%2023.5-6.5t10.5-16.5zm-14-934l768%201408q35%2063-2%20126-17%2029-46.5%2046t-63.5%2017h-1536q-34%200-63.5-17t-46.5-46q-37-63-2-126l768-1408q17-31%2047-49t65-18%2065%2018%2047%2049z%22%2F%3E%0A%3C%2Fsvg%3E%0A)
-        5px 0.3em no-repeat;
+    background: transparent var(--alert-icon) 5px 0.3em no-repeat;
 }
 p.errornote {
     margin-top: 0.4em;
 }
 #footer {
-    clear: both;
     color: #999;
     font-size: 9px;
-    margin: 0 6px;
-    text-align: left;
-}
-#changelist table tbody td:first-child,
-#changelist table thead th:first-child {
-    text-align: left;
-}
-td.hint {
-    color: #777;
-}
-div.module {
-    margin-bottom: 20px;
-}
-.checkall {
-    cursor: pointer;
-}
-#toolbar {
-    height: 20px;
-}
-#toolbar #translate-all {
-    float: right;
-}
-#toolbar form {
-    float: left;
 }
 #changelist table thead th {
-    padding: 2px 5px;
+    padding: 2px;
+    padding-left: 8px;
+    height: 30px;
 }
-
 #changelist {
-    display: block !important;
+    display: block;
+    margin-bottom: 0;
 }
-
+#changelist .actions {
+    padding-left: 0;
+}
+#changelist #action-toggle {
+    vertical-align: text-bottom;
+}
 .info-tip::after {
     content: "?";
     color: white;
     background-color: #bbb;
+    color: var(--body-bg);
     margin-left: 5px;
     padding: 1px 5px;
     border-radius: 10px;
     font-size: 11px;
 }
-#action-toggle {
-    display: inline;
-}
 a.suggest {
     display: block;
     margin-bottom: 5px;
+}
+
+/* Using input type=search because it comes with a button to clear its contents */
+#toolbar input[type="search"]#searchbar {
+    height: auto;
+    width: auto;
+    max-width: 80%;
+    margin: 0 2px !important; /* override all media queries */
+    background-color: var(--body-bg);
+    line-height: 2;
+    padding-left: 8px;
+}
+#toolbar input[type="search"]#searchbar::-webkit-search-cancel-button {
+    cursor: pointer;
+    zoom: 1.3;
+}
+/* Make the search button have the same height as the search input */
+#toolbar form input[type="submit"] {
+    line-height: 2;
+    padding: 2px 12px;
+}
+
+/* Hide fuzzy toggle in the table header and the location column on smaller screens */
+@media (max-width: 768px) {
+    #action-toggle,
+    td.location,
+    th.location-header {
+        display: none;
+    }
+}
+
+/* Highlight color for variables in the original text */
+:root {
+    --variable-bg-color: #ffb2a5; /* light mode */
+    --variable-bg-color-dark: #5f3834; /* dark mode */
+}
+@media (prefers-color-scheme: dark) {
+    html[data-theme="auto"] {
+        --variable-bg-color: var(--variable-bg-color-dark);
+    }
+}
+html[data-theme="dark"] {
+    --variable-bg-color: var(--variable-bg-color-dark);
 }

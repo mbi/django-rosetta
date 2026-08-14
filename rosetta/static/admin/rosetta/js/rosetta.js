@@ -170,6 +170,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // On page load make textarea height adapt to its contents
         autofitTextarea(textarea);
 
+        // On page load show warnings for unmatched variables in translations
+        validateTranslation(textarea);
+
         // On input
         textarea.addEventListener("input", () => {
             // Make textarea height adapt to its contents

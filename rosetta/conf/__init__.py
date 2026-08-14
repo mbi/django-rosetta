@@ -3,6 +3,7 @@ For a description of each rosetta setting see: docs/settings.rst.
 """
 
 from django.conf import settings as dj_settings
+from django.core.exceptions import ImproperlyConfigured
 from django.core.signals import setting_changed
 
 
@@ -60,7 +61,6 @@ class RosettaSettings(object):
         "ROSETTA_REQUIRES_AUTH": ("ROSETTA_REQUIRES_AUTH", True),
         "ROSETTA_EXCLUDED_PATHS": ("ROSETTA_EXCLUDED_PATHS", ()),
         "ROSETTA_LANGUAGE_GROUPS": ("ROSETTA_LANGUAGE_GROUPS", False),
-        "ROSETTA_AUTO_COMPILE": ("AUTO_COMPILE", True),
         "ROSETTA_SHOW_AT_ADMIN_PANEL": ("SHOW_AT_ADMIN_PANEL", False),
         "ROSETTA_LOGIN_URL": ("LOGIN_URL", dj_settings.LOGIN_URL),
         "ROSETTA_LANGUAGES": ("ROSETTA_LANGUAGES", dj_settings.LANGUAGES),
@@ -72,6 +72,9 @@ class RosettaSettings(object):
         # you can find the supported languages list of DeepL API here: https://www.deepl.com/docs-api/translating-text/request/
         # ex: DEEPL_LANGUAGES = {"fr": "FR", "en": "EN-GB", "zh_Hans": "ZH"}
         "DEEPL_LANGUAGES": ("DEEPL_LANGUAGES", {}),
+        "ROSETTA_VALIDATE": ("VALIDATE", False),
+        "ROSETTA_AUTO_COMPILE": ("AUTO_COMPILE", True),
+        "ROSETTA_AUTO_RELOAD": ("AUTO_RELOAD", False),
     }
 
     def __init__(self):
@@ -85,6 +88,23 @@ class RosettaSettings(object):
             self._settings[rosetta_setting] = getattr(
                 dj_settings, user_setting, default
             )
+        self.validate_settings(self._settings)
+
+    def validate_settings(self, settings):
+        lm = "django.middleware.locale.LocaleMiddleware"
+        am = "rosetta.middleware.AutoReloadMiddleware"
+        if am in dj_settings.MIDDLEWARE and lm in dj_settings.MIDDLEWARE:
+            if dj_settings.MIDDLEWARE.index(am) > dj_settings.MIDDLEWARE.index(lm):
+                msg = "rosetta.middleware.AutoReloadMiddleware must be above LocaleMiddleware"
+                raise ImproperlyConfigured(msg)
+
+        if settings["AUTO_RELOAD"]:
+            if not settings["AUTO_COMPILE"]:
+                msg = "ROSETTA_AUTO_RELOAD requires ROSETTA_AUTO_COMPILE to be enabled"
+                raise ImproperlyConfigured(msg)
+            if am not in dj_settings.MIDDLEWARE:
+                msg = "ROSETTA_AUTO_RELOAD requires rosetta.middleware.AutoReloadMiddleware in settings.MIDDLEWARE"
+                raise ImproperlyConfigured(msg)
 
     def reload(self):
         self.__init__()

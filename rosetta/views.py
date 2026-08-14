@@ -1,18 +1,25 @@
 import hashlib
+import logging
 import os
 import os.path
 import re
+import subprocess
+import tempfile
 import zipfile
+from datetime import datetime
 from io import BytesIO
 from urllib.parse import urlencode
 
+from filelock import FileLock
 from polib import pofile
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
+from django.core.cache import cache
 from django.core.paginator import Paginator
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.template.defaultfilters import linebreaksbr, truncatechars
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
@@ -24,10 +31,14 @@ from django.views.generic import TemplateView, View
 from . import get_version as get_rosetta_version
 from .access import can_translate, can_translate_language
 from .conf import settings as rosetta_settings
+from .middleware import TIMESTAMP_CACHE_KEY
 from .poutil import find_pos, pagination_range, timestamp_with_timezone
 from .signals import entry_changed, post_save
 from .storage import get_storage
 from .translate_utils import TranslationException, translate
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_app_name(path):
@@ -54,7 +65,7 @@ class RosettaBaseMixin(object):
     """
 
     def dispatch(self, *args, **kwargs):
-        return super(RosettaBaseMixin, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     @cached_property
     def po_filter(self):
@@ -188,6 +199,12 @@ class RosettaFileLevelMixin(RosettaBaseMixin):
         # (This was formerly called 'rosetta_i18n_write'.)
         return os.access(self.po_file_path, os.W_OK)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # The django base template needs this to show the user tools in the header:
+        context["has_permission"] = True
+        return context
+
 
 class TranslationFileListView(RosettaBaseMixin, TemplateView):
     """Lists the languages, the gettext catalog files that can be translated,
@@ -198,7 +215,7 @@ class TranslationFileListView(RosettaBaseMixin, TemplateView):
     template_name = "rosetta/file-list.html"
 
     def get_context_data(self, **kwargs):
-        context = super(TranslationFileListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         third_party_apps = self.po_filter in ("all", "third-party")
         django_apps = self.po_filter in ("all", "django")
@@ -274,6 +291,30 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
         elif "\n" != in_[-1] and "\n" == out_[-1]:
             out_ = out_.rstrip()
         return out_
+
+    def is_valid(self):
+        try:
+            null_device = "NUL" if os.name == "nt" else "/dev/null"
+            cmd = ["msgfmt", "--check-format", "--use-fuzzy", "-o", null_device]
+            subprocess_args = dict(capture_output=True, check=True, text=True)
+            if self.po_file_is_writable:
+                subprocess.run(cmd + [self.po_file_path], **subprocess_args)
+            else:
+                subprocess.run(cmd + ["-"], input=str(self.po_file), **subprocess_args)
+            self.msgfmt_stderr = None
+            return True
+        except subprocess.CalledProcessError as e:
+            self.msgfmt_stderr = e.stderr
+            return False
+
+    def get(self, *args, **kwargs):
+        if rosetta_settings.VALIDATE and not self.is_valid():
+            # Add error messages flagged by msgfmt/compilemessages for this PO file.
+            pattern = rf"^(<stdin>|{self.po_file_path}):\d+:"
+            errors = re.sub(pattern, "•", self.msgfmt_stderr, flags=re.M)
+            errors = linebreaksbr(truncatechars(errors, 1000))
+            messages.error(self.request, errors)
+        return super().get(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """The only circumstances when we POST is to submit the main form, both
@@ -371,43 +412,16 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
                 pass
 
             try:
-                self.po_file.save()
-                po_filepath, ext = os.path.splitext(self.po_file_path)
-
-                if rosetta_settings.AUTO_COMPILE:
-                    self.po_file.save_as_mofile(po_filepath + ".mo")
-
-                post_save.send(
-                    sender=None, language_code=self.language_id, request=self.request
-                )
-                # Try auto-reloading via the WSGI daemon mode reload mechanism
-                should_try_wsgi_reload = (
-                    rosetta_settings.WSGI_AUTO_RELOAD
-                    and "mod_wsgi.process_group" in self.request.environ
-                    and self.request.environ.get("mod_wsgi.process_group", None)
-                    and "SCRIPT_FILENAME" in self.request.environ
-                    and int(self.request.environ.get("mod_wsgi.script_reloading", 0))
-                )
-                if should_try_wsgi_reload:
-                    try:
-                        os.utime(self.request.environ.get("SCRIPT_FILENAME"), None)
-                    except OSError:
-                        pass
-                # Try auto-reloading via uwsgi daemon reload mechanism
-                if rosetta_settings.UWSGI_AUTO_RELOAD:
-                    try:
-                        import uwsgi
-
-                        uwsgi.reload()  # pretty easy right?
-                    except Exception:
-                        pass  # we may not be running under uwsgi :P
-                # XXX: It would be nice to add a success message here!
+                self.save_writable()
             except Exception as e:
+                logger.exception("Rosetta error on save")
                 messages.error(self.request, e)
 
         if file_change and not self.po_file_is_writable:
             storage = get_storage(self.request)
             storage.set(self.po_file_cache_key, self.po_file)
+            if rosetta_settings.VALIDATE:
+                self.is_valid()
 
         # Reconstitute url to redirect to. Start with determining whether the
         # page number can be incremented.
@@ -436,8 +450,63 @@ class TranslationFormView(RosettaFileLevelMixin, TemplateView):
             )
         )
 
+    def save_writable(self):
+        po_filepath, ext = os.path.splitext(self.po_file_path)
+
+        # Use a lockfile to avoid writing to the same PO/MO file by multiple
+        # processes at the same time. Lockfiles are not deleted after use:
+        # https://github.com/tox-dev/filelock/pull/8
+        # so they are placed in the temporary directory to avoid clutter.
+        lock_path = os.path.relpath(po_filepath, start=os.path.sep) + ".lock"
+        lock_path = os.path.join(tempfile.gettempdir(), "rosetta", lock_path)
+        with FileLock(lock_path, timeout=5):
+            # Save PO file
+            self.po_file.save()
+
+            # Validate PO file (optional)
+            can_reload = not rosetta_settings.VALIDATE or self.is_valid()
+
+            # Save MO file
+            if can_reload and rosetta_settings.AUTO_COMPILE:
+                self.po_file.save_as_mofile(po_filepath + ".mo")
+
+        post_save.send(
+            sender=None, language_code=self.language_id, request=self.request
+        )
+
+        if not can_reload:
+            return
+
+        # Try auto-reloading via the WSGI daemon mode reload mechanism
+        should_try_wsgi_reload = (
+            rosetta_settings.WSGI_AUTO_RELOAD
+            and "mod_wsgi.process_group" in self.request.environ
+            and self.request.environ.get("mod_wsgi.process_group", None)
+            and "SCRIPT_FILENAME" in self.request.environ
+            and int(self.request.environ.get("mod_wsgi.script_reloading", 0))
+        )
+        if should_try_wsgi_reload:
+            try:
+                os.utime(self.request.environ.get("SCRIPT_FILENAME"), None)
+            except OSError:
+                logger.exception("Rosetta wsgi reload failed")
+
+        # Try auto-reloading via uwsgi daemon reload mechanism
+        if rosetta_settings.UWSGI_AUTO_RELOAD:
+            try:
+                import uwsgi
+
+                uwsgi.reload()
+            except Exception:
+                logger.exception("Rosetta uwsgi reload failed")
+
+        # Signal to AutoReloadMiddleware that per-process translation
+        # caches need to be cleared during the next request.
+        if rosetta_settings.AUTO_RELOAD:
+            cache.set(TIMESTAMP_CACHE_KEY, datetime.now().timestamp())
+
     def get_context_data(self, **kwargs):
-        context = super(TranslationFormView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         entries = self.get_entries()
         paginator = Paginator(entries, rosetta_settings.MESSAGES_PER_PAGE)
 

@@ -4,39 +4,58 @@ Settings
 Rosetta can be configured via the following parameters, to be defined in your project settings file:
 
 * ``ROSETTA_MESSAGES_PER_PAGE``: Number of messages to display per page. Defaults to ``10``.
-* ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
-* ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <http://api.yandex.com/key/form.xml?service=trnsl>`_, then specify the key here. Defaults to ``None``.
-* ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure Translator API. To use this service, you must first `register for the service <https://docs.microsoft.com/en-us/azure/cognitive-services/Translator/translator-text-how-to-signup>`_, and set ``AZURE_CLIENT_SECRET`` to either of the keys listed for your subscription. Defaults to ``None``.
-* ``DEEPL_AUTH_KEY``: Translation suggestions using the DeepL Translation API. To use this service, you must first `register for DeepL API <https://www.deepl.com/pro#developer>`_, and set ``DEEPL_AUTH_KEY`` to either of the keys listed for your subscription. Defaults to ``None``.
-* ``DEEPL_LANGUAGES``: A dictionary to convert Django language codes to DeepL API Language codes. For example, for Simplified Chinese you could specify: ``{"zh_Hans": "ZH"}``. Check the languages supported by DeepL at `DeepL API docs <https://www.deepl.com/docs-api/>`_. Even if this is not set, Rosetta will try to get the language looking at the first 2 letters of django language code, but it would be useful if you want to specify EN-GB or EN-US for example.
-* ``GOOGLE_APPLICATION_CREDENTIALS_PATH`` and ``GOOGLE_PROJECT_ID``: Translation suggestions using Google Translation API. To use this service, you must first `register the project <https://cloud.google.com/translate/docs/quickstart-client-libraries-v3>`_. You do not have to register ENV variable. GOOGLE_APPLICATION_CREDENTIALS_PATH is path to JSON credentials file. Defaults to ``None``. You also have to install google-cloud-translate package `pip install google-cloud-translate==3.0.2`
 * ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE`` and ``ROSETTA_MESSAGES_SOURCE_LANGUAGE_NAME``: Change these if the source language in your PO files isn't English. Default to ``'en'`` and ``'English'`` respectively.
-* ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
 * ``ROSETTA_EXCLUDED_APPLICATIONS``: Exclude applications defined in this list from being translated. Defaults to ``()``.
 * ``ROSETTA_REQUIRES_AUTH``: Require authentication for all Rosetta views. Defaults to ``True``.
 * ``ROSETTA_POFILE_WRAP_WIDTH``: Sets the line-length of the edited PO file. Set this to ``0`` to mimic ``makemessage``'s ``--no-wrap`` option. Defaults to ``78``.
-* ``ROSETTA_STORAGE_CLASS``: See the note below on Storages. Defaults to ``rosetta.storage.CacheRosettaStorage``
 * ``ROSETTA_ACCESS_CONTROL_FUNCTION``: An alternative function (string or a callable) that determines if a given user can access the translation views. This function receives a ``user`` as its argument, and returns a boolean specifying whether the passed user is allowed to use Rosetta or not.
 * ``ROSETTA_LANGUAGE_GROUPS``: Set to ``True`` to enable language-specific groups, which can be used to give different translators access to different languages. Instead of creating a global ``translators`` group, create individual per-language groups, e.g. ``translators-de``, ``translators-fr``, and assign users to these.
-* ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the Rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
 * ``ROSETTA_POFILENAMES``: Defines which po file names are exposed in the web interface. Defaults to ``('django.po', 'djangojs.po')``
 * ``ROSETTA_EXCLUDED_PATHS``: Exclude paths defined in this list from being searched (usually ends with "locale"). Defaults to ``()``
-* ``ROSETTA_AUTO_COMPILE``: Determines whether the MO file is automatically compiled when the PO file is saved. Defaults to ``True``.
 * ``ROSETTA_ENABLE_REFLANG``: Enables a selector for picking a reference language other than English. Defaults to ``False``.
 * ``ROSETTA_SHOW_AT_ADMIN_PANEL``: Adds a handy link to Rosetta at the bottom of the Django admin apps index. Defaults to ``False``.
 * ``ROSETTA_LOGIN_URL``: Use this if you want to override the login URL for rosetta. Defaults to ``settings.LOGIN_URL``.
 * ``ROSETTA_LANGUAGES``: List of languages that Rosetta will offer to translate. This is useful when you wish to translate a language that is not yet defined in ``settings.LANGUAGES``. Defaults to ``settings.LANGUAGES``.
 * ``ROSETTA_SHOW_OCCURRENCES``: Determines whether occurrences (where the original text appears) should be shown next to the translations for context. Defaults to ``True``.
 * ``ROSETTA_CASE_SENSITIVE_FILESYSTEM``: Overrides auto-detection of case sensitive OS. Defaults to ``None`` which enables auto-detection. Useful when running case sensitive OS (e.g. Ubuntu) in docker on case insensitive OS (e.g. MacOS).
+
+
+Validate, compile, reload
+-------------------------
+
+* ``ROSETTA_VALIDATE``: Show validation errors flagged by ``msgfmt --check-format --use-fuzzy``. If this is ``True`` and the validation fails then auto-compile and auto-reload will be skipped. Defaults to ``False``.
+* ``ROSETTA_AUTO_COMPILE``: Determines whether the MO file is automatically compiled when the PO file is saved. Defaults to ``True``.
+* ``ROSETTA_WSGI_AUTO_RELOAD`` and ``ROSETTA_UWSGI_AUTO_RELOAD``: When running WSGI daemon mode, using ``mod_wsgi`` 2.0c5 or later, this setting controls whether the contents of the gettext catalog files should be automatically reloaded by the WSGI processes each time they are modified. For performance reasons, this setting should be disabled in production environments. Default to ``False``.
+* ``ROSETTA_AUTO_RELOAD``: Similar to ``ROSETTA_(U)WSGI_AUTO_RELOAD`` it makes updated translations automatically visible, but does it without restarting any processes. Defaults to ``False``.
+    * Supports multiple processes, e.g. ``gunicorn --workers=2``.
+    * It might not work 100% reliably with threading enabled, e.g. ``gunicorn --threads=2`` or with any ``async`` code because it modifies ``global`` variables.
+    * If there are multiple processes then requires a ``cache`` backend that's shared across all processes. If there's a cache backend named ``rosetta`` it will use that, otherwise the ``default`` one.
+    * Clears Django's translation cache for all languages, not just for the one being edited.
+    * No need to enable when using Django's ``runserver`` because that also clears the same translation cache when MO files are updated.
+    * Requires ``rosetta.middleware.AutoReloadMiddleware`` to be added above ``LocaleMiddleware``, or anything that activates the current language.
+    * Requires ``ROSETTA_AUTO_COMPILE`` to be enabled, so that MO files are compiled first.
+
+
+Translation suggestions
+-----------------------
+
+* ``ROSETTA_ENABLE_TRANSLATION_SUGGESTIONS``: Enable AJAX translation suggestions. Defaults to ``False``.
+* ``YANDEX_TRANSLATE_KEY``: Translation suggestions from Yandex `Yandex.Translate API <http://api.yandex.com/translate/>`_. To use this service you must first `obtain an AppID key <http://api.yandex.com/key/form.xml?service=trnsl>`_, then specify the key here. Defaults to ``None``.
+* ``AZURE_CLIENT_SECRET``: Translation suggestions using the Microsoft Azure Translator API. To use this service, you must first `register for the service <https://docs.microsoft.com/en-us/azure/cognitive-services/Translator/translator-text-how-to-signup>`_, and set ``AZURE_CLIENT_SECRET`` to either of the keys listed for your subscription. Defaults to ``None``.
+* ``DEEPL_AUTH_KEY``: Translation suggestions using the DeepL Translation API. To use this service, you must first `register for DeepL API <https://www.deepl.com/pro#developer>`_, and set ``DEEPL_AUTH_KEY`` to either of the keys listed for your subscription. Defaults to ``None``.
+* ``DEEPL_LANGUAGES``: A dictionary to convert Django language codes to DeepL API Language codes. For example, for Simplified Chinese you could specify: ``{"zh_Hans": "ZH"}``. Check the languages supported by DeepL at `DeepL API docs <https://www.deepl.com/docs-api/>`_. Even if this is not set, Rosetta will try to get the language looking at the first 2 letters of django language code, but it would be useful if you want to specify EN-GB or EN-US for example.
+* ``GOOGLE_APPLICATION_CREDENTIALS_PATH`` and ``GOOGLE_PROJECT_ID``: Translation suggestions using Google Translation API. To use this service, you must first `register the project <https://cloud.google.com/translate/docs/quickstart-client-libraries-v3>`_. You do not have to register ENV variable. GOOGLE_APPLICATION_CREDENTIALS_PATH is path to JSON credentials file. Defaults to ``None``. You also have to install google-cloud-translate package `pip install google-cloud-translate==3.0.2`
 * ``OPENAI_API_KEY``: Translation suggestions using the OpenAI API. To use this service, you must first `register for the service <https://beta.openai.com/signup/>`, and set ``OPENAI_API_KEY`` to the key listed for your subscription. Requires `openai-python`. Defaults to ``None``.
 * ``OPENAI_PROMPT_TEMPLATE``: Format template used to generate prompt when translating with OpenAI. variables `from_language`, `to_language` and `text` are available for substitution. Defaults to ``Translate the following text from {from_language} to {to_language}:\n\n{text}``.
 * ``OPENAI_BASE_URL``: OpenAI base url for self host, example: OPENAI_BASE_URL = "https://openai.domain/v1". Defaults to ``None``
 * ``OPENAI_MODEL``: the LLM model to use for translate, example: OPENAI_MODEL="@cf/meta/llama-3.1-70b-instruct". Defaults to ``gpt-3.5-turbo-instruct``
 
 
-
 Storages
 --------
+
+* ``ROSETTA_STORAGE_CLASS``: This is used only when the PO files are not writable. Allows editing and then downloading a catalog even in that case. Defaults to ``rosetta.storage.CacheRosettaStorage``
+* ``ROSETTA_CACHE_NAME``: When using ``rosetta.storage.CacheRosettaStorage``, you can store the Rosetta data in a specific cache. This is particularly useful when your ``default`` cache is a ``django.core.cache.backends.dummy.DummyCache`` (which happens on pre-production environments). If unset, it will default to ``rosetta`` if a cache with this name exists, or ``default`` if not.
 
 To prevent re-reading and parsing the PO file catalogs over and over again, Rosetta stores them in a volatile location. This can be either the HTTP session or the Django cache.
 

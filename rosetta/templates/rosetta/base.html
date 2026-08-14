@@ -1,35 +1,34 @@
-<!DOCTYPE html>{% load static %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; script-src-elem 'self' https://translate.yandex.net" />
-        <title>{% block pagetitle %}Rosetta{% endblock %}</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+{% extends "admin/base.html" %}
 
-        <link rel="stylesheet" href="{% static "admin/css/base.css" %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static "admin/css/forms.css" %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}" type="text/css"/>
-        <link rel="stylesheet" href="{% static "admin/rosetta/css/rosetta.css" %}" type="text/css"/>
-        {% block extra_styles %}{% endblock %}
-        {{ rosetta_settings_js|json_script:"rosetta-settings-js" }}
-        <script src="{% static "admin/rosetta/js/rosetta.js" %}"></script>
-    </head>
-    <body>
-        <div id="container">
-            <div id="header">
-                {% block header %}
-                    <div id="branding">
-                        <h1 id="site-name"><a href="{% url 'rosetta-file-list' po_filter='project' %}">Rosetta</a> </h1>
-                    </div>
-                {% endblock %}
-            </div>
-            <div class="breadcrumbs">{% block breadcumbs %}{% endblock %}</div>
-            <div id="content" class="flex">
-                {% block main %}{% endblock %}
-            </div>
-            <div id="footer" class="breadcumbs">
-                <a href="https://github.com/mbi/django-rosetta">Rosetta</a> <span class="version">{{ version }}</span>
-            </div>
+{% load i18n static %}
+
+{% block title %}Rosetta{% endblock %}
+
+{% block extrahead %}
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; script-src-elem 'self' https://translate.yandex.net" />
+    <link rel="stylesheet" href="{% static "admin/css/changelists.css" %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static "admin/rosetta/css/rosetta.css" %}" type="text/css"/>
+    {{ rosetta_settings_js|json_script:"rosetta-settings-js" }}
+    <script src="{% static "admin/rosetta/js/rosetta.js" %}"></script>
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'rosetta-file-list' po_filter='project' %}">Rosetta</a>
+    </h1>
+{% endblock %}
+
+{% block nav-breadcrumbs %}
+    <nav aria-label="{% trans 'Breadcrumbs' %}">
+        <div class="breadcrumbs">
+            {% block breadcrumbs %}{% endblock %}
         </div>
-    </body>
-</html>
+    </nav>
+{% endblock %}
+
+{% block footer %}
+    <footer id="footer">
+        <a href="https://github.com/mbi/django-rosetta">Rosetta</a>
+        <span class="version">{{ version }}</span>
+    </footer>
+{% endblock %}

@@ -2,6 +2,7 @@ import filecmp
 import hashlib
 import os
 import shutil
+from pathlib import Path
 from unittest import mock
 from urllib.parse import urlencode
 
@@ -9,6 +10,7 @@ import vcr
 
 from django import VERSION
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.dispatch import receiver
 from django.http import Http404
@@ -16,11 +18,24 @@ from django.test import RequestFactory, TestCase, override_settings
 from django.test.client import Client
 from django.urls import resolve, reverse
 from django.utils.encoding import force_bytes
+from django.utils.translation import activate, get_language, gettext, trans_real
+from django.utils.translation.reloader import translation_file_changed
 
 from rosetta import views
+from rosetta.conf import settings as rosetta_settings
+from rosetta.middleware import TIMESTAMP_CACHE_KEY
 from rosetta.poutil import find_pos
 from rosetta.signals import entry_changed, post_save
 from rosetta.storage import get_storage
+
+
+# Stubbed access control function
+def no_access(user):
+    return False
+
+
+def prepend_middleware(*args):
+    return override_settings(MIDDLEWARE=args + settings.MIDDLEWARE)
 
 
 class RosettaTestCase(TestCase):
@@ -64,6 +79,15 @@ class RosettaTestCase(TestCase):
         """
         src_path = os.path.normpath(os.path.join(self.curdir, template_path))
         shutil.copy(src_path, self.dest_file)
+
+        # remove previously used mo file
+        try:
+            os.remove(self.dest_file.replace(".po", ".mo"))
+        except FileNotFoundError:
+            pass
+
+        # clear django's translation cache
+        translation_file_changed(sender=None, file_path=Path("dummy.mo"))
 
     @property
     def xx_form_url(self):
@@ -233,13 +257,14 @@ class RosettaTestCase(TestCase):
         data = {"m_e48f149a8b2e8baa81b816c0edf93890": "Hello, world, from client two!"}
         r2 = self.client2.post(untranslated_url, data, follow=True)
 
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
 
         # uh-oh here comes client 1
         data = {"m_e48f149a8b2e8baa81b816c0edf93890": "Hello, world, from client one!"}
         r = self.client.post(untranslated_url, data, follow=True)
         # An error message is displayed
-        self.assertContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 1)
+        self.assertEqual(list(r.context["messages"])[0].level, 40)
 
         # client 2 won
         with open(self.dest_file, "r") as po_file:
@@ -248,13 +273,13 @@ class RosettaTestCase(TestCase):
 
         # Both clients show all strings, error messages are gone
         r = self.client.get(translated_url)
-        self.assertNotContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r2 = self.client2.get(translated_url)
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r = self.client.get(self.xx_form_url)
-        self.assertNotContains(r, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
         r2 = self.client2.get(self.xx_form_url)
-        self.assertNotContains(r2, "save-conflict")
+        self.assertEqual(len(r.context["messages"]), 0)
 
         # Both have client's two version
         self.assertContains(r, "Hello, world, from client two!")
@@ -1108,7 +1133,125 @@ class RosettaTestCase(TestCase):
             find_pos("en")
             path_mock.isfile.assert_not_called()
 
+    @override_settings(ROSETTA_VALIDATE=True)
+    def test_msgfmt_validation_error(self):
+        self.copy_po_file_from_template("./django.po.missing_variable.template")
 
-# Stubbed access control function
-def no_access(user):
-    return False
+        r = self.client.get(self.xx_form_url)
+        self.assertEqual(len(r.context["messages"]), 1)
+        self.assertEqual(list(r.context["messages"])[0].level, 40)
+        self.assertContains(r, "msgfmt")
+
+    def test_auto_reload_without_auto_compile(self):
+        """ROSETTA_AUTO_RELOAD needs ROSETTA_AUTO_COMPILE"""
+        with self.assertRaises(ImproperlyConfigured):
+            with override_settings(
+                ROSETTA_AUTO_COMPILE=False, ROSETTA_AUTO_RELOAD=True
+            ):
+                rosetta_settings.reload()
+
+    @prepend_middleware(
+        "django.middleware.locale.LocaleMiddleware",
+        "rosetta.middleware.AutoReloadMiddleware",
+    )
+    def test_auto_reload_middleware_order(self):
+        """If AutoReloadMiddleware was used in this order then
+        LocaleMiddleware wouldn't work, so we don't allow this.
+        """
+        with self.assertRaises(ImproperlyConfigured):
+            rosetta_settings.reload()
+
+    @prepend_middleware(
+        "rosetta.middleware.AutoReloadMiddleware",
+        "django.middleware.locale.LocaleMiddleware",
+    )
+    @override_settings(ROSETTA_AUTO_RELOAD=False)
+    def test_auto_reload_disabled(self):
+        """If auto reload is disabled a new translation won't be visible"""
+
+        self.copy_po_file_from_template("./django.po.template")
+        cache.delete(TIMESTAMP_CACHE_KEY)
+
+        # original string is in English, and gettext returns the same text
+        en = "String 2"
+        activate("en")
+        self.assertEqual(gettext(en), en)
+
+        # there's no translation of it in language xx
+        activate("xx")
+        self.assertEqual(gettext(en), en)
+
+        # post a translation and activate language xx
+        data = {"m_e48f149a8b2e8baa81b816c0edf93890": "translation1"}
+        response = self.client.post(
+            self.xx_form_url, data, HTTP_ACCEPT_LANGUAGE="xx", follow=True
+        )
+
+        # make sure there weren't any errors
+        self.assertEqual(list(response.context["messages"]), [])
+
+        # check if LocaleMiddleware still activated the language xx
+        self.assertEqual(get_language(), "xx")
+
+        # we still see the original instead of the translation
+        self.assertEqual(gettext(en), en)
+
+    @prepend_middleware(
+        "rosetta.middleware.AutoReloadMiddleware",
+        "django.middleware.locale.LocaleMiddleware",
+    )
+    @override_settings(ROSETTA_AUTO_RELOAD=True)
+    def subtest_auto_reload_enabled(self):
+        """With auto reload enabled we'll see the new translation automatically"""
+
+        self.copy_po_file_from_template("./django.po.template")
+
+        # original string is in English, and gettext returns the same text
+        en = "String 2"
+        activate("en")
+        self.assertEqual(gettext(en), en)
+
+        # there's no translation of it in language xx yet either
+        activate("xx")
+        self.assertEqual(gettext(en), en)
+
+        # post a translation and activate language xx
+        data = {"m_e48f149a8b2e8baa81b816c0edf93890": "translation2"}
+        initial_translation_cache = trans_real._translations
+
+        self.client.post(self.xx_form_url, data, HTTP_ACCEPT_LANGUAGE="xx")
+
+        # at this point we haven't cleared the translation cache yet
+        self.assertEqual(initial_translation_cache, trans_real._translations)
+
+        # check if LocaleMiddleware still activated the language xx
+        self.assertEqual(get_language(), "xx")
+
+        # we need to make another request to clear the translation cache
+        # (this will happen for every process)
+        response = self.client.get(self.xx_form_url, HTTP_ACCEPT_LANGUAGE="xx")
+
+        # make sure there weren't any errors when adding the new translation above
+        self.assertEqual(list(response.context["messages"]), [])
+
+        # we should have a new translation cache now
+        new_translation_cache = trans_real._translations
+        self.assertNotEqual(initial_translation_cache, new_translation_cache)
+
+        # check if LocaleMiddleware still activated the language xx
+        self.assertEqual(get_language(), "xx")
+
+        # the new translation should be visible now
+        self.assertEqual(gettext(en), "translation2")
+
+        # susbsequent requests should leave the cache intact
+        self.client.get("/", HTTP_ACCEPT_LANGUAGE="xx")
+        self.assertEqual(new_translation_cache, trans_real._translations)
+
+    def test_auto_reload_enabled(self):
+        """With auto reload enabled we'll see the new translation automatically"""
+        cache.delete(TIMESTAMP_CACHE_KEY)
+        with self.subTest("Subtest with empty cache"):
+            self.subtest_auto_reload_enabled()
+        with self.subTest("Subtest with non-empty cache"):
+            self.subtest_auto_reload_enabled()

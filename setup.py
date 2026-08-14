@@ -65,6 +65,7 @@ setup(
         "Django >= 4.2",
         "requests >= 2.30.0",
         "polib >= 1.1.0",
+        "filelock >= 3.13.0",
     ],
     tests_require=[
         "vcrpy",
