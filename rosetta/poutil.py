@@ -49,8 +49,8 @@ def find_pos(lang, project_apps=True, django_apps=False, third_party_apps=False)
         parts = os.environ.get(ENVIRONMENT_VARIABLE).split(".")
     project = __import__(parts[0], {}, {}, [])
     abs_project_path = os.path.normpath(
-        os.path.abspath(os.path.dirname(project.__file__))
-    )
+        os.path.abspath(os.path.dirname(os.path.dirname(project.__file__)))
+    )  # otherwise it does not see the application locale files
     if project_apps:
         if os.path.exists(
             os.path.abspath(os.path.join(os.path.dirname(project.__file__), "locale"))
