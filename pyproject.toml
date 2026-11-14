@@ -7,7 +7,7 @@ name = "django-rosetta"
 dynamic = ["version"]
 description = "A Django application that eases the translation of Django projects"
 readme = { file = "README.rst", content-type = "text/x-rst" }
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Marco Bonetti", email = "mbonetti@gmail.com" }]
@@ -19,7 +19,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -28,14 +27,12 @@ classifiers = [
     "Topic :: Software Development :: Localization",
     "Topic :: Software Development :: Internationalization",
     "Framework :: Django",
-    "Framework :: Django :: 4.2",
-    "Framework :: Django :: 5.0",
-    "Framework :: Django :: 5.1",
     "Framework :: Django :: 5.2",
     "Framework :: Django :: 6.0",
+    "Framework :: Django :: 6.1",
 ]
 dependencies = [
-    "Django>=4.2",
+    "Django>=5.2",
     "requests>=2.30.0",
     "polib>=1.1.0",
 ]
@@ -59,10 +56,10 @@ exclude = ["testproject", "testproject.*"]
 [tool.setuptools.dynamic]
 version = { attr = "rosetta.__version__" }
 
-# Lint + format: ruff replaces flake8, black and (for import ordering) isort.
+# Lint + format: ruff replaces flake8 and black; isort still owns import order.
 [tool.ruff]
 line-length = 88
-target-version = "py39"
+target-version = "py310"
 extend-exclude = [
     "build",
     "dist",

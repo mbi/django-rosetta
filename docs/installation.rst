@@ -3,7 +3,7 @@ Installation
 
 Requirements
 ------------
-* As of version 0.9.0, Rosetta supports Django 1.11 and up.
+* As of version 0.10.5, Rosetta requires Django 5.2 or later, on Python 3.10 or later.
 
 
 Install Rosetta

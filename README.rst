@@ -22,6 +22,7 @@ Note:
 * As of version 0.9.6, django-rosetta requires Django 2.2 or later
 * As of version 0.9.9 django-rosetta supports Django 3.2 or later
 * As of version 0.10.0, django-rosetta requires Django 4.2 or later
+* As of version 0.10.5, django-rosetta requires Django 5.2 or later
 
 ********
 Features

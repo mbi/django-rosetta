@@ -4,6 +4,9 @@ Version History
 Version 0.10.5 (Unreleased)
 ---------------------------
 * Modernize packaging and lint tooling: move project metadata from setup.py to pyproject.toml, replace flake8/black with ruff, and declare requires-python and test/docs extras.
+* Test against Django 6.1
+* Drop support for end-of-life Django versions 4.2, 5.0 and 5.1; require Django 5.2 or newer.
+* Drop support for Python 3.9; require Python 3.10 or newer.
 
 
 Version 0.10.4
