@@ -40,14 +40,18 @@ def _ref_lang_po_path(po_file_path, ref_lang, separator=os.sep):
     The separator is escaped before being embedded into the regular
     expression and the replacement is passed as a callable, so that a
     Windows separator (a backslash) is never interpreted as a regex escape.
+
+    The language directory is matched between ``locale`` and ``LC_MESSAGES``
+    instead of a fixed two-letter code, so ids with a region or script
+    subtag (``pt_BR``, ``sr_Latn``) and three-letter codes (``fil``) resolve
+    to the right directory instead of being partially replaced.
     """
-    replacement = "{separator}locale{separator}{ref_lang}".format(
-        separator=separator, ref_lang=ref_lang
+    escaped = re.escape(separator)
+    pattern = f"{escaped}locale{escaped}[^{escaped}]+{escaped}LC_MESSAGES{escaped}"
+    replacement = (
+        f"{separator}locale{separator}{ref_lang}{separator}LC_MESSAGES{separator}"
     )
-    pattern = r"{separator}locale{separator}[a-z]{{2}}".format(
-        separator=re.escape(separator)
-    )
-    return re.sub(pattern, lambda match: replacement, po_file_path)
+    return re.sub(pattern, lambda _: replacement, po_file_path)
 
 
 class LoginURL(Promise):

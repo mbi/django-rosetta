@@ -1130,3 +1130,24 @@ class RefLangPoPathTest(SimpleTestCase):
             views._ref_lang_po_path(path, "en", separator="\\"),
             "C:\\project\\locale\\en\\LC_MESSAGES\\django.po",
         )
+
+    def test_language_codes_longer_than_two_characters(self):
+        # Region/script subtags and three-letter codes must be replaced as a
+        # whole; a fixed two-letter pattern used to turn ``pt_BR`` into
+        # ``en_BR`` and ``fil`` into ``enl``.
+        cases = (
+            ("/", "/project/locale/pt_BR/LC_MESSAGES/django.po",
+             "/project/locale/en/LC_MESSAGES/django.po"),
+            ("/", "/project/locale/sr_Latn/LC_MESSAGES/django.po",
+             "/project/locale/en/LC_MESSAGES/django.po"),
+            ("/", "/project/locale/fil/LC_MESSAGES/django.po",
+             "/project/locale/en/LC_MESSAGES/django.po"),
+            ("\\", "C:\\project\\locale\\pt_BR\\LC_MESSAGES\\django.po",
+             "C:\\project\\locale\\en\\LC_MESSAGES\\django.po"),
+        )
+        for separator, path, expected in cases:
+            with self.subTest(path=path):
+                self.assertEqual(
+                    views._ref_lang_po_path(path, "en", separator=separator),
+                    expected,
+                )

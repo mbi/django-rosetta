@@ -1,6 +1,12 @@
 Version History
 ===============
 
+Version 0.10.4
+--------------
+* Fix Windows crash in reference-language path resolution (#310, PR #312, thanks @Goldloli)
+* Resolve reference-language paths for ids longer than two characters (pt_BR, sr_Latn, fil) instead of partially replacing them (#306 superseded by #312, thanks @sipa-echo-zaoa)
+
+
 Version 0.10.3
 --------------
 * Test against Django 6.0
