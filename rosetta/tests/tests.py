@@ -1136,14 +1136,26 @@ class RefLangPoPathTest(SimpleTestCase):
         # whole; a fixed two-letter pattern used to turn ``pt_BR`` into
         # ``en_BR`` and ``fil`` into ``enl``.
         cases = (
-            ("/", "/project/locale/pt_BR/LC_MESSAGES/django.po",
-             "/project/locale/en/LC_MESSAGES/django.po"),
-            ("/", "/project/locale/sr_Latn/LC_MESSAGES/django.po",
-             "/project/locale/en/LC_MESSAGES/django.po"),
-            ("/", "/project/locale/fil/LC_MESSAGES/django.po",
-             "/project/locale/en/LC_MESSAGES/django.po"),
-            ("\\", "C:\\project\\locale\\pt_BR\\LC_MESSAGES\\django.po",
-             "C:\\project\\locale\\en\\LC_MESSAGES\\django.po"),
+            (
+                "/",
+                "/project/locale/pt_BR/LC_MESSAGES/django.po",
+                "/project/locale/en/LC_MESSAGES/django.po",
+            ),
+            (
+                "/",
+                "/project/locale/sr_Latn/LC_MESSAGES/django.po",
+                "/project/locale/en/LC_MESSAGES/django.po",
+            ),
+            (
+                "/",
+                "/project/locale/fil/LC_MESSAGES/django.po",
+                "/project/locale/en/LC_MESSAGES/django.po",
+            ),
+            (
+                "\\",
+                "C:\\project\\locale\\pt_BR\\LC_MESSAGES\\django.po",
+                "C:\\project\\locale\\en\\LC_MESSAGES\\django.po",
+            ),
         )
         for separator, path, expected in cases:
             with self.subTest(path=path):

@@ -1,4 +1,6 @@
-VERSION = (0, 10, 4)
+__version__ = "0.10.5"
+
+VERSION = tuple(int(part) for part in __version__.split("."))
 
 
 def get_version(limit=3):
